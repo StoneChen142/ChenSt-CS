@@ -1,3 +1,5 @@
+### SRC - Please use meaningful variable names and use coding conventions
+
 n=int(input("Please input a number greater or equal to 1 and less or equal to 20: "))
 v=False
 v2=False
@@ -17,7 +19,9 @@ while v2==False:
         else:
             n=-1
     else:
-        n=int(input("Please input a positive number maximum 20: "))
+        n=int(input("Please input a positive number maximum 20: "))  ### SRC - You appear to be using n for the table and the rows...
+
+        
 
 for i in range(n+1):
     print(i*n)

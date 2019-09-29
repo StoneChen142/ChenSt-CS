@@ -1,4 +1,4 @@
-x=0
+x=0  ### SRC - is x needed? Could you not just use units for the same job?
 units=int(input("1: Imperial, 2: Metric"))
 
 if units == 1:
@@ -12,9 +12,11 @@ elif units == 2:
     w = int(input("Enter Width in meters: "))
     x=2
 else:
-    print("invalid")
+    print("invalid") 
     
 #endif
+
+### SRC - What happens here is units is invalid?
 if x == 1:
     print("Paint Needed:",2*w*d+2*w*h+2*h*d,"inch^2")
 else:

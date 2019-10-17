@@ -45,7 +45,6 @@ while not game_over:
         #End If
             
     # -- Game logic goes after this comment
-
     pos_x = pos_x + x_offset
     pos_y = pos_y + y_offset
     
@@ -58,10 +57,10 @@ while not game_over:
     elif pos_x == 0:
         x_offset = x_offset*-1
     #Player Paddle
-    elif pos_x < 12 and pos_y > block_y and pos_y < block_y + 65:
+    elif pos_x < 12 and pos_y > block_y-20 and pos_y < block_y + 65:
         x_offset = x_offset*-1
     #Computer Paddle
-    elif pos_x > 588 and pos_y > com_y and pos_y < com_y + 65:
+    elif pos_x > 568 and pos_y > com_y-20 and pos_y < com_y + 65:
         x_offset = x_offset*-1
     #endif
     

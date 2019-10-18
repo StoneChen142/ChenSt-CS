@@ -1,7 +1,8 @@
-import pygame
+import pygame, sys
 from random import randint
 import math
 import time
+from pygame.locals import *
 
 # -- Colours
 BLACK = (0,0,0)
@@ -45,6 +46,11 @@ while not game_over:
         #End If
             
     # -- Game logic goes after this comment
+    basicfont = pygame.font.SysFont(None, 48)
+    text = basicfont.render('Score'+str(score), True, RED, WHITE)
+    textRect = text.get_rect()
+    textRect.centerx , textRect.centery = 300,50
+    
     pos_x = pos_x + x_offset
     pos_y = pos_y + y_offset
     
@@ -59,6 +65,7 @@ while not game_over:
     #Player Paddle
     elif pos_x < 12 and pos_y > block_y-20 and pos_y < block_y + 65:
         x_offset = x_offset*-1
+        score += 100
     #Computer Paddle
     elif pos_x > 568 and pos_y > com_y-20 and pos_y < com_y + 65:
         x_offset = x_offset*-1
@@ -79,6 +86,7 @@ while not game_over:
     #endif
         
     screen.fill (WHITE)
+    screen.blit(text, textRect)
     
     pygame.draw.rect(screen,BLUE, (0, block_y, 12, 65))
     pygame.draw.rect(screen,RED, (pos_x, pos_y, 20, 20))

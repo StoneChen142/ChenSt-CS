@@ -189,6 +189,7 @@ def entername(Score):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 done = True
+                pygame.quit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # If the user clicked on the input_box rect.
                 if input_box.collidepoint(event.pos):
@@ -201,7 +202,6 @@ def entername(Score):
             if event.type == pygame.KEYDOWN:
                 if active:
                     if event.key == pygame.K_RETURN:
-                        return text
                         scoreboard(Score,text)
                         done = True
                     elif event.key == pygame.K_BACKSPACE:
@@ -231,7 +231,7 @@ def scoreboard(score,name):
     data=f.read()
     length=len(data)
     if length == 0:
-        f = open("Score_Board.txt","wt")
+        f = open("Score_Board.txt","w+")
         f.write(data)
         f.close()
 #endfunction
@@ -274,8 +274,7 @@ while not game_close:
             
     # -- Game logic goes after this comment
 
-    #menu()
-    entername(5)
+    menu()
     
 #End While - End of game loop
 

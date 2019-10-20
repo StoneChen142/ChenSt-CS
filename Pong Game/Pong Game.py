@@ -123,7 +123,10 @@ def game():
     Score = score
 #endfunction
 
+#Finish screen
 def finish(Score):
+    Yscore = Score
+    entername(Yscore)
     Continue = False
     while Continue == False:
         for event in pygame.event.get():
@@ -159,7 +162,69 @@ def finish(Score):
         clock.tick(60)
     #endwhile
 #endfunction
-     
+
+def entername(Score):
+    font = pygame.font.Font(None, 32)
+    input_box = pygame.Rect(200, 280, 140, 32)
+    color_inactive = (0,0,0)
+    color_active = (235,52,52)
+    color = color_inactive
+    active = False
+    text = ''
+    done = False
+
+    p1_font = pygame.font.Font('freesansbold.ttf',30)
+    p1_text = p1_font.render('Enter your name', True, RED, WHITE) 
+    p1_textRect = p1_text.get_rect()
+    p1_textRect.center = (300,240)
+    display_surface.blit(p1_text, p1_textRect)
+
+    h_score_font = pygame.font.Font('freesansbold.ttf',20)
+    h_score_text = h_score_font.render('Your Score: '+str(Score), True, RED, BLACK) 
+    h_score_textRect = h_score_text.get_rect()
+    h_score_textRect.center = (300,330)
+    display_surface.blit(h_score_text, h_score_textRect)
+
+    while not done:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                done = True
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                # If the user clicked on the input_box rect.
+                if input_box.collidepoint(event.pos):
+                    # Toggle the active variable.
+                    active = not active
+                else:
+                    active = False
+                # Change the current color of the input box.
+                color = color_active if active else color_inactive
+            if event.type == pygame.KEYDOWN:
+                if active:
+                    if event.key == pygame.K_RETURN:
+                        print(text)
+                        text = ''
+                        done = True
+                    elif event.key == pygame.K_BACKSPACE:
+                        text = text[:-1]
+                    else:
+                        text += event.unicode
+
+        screen.fill(WHITE)
+        # Render the current text.
+        txt_surface = font.render(text, True, color)
+        # Resize the box if the text is too long.
+        width = max(200, txt_surface.get_width()+10)
+        input_box.w = width
+        # Blit the text.
+        screen.blit(txt_surface, (input_box.x+5, input_box.y+5))
+        # Blit the input_box rect.
+        pygame.draw.rect(screen, color, input_box, 2)
+
+        pygame.display.flip()
+        
+        clock.tick(60)
+    #endwhile
+        
 def scoreboard():
     f = open("text.txt","rt")
     data=f.read()
@@ -201,7 +266,8 @@ while not game_close:
             
     # -- Game logic goes after this comment
 
-    menu()
+    #menu()
+    entername(5)
     
 #End While - End of game loop
 

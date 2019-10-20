@@ -225,14 +225,16 @@ def entername(Score):
         clock.tick(60)
     #endwhile
 
-#Scoreboard    
+#Scoreboard
+### SRC - It's not clear what you are trying to do here...
+### Are you trying to save the score to a file?
 def scoreboard(score,name):
     f = open("Score_Board.txt","w+")
-    data=f.read()
+    data=f.read() 
     length=len(data)
-    if length == 0:
+    if length == 0:    ### SRC - if nothing is in the file why do yo need to open it again?
         f = open("Score_Board.txt","w+")
-        f.write(data)
+        f.write(data)  ### SRC - you haven't updated the variable data, do you need to add score and name to this?
         f.close()
 #endfunction
         

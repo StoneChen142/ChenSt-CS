@@ -201,8 +201,8 @@ def entername(Score):
             if event.type == pygame.KEYDOWN:
                 if active:
                     if event.key == pygame.K_RETURN:
-                        print(text)
-                        text = ''
+                        return text
+                        scoreboard(Score,text)
                         done = True
                     elif event.key == pygame.K_BACKSPACE:
                         text = text[:-1]
@@ -224,10 +224,18 @@ def entername(Score):
         
         clock.tick(60)
     #endwhile
-        
-def scoreboard():
-    f = open("text.txt","rt")
+
+#Scoreboard    
+def scoreboard(score,name):
+    f = open("Score_Board.txt","w+")
     data=f.read()
+    length=len(data)
+    if length == 0:
+        f = open("Score_Board.txt","wt")
+        f.write(data)
+        f.close()
+#endfunction
+        
 #endfunction
 
 # -- Colours

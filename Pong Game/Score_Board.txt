@@ -1,0 +1,5 @@
+1 01050   Stone
+2 00950   Stone
+3 00850   Stone
+4 00750   Stone
+5 00650   Stone

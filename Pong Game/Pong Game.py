@@ -4,20 +4,35 @@ import math
 import time
 from pygame.locals import *
 
+#Button
+
+
 #Menu
 def menu():
     game_start = False
+    startButton = button((0,255,0), 300, 400, 50, 35, 'START')
+    startButton.draw(screen,(0,0,0))
     while game_start == False:
         for event in pygame.event.get():
+            pos = pygame.mouse.get_pos()
             if event.type == pygame.QUIT:
                 pygame.quit()
-                #endfunction close everything
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
+            #endif
+            
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if startButton.isOver(pos):
                     game_start = True
                     game()
                 #endif
-            #End If
+            #endif
+
+            if event.type == pygame.MOUSEMOTION:
+                if startButton.isOver(pos):
+                    startButton.color = (50,255,50)
+                else:
+                    startButton.color = (0,255,0)
+                #endif
+            #endif
         #endfor
 
         screen.fill (WHITE)
@@ -27,12 +42,6 @@ def menu():
         p1_textRect = p1_text.get_rect()
         p1_textRect.center = (300,280)
         display_surface.blit(p1_text, p1_textRect)
-        
-        but_font = pygame.font.Font('freesansbold.ttf',30)
-        but_text = but_font.render('Press Space to Start', True, BLACK, WHITE) 
-        but_textRect = but_text.get_rect()
-        but_textRect.center = (300,380)
-        display_surface.blit(but_text, but_textRect)
 
         h_score_font = pygame.font.Font('freesansbold.ttf',20)
         h_score_text = h_score_font.render('Highest Score: ', True, RED, BLACK) 
@@ -226,14 +235,19 @@ def entername(Score):
     #endwhile
 
 #Scoreboard
-### SRC - It's not clear what you are trying to do here...
-### Are you trying to save the score to a file?
 def scoreboard(score,name):
     f = open("Score_Board.txt","w+")
+    score = str(score)
     data=f.read() 
     length=len(data)
-    if length == 0:    ### SRC - if nothing is in the file why do yo need to open it again?
+    s_length=len(score)
+    if s_length < 5:
+        while s_length != 5:
+            score = "0"+score
+            s_length +=1
+    while i < 4 or big == True:    ### SRC - if nothing is in the file why do yo need to open it again?
         f = open("Score_Board.txt","w+")
+        data = str(score)+"   "+str(name) + \
         f.write(data)  ### SRC - you haven't updated the variable data, do you need to add score and name to this?
         f.close()
 #endfunction

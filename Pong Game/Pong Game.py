@@ -238,18 +238,32 @@ def entername(Score):
 def scoreboard(score,name):
     f = open("Score_Board.txt","w+")
     score = str(score)
-    data=f.read() 
-    length=len(data)
     s_length=len(score)
+    data = f.read()
+    data = ""
+    #Formatting the score
     if s_length < 5:
         while s_length != 5:
             score = "0"+score
             s_length +=1
-    while i < 4 or big == True:    ### SRC - if nothing is in the file why do yo need to open it again?
-        f = open("Score_Board.txt","w+")
-        data = str(score)+"   "+str(name) + \
-        f.write(data)  ### SRC - you haven't updated the variable data, do you need to add score and name to this?
-        f.close()
+    newLine = " "+score+"   "+name
+    lines = f.readlines()
+    #Evaluating the score
+    big=False
+    while i < 4:
+        line=str(lines[i])
+        for j in range(2,5):
+            if score[i-2]>line[i]:
+                big = True
+            #endif
+        #endfor
+        if big == False:
+            data = data + line\n
+        else:
+            data = data + str(i+1) + " " + str(score)+"   "+str(name)\n
+    #endwhile
+    f.write(data)  
+    f.close()
 #endfunction
         
 #endfunction

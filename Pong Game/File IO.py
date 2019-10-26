@@ -1,34 +1,38 @@
 def scoreboard(score,name):
     f = open("Score_Board.txt","w+")
-    score = str(score)
+    #Reading data
     name = str(name)
-    s_length=len(score)
-    data = f.read()
+    score = str(score)
+    score_length=len(score)
+    lines = f.readlines()
+    maximum = int(len(lines)) - 1
     data = ""
     #Formatting the score
-    if s_length < 5:
-        while s_length != 5:
+    if score_length < 5:
+        while score_length != 5:
             score = "0"+score
-            s_length +=1
-    newLine = " "+score+"   "+name
-    lines = f.readlines()
+            score_length += 1
+    addLine = " "+score+"   "+name
     #Evaluating the score
-    big=False
-    while i < 4:
-        line=str(lines[i])
+    big = False
+    rank = 0
+    while rank < maximum:
+        line=str(lines[rank])
         for j in range(2,5):
-            if score[i-2]>line[i]:
+            if int(score[j]) > int(line[j]):
                 big = True
             #endif
         #endfor
         if big == False:
-            data = data + line+"\n"
+            data = data + line
         else:
-            data = data + str(i+1) + " " + str(score)+"   "+str(name)+"\n"
+            data = data + str(rank+1) + " " + str(score)+"   "+str(name)+"\n"
+            big = False
+        rank += 1
     #endwhile
     f.write(data)  
     f.close()
 #endfunction
 
-
-scoreboard(1000,Arthur)
+n = "Arthur"
+scoreboard(1000,n)

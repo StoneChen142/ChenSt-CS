@@ -19,7 +19,7 @@ def scoreboard(score,name):
     while rank < maximum:
         line=str(lines[rank])
         for j in range(2,5):
-            if int(score[j]) > int(line[j]):
+            if int(score[j-1]) > int(line[j]):
                 big = True
             #endif
         #endfor

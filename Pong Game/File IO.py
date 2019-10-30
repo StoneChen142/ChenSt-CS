@@ -1,13 +1,14 @@
 def scoreboard(score,name):
-    f = open("Score_Board.txt","w+")
+    f = open("Score_Board.txt","w+") ### SRC - This will overwrite your existing file
     #Reading data
     name = str(name)
     score = str(score)
     score_length=len(score)
-    lines = f.readlines()
+    lines = f.readlines()  ### SRC - There will be no data!
     maximum = int(len(lines)) - 1
     data = ""
     #Formatting the score
+    ### SRC - This works
     if score_length < 5:
         while score_length != 5:
             score = "0"+score
@@ -16,6 +17,7 @@ def scoreboard(score,name):
     #Evaluating the score
     big = False
     rank = 0
+    ### SRC - This doesn't work because maximum is always -1
     while rank < maximum:
         line=str(lines[rank])
         for j in range(2,5):

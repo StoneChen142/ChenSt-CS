@@ -42,7 +42,7 @@ def menu():
             #endif
             
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if pos>(125,385) and pos<(275,465):
+                if pos>(105,385) and pos<(255,465):
                     game_start = True
                     game()
                 if pos>(350,385) and pos<(500,465):
@@ -67,8 +67,8 @@ def menu():
         display_surface.blit(h_score_text, h_score_textRect)
 
         #Button Code
-        pygame.draw.rect(screen,GREEN, (125, 385, 150, 80))
-        buttonText("START", BLACK, 150, 400, 100,  50, size="small")
+        pygame.draw.rect(screen,GREEN, (105, 385, 150, 80))
+        buttonText("START", BLACK, 130, 400, 100,  50, size="small")
 
         pygame.draw.rect(screen,BLUE, (350, 385, 150, 80))
         buttonText("MULTI", BLACK, 375, 400, 100,  50, size="small")

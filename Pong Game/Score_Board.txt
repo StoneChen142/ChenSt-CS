@@ -1,2 +1,5 @@
-1 00500   Stone
-2 00050   Tom
+1 03000   Ruby
+2 02500   Wall.E
+3 00600   Derrick
+4 00600   Stone
+5 00450   Lucy

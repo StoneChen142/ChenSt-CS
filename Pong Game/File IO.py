@@ -1,38 +1,73 @@
 def scoreboard(score,name):
-    f = open("Score_Board.txt","w+")
+    f = open("Score_Board.txt","r+")
     #Reading data
     name = str(name)
     score = str(score)
     score_length=len(score)
     lines = f.readlines()
-    maximum = int(len(lines)) - 1
+    maximum = int(len(lines))
     data = ""
+    f.close()
     #Formatting the score
     if score_length < 5:
         while score_length != 5:
             score = "0"+score
             score_length += 1
-    addLine = " "+score+"   "+name
+    addLine = " "+score+"   "+name+"\n"
+    print(addLine)
     #Evaluating the score
-    big = False
     rank = 0
+    added = False
     while rank < maximum:
+        big = False
+        same = False
+        TF = ""
         line=str(lines[rank])
-        for j in range(2,5):
-            if int(score[j-1]) > int(line[j]):
-                big = True
+        print(line[1:])
+        for j in range(2,6):
+            if int(score[j-2]) > int(line[j]):
+                TF = TF + "T"
+            elif int(score[j-2]) == int(line[j]):
+                TF = TF + "S"
+            else:
+                TF = TF + "F"
             #endif
         #endfor
-        if big == False:
-            data = data + line
+        #Evaluating
+        print(TF,TF[:2])
+        if TF[1] == "T" or TF[:2] == "ST" or TF[:3] == "SST" or TF[:4] == "SSST":
+            big = True
+        elif TF == "SSSSS":
+            same = True
         else:
-            data = data + str(rank+1) + " " + str(score)+"   "+str(name)+"\n"
             big = False
-        rank += 1
+            same = False
+        #endif
+            
+        if same == True:
+            data = data + str(rank+1) + line[1:]
+            print(data)
+            rank += 1
+        elif big == True and added == False:
+            data = data + str(rank+1) + addLine
+            big = False
+            rank += 1
+            added = True
+            if rank < 4:
+                data = data + str(rank+1) + line[1:]
+                rank += 1
+            #endif
+            print(data)
+        else:
+            data = data + str(rank+1) + line[1:]
+            print(data)
+            rank += 1
+        #endif
     #endwhile
+    f = open("Score_Board.txt","w+")
     f.write(data)  
     f.close()
 #endfunction
 
-n = "Arthur"
-scoreboard(1000,n)
+n = "Stone"
+scoreboard(600,n)

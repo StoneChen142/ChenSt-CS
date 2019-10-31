@@ -1,5 +1,5 @@
-1 03000   Ruby
-2 02500   Wall.E
-3 00600   Derrick
+1 04000   Sandy
+2 04000   Stone
+3 03500   Terra
 4 00600   Stone
 5 00450   Lucy

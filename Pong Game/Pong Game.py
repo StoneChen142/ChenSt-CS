@@ -416,7 +416,7 @@ def scoreboard(score,name):
     score = str(score)
     score_length=len(score)
     lines = f.readlines()
-    maximum = int(len(lines))
+    maximum = 4
     data = ""
     f.close()
     #Formatting the score
@@ -428,8 +428,9 @@ def scoreboard(score,name):
     print(addLine)
     #Evaluating the score
     rank = 0
+    num = 0
     added = False
-    while rank < maximum:
+    while rank < maximum or added == False:
         big = False
         same = False
         TF = ""
@@ -445,34 +446,39 @@ def scoreboard(score,name):
             #endif
         #endfor
         #Evaluating
-        print(TF,TF[:2])
-        if TF[1] == "T" or TF[:2] == "ST" or TF[:3] == "SST" or TF[:4] == "SSST":
-            big = True
-        elif TF == "SSSSS":
-            same = True
-        else:
-            big = False
-            same = False
+        if added == False:
+            if TF[1] == "T" or TF[:2] == "ST" or TF[:3] == "SST" or TF[:4] == "SSST":
+                big = True
+            elif TF == "SSSSS":
+                same = True
+            else:
+                big = False
+                same = False
+            #endif
         #endif
             
         if same == True:
-            data = data + str(rank+1) + line[1:]
+            data = data + str(num+1) + line[1:]
             print(data)
             rank += 1
+            num += 1
         elif big == True and added == False:
-            data = data + str(rank+1) + addLine
+            data = data + str(num+1) + addLine
             big = False
             rank += 1
+            num += 1
             added = True
+            same=False
             if rank < 4:
-                data = data + str(rank+1) + line[1:]
-                rank += 1
+                data = data + str(num+1) + line[1:]
+                num += 1
             #endif
             print(data)
         else:
-            data = data + str(rank+1) + line[1:]
+            data = data + str(num+1) + line[1:]
             print(data)
             rank += 1
+            num += 1
         #endif
     #endwhile
     f = open("Score_Board.txt","w+")

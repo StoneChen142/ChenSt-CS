@@ -42,9 +42,12 @@ def menu():
             #endif
             
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if pos>(225,385) and pos<(375,465):
+                if pos>(125,385) and pos<(275,465):
                     game_start = True
                     game()
+                if pos>(350,385) and pos<(500,465):
+                    game_start = True
+                    mgame()
                 #endif
             #endif
         #endfor
@@ -64,8 +67,11 @@ def menu():
         display_surface.blit(h_score_text, h_score_textRect)
 
         #Button Code
-        pygame.draw.rect(screen,GREEN, (225, 385, 150, 80))
-        buttonText("START", BLACK, 250, 400, 100,  50, size="small")
+        pygame.draw.rect(screen,GREEN, (125, 385, 150, 80))
+        buttonText("START", BLACK, 150, 400, 100,  50, size="small")
+
+        pygame.draw.rect(screen,BLUE, (350, 385, 150, 80))
+        buttonText("MULTI", BLACK, 375, 400, 100,  50, size="small")
 
         pygame.display.flip()
 
@@ -152,6 +158,125 @@ def game():
         clock.tick(60)
     #endwhile
     Score = score
+#endfunction
+
+#Start the Multiplayer game
+def mgame():
+    game_over = False
+    block_y = 300
+    com_y = 300
+    x_offset = 2
+    y_offset = 2
+    pos_x = 100
+    pos_y = 300
+    Round = 0
+    while game_over == False:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+
+        font = pygame.font.Font('freesansbold.ttf',20)
+        text = font.render('P1               Last player standing wins               P2', True, RED, WHITE) 
+        textRect = text.get_rect()
+        textRect.center = (300,20)
+        display_surface.blit(text, textRect)
+
+        #Change Speed
+        if Round < 99:
+            if x_offset < 0:
+                x_offset -= 0.0001
+            elif x_offset > 0:
+                x_offset += 0.0001
+            elif y_offset < 0:
+                y_offset -= 0.00006
+            elif y_offset > 0:
+                y_offset += 0.00006
+        
+        pos_x = pos_x + x_offset
+        pos_y = pos_y + y_offset
+        
+        if pos_y == 582 or pos_y > 582:#Ball Condition
+            y_offset = y_offset*-1
+        elif pos_y == 0 or pos_y < 0:
+            y_offset = y_offset*-1
+        elif pos_x > 582:
+            game_over = True
+            mfinish(1)
+        elif pos_x < 0:
+            game_over = True
+            mfinish(2)
+            
+        #Player 1 Paddle
+        elif pos_x < 12 and pos_y > block_y-20 and pos_y < block_y + 65:
+            x_offset = x_offset*-1
+            Round += 1
+        #Player 2 Paddle
+        elif pos_x > 568 and pos_y > com_y-20 and pos_y < com_y + 65:
+            x_offset = x_offset*-1
+        #endif
+        
+        keys = pygame.key.get_pressed()#Player Control
+        
+        #P1 control
+        if keys[pygame.K_w]:
+            block_y = block_y - 3
+        elif keys[pygame.K_s]:
+            block_y = block_y + 3
+        #endif
+
+        #P2 control
+        if keys[pygame.K_UP]:
+            com_y = com_y - 3
+        elif keys[pygame.K_DOWN]:
+            com_y = com_y + 3
+        #endif
+            
+        screen.fill (WHITE)
+        screen.blit(text, textRect)
+        
+        pygame.draw.rect(screen,BLUE, (0, block_y, 12, 65))
+        pygame.draw.rect(screen,RED, (pos_x, pos_y, 20, 20))
+        pygame.draw.rect(screen,YELLOW, (588, com_y, 12, 65))
+
+        pygame.display.flip()
+
+        clock.tick(60)
+    #endwhile
+#endfunction
+
+#Multiplayer finish screen
+def mfinish(num):
+    Continue = False
+    while Continue == False:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    Continue = True
+                    menu()
+                #endif
+            #endif
+        #endfor
+        
+        screen.fill (WHITE)
+        
+        p1_font = pygame.font.Font('freesansbold.ttf',80)
+        p1_text = p1_font.render('Player '+str(num) + " Won!", True, RED, WHITE) 
+        p1_textRect = p1_text.get_rect()
+        p1_textRect.center = (300,200)
+        display_surface.blit(p1_text, p1_textRect)
+
+        but1_font = pygame.font.Font('freesansbold.ttf',30)
+        but1_text = but1_font.render('Press Space to continue', True, BLACK, WHITE) 
+        but1_textRect = but1_text.get_rect()
+        but1_textRect.center = (300,430)
+        display_surface.blit(but1_text, but1_textRect)
+
+        pygame.display.flip()
+
+        clock.tick(60)
+    #endwhile
 #endfunction
 
 #Restart screen

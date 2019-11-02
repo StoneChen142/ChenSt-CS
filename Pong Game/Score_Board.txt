@@ -1,5 +1,5 @@
-1 04000   Sandy
-2 04000   Stone
-3 03500   Terra
-4 00600   Stone
-5 00450   Lucy
+1) 06650   Stone
+2) 04000   Sandy
+3) 04000   Nero
+4) 03500   Terra
+5) 00500   Kira

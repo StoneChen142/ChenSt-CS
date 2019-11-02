@@ -30,7 +30,7 @@ def menu():
     highestScore = ""
     f = open("Score_Board.txt","r+")
     data=f.read()
-    for i in range(2,7):
+    for i in range(3,8):
         highestScore = highestScore + data[i]
     #endfor
     f.close()
@@ -184,13 +184,13 @@ def mgame():
         #Change Speed
         if Round < 99:
             if x_offset < 0:
-                x_offset -= 0.0001
+                x_offset -= 0.0002
             elif x_offset > 0:
-                x_offset += 0.0001
+                x_offset += 0.0002
             elif y_offset < 0:
-                y_offset -= 0.00006
+                y_offset -= 0.00012
             elif y_offset > 0:
-                y_offset += 0.00006
+                y_offset += 0.00012
         
         pos_x = pos_x + x_offset
         pos_y = pos_y + y_offset
@@ -285,7 +285,7 @@ def finish(Score):
     highestScore=""
     f = open("Score_Board.txt","r+")
     data=f.read()
-    for i in range(2,7):
+    for i in range(3,8):
         highestScore = highestScore + data[i]
     #endfor
     f.close()
@@ -348,10 +348,10 @@ def entername(Score):
     #Get Highest Score
     f = open("Score_Board.txt","r+")
     data=f.read()
-    for i in range(2,7):
+    for i in range(3,8):
         highestScore = highestScore + data[i]
     #endfor
-    j=7
+    j=8
     while data[j] != "\n":
         highName = highName + data[j]
         j+=1
@@ -470,7 +470,6 @@ def leaderboard():
         while (lines[i])[j] != "\n":
             output[i] = output[i] + (lines[i])[j]
             j+=1
-        print(output[i])
         #endwhile
     #endfor
     done = False
@@ -549,8 +548,7 @@ def scoreboard(score,name):
         while score_length != 5:
             score = "0"+score
             score_length += 1
-    addLine = " "+score+"   "+name+"\n"
-    print(addLine)
+    addLine = ") "+score+"   "+name+"\n"
     #Evaluating the score
     rank = 0
     num = 0
@@ -560,11 +558,10 @@ def scoreboard(score,name):
         same = False
         TF = ""
         line=str(lines[rank])
-        print(line[1:])
-        for j in range(2,6):
-            if int(score[j-2]) > int(line[j]):
+        for j in range(3,7):
+            if int(score[j-3]) > int(line[j]):
                 TF = TF + "T"
-            elif int(score[j-2]) == int(line[j]):
+            elif int(score[j-3]) == int(line[j]):
                 TF = TF + "S"
             else:
                 TF = TF + "F"
@@ -584,7 +581,6 @@ def scoreboard(score,name):
             
         if same == True:
             data = data + str(num+1) + line[1:]
-            print(data)
             rank += 1
             num += 1
         elif big == True and added == False:
@@ -598,10 +594,8 @@ def scoreboard(score,name):
                 data = data + str(num+1) + line[1:]
                 num += 1
             #endif
-            print(data)
         else:
             data = data + str(num+1) + line[1:]
-            print(data)
             rank += 1
             num += 1
         #endif

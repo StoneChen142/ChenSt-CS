@@ -1,3 +1,6 @@
+### SRC - This is a very impressive attempt at pong. You have clearly learnt a lot.
+### SRC - We will now start looking at how we can use OOP to simplify the code.
+
 import pygame
 import random
 import math

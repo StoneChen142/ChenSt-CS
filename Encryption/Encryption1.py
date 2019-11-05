@@ -6,6 +6,8 @@ f.close()
 
 
 #Encrypt
+### SRC - can you change this to a full Caeser Cipher by wrapping
+### the letters, i.e. z should become c...
 
 encrypted_text=""
 i=0
@@ -20,7 +22,7 @@ while i<length:
     i+=1
     #endif
 #endwhile
-
+### SRC - Open a file in write mode and export the encrypted text
 print("Encrypted text: ",encrypted_text)
 print("")
 

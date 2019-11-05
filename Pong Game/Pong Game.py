@@ -407,6 +407,7 @@ def entername(Score):
         
 #Next page
 def nextpage(Score):
+    size = (600,600)
     screen = pygame.display.set_mode(size)
     font = pygame.font.Font(None, 32)
     input_box = pygame.Rect(200, 280, 140, 32)
@@ -442,6 +443,12 @@ def nextpage(Score):
                     else:
                         text += event.unicode
 
+        p_font = pygame.font.Font('freesansbold.ttf',30)
+        p_text = p_font.render('Press "Space" to continue', True, RED, BLACK) 
+        p_textRect = p_text.get_rect()
+        p_textRect.center = (300,480)
+        screen.blit(p_text, p_textRect)
+
         screen.fill(WHITE)
         # Render the current text.
         txt_surface = font.render(text, True, color)
@@ -467,7 +474,7 @@ def leaderboard():
     output = ["","","","",""]
     for i in range(0,5):
         j=0
-        while (lines[i])[j] != "\n":
+        while str((lines[i])[j]) != "\n":
             output[i] = output[i] + (lines[i])[j]
             j+=1
         #endwhile
@@ -540,7 +547,7 @@ def scoreboard(score,name):
     score = str(score)
     score_length=len(score)
     lines = f.readlines()
-    maximum = 4
+    maximum = 5
     data = ""
     f.close()
     #Formatting the score
@@ -553,11 +560,12 @@ def scoreboard(score,name):
     rank = 0
     num = 0
     added = False
-    while rank < maximum or added == False:
+    while num < maximum:
         big = False
         same = False
         TF = ""
         line=str(lines[rank])
+        print(line)
         for j in range(3,7):
             if int(score[j-3]) > int(line[j]):
                 TF = TF + "T"
@@ -571,7 +579,7 @@ def scoreboard(score,name):
         if added == False:
             if TF[1] == "T" or TF[:2] == "ST" or TF[:3] == "SST" or TF[:4] == "SSST":
                 big = True
-            elif TF == "SSSSS":
+            elif TF == "SSSS":
                 same = True
             else:
                 big = False
@@ -590,7 +598,7 @@ def scoreboard(score,name):
             num += 1
             added = True
             same=False
-            if rank < 4:
+            if num < 4:
                 data = data + str(num+1) + line[1:]
                 num += 1
             #endif
@@ -599,6 +607,7 @@ def scoreboard(score,name):
             rank += 1
             num += 1
         #endif
+        print(rank)
     #endwhile
     f = open("Score_Board.txt","w+")
     f.write(data)  

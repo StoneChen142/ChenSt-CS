@@ -1,5 +1,5 @@
 1) 06650   Stone
-2) 04000   Sandy
-3) 04000   Nero
-4) 03500   Terra
-5) 00500   Kira
+2) 06000   Levi
+3) 04000   Sandy
+4) 04000   Nero
+5) 03000   Lis

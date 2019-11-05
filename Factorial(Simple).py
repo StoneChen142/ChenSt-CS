@@ -1,3 +1,5 @@
+
+### SRC - Can you convert into a function?
 n=int(input("Please input a positive number: "))
 sum=1
 i=1

@@ -19,10 +19,14 @@ LY = (255,255,204)
 NICE = (204,204,255)
 # -- Classes
 
+
+### SRC - This is the class definition off one ball
+### i.e. the template
+
 class Ball():
     def __init__(self, colour, n):
         self.n = n
-        for i in range(0,self.n-1):
+        for i in range(0,self.n-1):  ### SRC - you only need one set of attributes.
             self.x[i] = randint(10,590)
             self.y[i] = randint(10,590)
             self.speedx[i] = randint(2,4)
@@ -62,7 +66,13 @@ screen = pygame.display.set_mode(size)
 pygame.display.set_caption("My First Flipbook")
 
 game_over = False
-ball = Ball(NICE,10)
+### SRC - this is where the for loop should go, create multiple instances of ball and add to list
+### ball_list = []
+### for n in range(10):
+
+ball = Ball(NICE,10) ### SRC - Give the ball object a different name to the class, like my_ball.
+### ball_list.append(my_ball)
+
 
 ### -- Game Loop
 while not game_over:

@@ -58,18 +58,11 @@ screen = pygame.display.set_mode(size)
 pygame.display.set_caption("My First Flipbook")
 
 game_over = False
-ball = Ball(RED)
-ball2 = Ball(BLUE)
-ball3 = Ball(WHITE)
-ball4 = Ball(YELLOW)
-ball5 = Ball(WHITE)
-ball6 = Ball(GREEN)
-ball7 = Ball(ORANGE)
-ball8 = Ball(PURPLE)
-ball9 = Ball(DGREEN)
-ball10 = Ball(PINK)
-ball11 = Ball(CYAN)
-ball12 = Ball(NICE)
+
+ball_list = []
+for n in range(50):
+    my_ball = Ball(NICE)
+    ball_list.append(my_ball)
 
 ### -- Game Loop
 while not game_over:
@@ -80,35 +73,11 @@ while not game_over:
         #End If
     #Next event
 
-    ball.move()
-    ball2.move()
-    ball3.move()
-    ball4.move()
-    ball5.move()
-    ball6.move()
-    ball7.move()
-    ball8.move()
-    ball9.move()
-    ball10.move()
-    ball11.move()
-    ball12.move()
-
-
     screen.fill(BLACK)
 
-    ball.draw()
-    ball2.draw()
-    ball3.draw()
-    ball4.draw()
-    ball5.draw()
-    ball6.draw()
-    ball7.draw()
-    ball8.draw()
-    ball9.draw()
-    ball10.draw()
-    ball11.draw()
-    ball12.draw()
-
+    for n in range(50):
+        ball_list[n].move()
+        ball_list[n].draw()
     
     # -- flip display to reveal new position of objects
     pygame.display.flip()

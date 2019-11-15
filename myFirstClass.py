@@ -25,16 +25,20 @@ NICE = (204,204,255)
 #Sub class
 class Ball():
     def __init__(self, colour):
-        self.x = randint(30,570)
-        self.y = randint(30,570)
+        self.x = randint(10,590)
+        self.y = randint(10,590)
         if self.x < 300 and self.y < 300:
             self.region = 1
-        if self.y < 300 and self.x > 300:
+        elif self.y < 300 and self.x >= 300:
             self.region = 2
-        if self.x < 300 and self.y > 300 or self.y == 300:
+            self.x += 10
+        elif self.x < 300 and self.y > 300 or self.y == 300:
             self.region = 3
-        if self.x > 300 or self.x == 300 and self.y > 300 or self.y == 300:
+            self.y += 10
+        elif self.x > 300 or self.x == 300 and self.y > 300 or self.y == 300:
             self.region = 4
+            self.y += 10
+        #endif
         self.speedx = randint(2,4)
         self.speedy = randint(2,4)
         self.colour = colour

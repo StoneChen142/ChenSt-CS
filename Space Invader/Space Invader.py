@@ -17,6 +17,8 @@ DBLUE = (51,51,204)
 DGREEN = (0,51,0)
 LY = (255,255,204)
 NICE = (204,204,255)
+
+Wave = 3
 # -- Classes
 #Sub class #Class - Template/Blueprint with attributes
 class Block(pygame.sprite.Sprite):
@@ -43,18 +45,19 @@ screen = pygame.display.set_mode(size)
 # -- Title of new window/screen
 pygame.display.set_caption("Sprites")
 
-block_list = pygame.sprite.Group()
+enemy_list = pygame.sprite.Group()
 
 all_sprites_list = pygame.sprite.Group()
 
-for i in range(5000):
-    block = Block(CYAN, 20, 15)
+#Creates enemies
+for i in range(50):
+    enemy = Block(RED, 20, 20)
 
-    block.rect.x = randint(0,600)
-    block.rect.y = randint(0,600)
+    enemy.rect.x = randint(0,580)
+    enemy.rect.y = -10
 
-    block_list.add(block)
-    all_sprites_list.add(block)
+    enemy_list.add(enemy)
+    all_sprites_list.add(enemy)
 #endfor
 
 player = Block(NICE, 20, 15)
@@ -75,18 +78,25 @@ while not game_over:
         #End If
     #Next event
 
-    screen.fill(WHITE)
+    screen.fill(BLACK)
 
     pos = pygame.mouse.get_pos()
     
     player.rect.x = pos[0]
     player.rect.y = pos[1]
 
-    blocks_hit_list = pygame.sprite.spritecollide(player, block_list, True)
+    enemy_hit_list = pygame.sprite.spritecollide(player, enemy_list, True)
 
-    for block in blocks_hit_list:
+    for block in enemy_hit_list:
         score += 1
         print(score)
+
+    for i in range(50):
+        enemy_list[i].rect.y += 2
+
+        if enemy_list[i].rect.y >= 600:
+            enemy_list[i].rect.y = -10
+    #endfor
 
     all_sprites_list.draw(screen)
     # -- flip display to reveal new position of objects

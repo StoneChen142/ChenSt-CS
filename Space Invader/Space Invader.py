@@ -79,6 +79,32 @@ def game():
     RemainNum = 10
     AddNum=1
     live = 3
+
+    block_list = pygame.sprite.Group()
+
+    bullet_list = pygame.sprite.Group()
+
+    all_sprites_list = pygame.sprite.Group()
+
+    #Player
+    THEEND = Block(CYAN, 600, 10)
+    THEEND.rect.x = 0
+    THEEND.rect.y = 600
+
+    player = Player()
+    player.rect.x = 290
+    all_sprites_list.add(player)
+    
+    for i in range(10):
+        block = Block(CYAN, 20, 15)
+
+        block.rect.x = randint(0,580)
+        block.rect.y = randint(-600,-10)
+
+        block_list.add(block)
+        all_sprites_list.add(block)
+    #endfor
+        
     while game_over == False:
     # -- User input and controls
         for event in pygame.event.get():
@@ -119,6 +145,7 @@ def game():
         for block in live_list:
             live -= 1
             score += 1
+            remain -= 1
             block_list.remove(block)
             all_sprites_list.remove(block)
 
@@ -132,6 +159,10 @@ def game():
             finish(score)
 
         for bullet in bullet_list:
+
+            if bullet.rect.y <= -10:
+                bullet_list.remove(bullet)
+                all_sprites_list.remove(bullet)
 
             blocks_hit_list = pygame.sprite.spritecollide(bullet, block_list, False)
 
@@ -149,7 +180,7 @@ def game():
                         block = Block(CYAN, 20, 15)
 
                         block.rect.x = randint(0,580)
-                        block.rect.y = randint(-1800,-10)
+                        block.rect.y = randint(-900,-10)
 
                         block_list.add(block)
                         all_sprites_list.add(block)
@@ -178,7 +209,6 @@ def finish(Score):
                     Continue = True
                     menu()
             #endif
-            
         #endfor
         
         screen.fill (BLACK)
@@ -260,11 +290,6 @@ class Bullet(pygame.sprite.Sprite):
         
         self.rect.y -= 3
 
-        if self.rect.y <= -10:
-            for bullet in bullet_list:
-                bullet_list.remove(bullet)
-                all_sprites_list.remove(bullet)
-
 # -- Initialise PyGame
 pygame.init()
 
@@ -278,31 +303,6 @@ screen = pygame.display.set_mode(size)
 
 # -- Title of new window/screen
 pygame.display.set_caption("Sprites")
-
-block_list = pygame.sprite.Group()
-
-bullet_list = pygame.sprite.Group()
-
-all_sprites_list = pygame.sprite.Group()
-
-for i in range(10):
-    block = Block(CYAN, 20, 15)
-
-    block.rect.x = randint(0,580)
-    block.rect.y = randint(-600,-10)
-
-    block_list.add(block)
-    all_sprites_list.add(block)
-#endfor
-
-#Player
-THEEND = Block(CYAN, 600, 10)
-THEEND.rect.x = 0
-THEEND.rect.y = 600
-
-player = Player()
-player.rect.x = 290
-all_sprites_list.add(player)
 
 clock =pygame.time.Clock()
     

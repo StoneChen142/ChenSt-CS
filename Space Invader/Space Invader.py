@@ -79,6 +79,7 @@ def game():
     RemainNum = 10
     AddNum=1
     live = 3
+    bulletNum = 5
 
     block_list = pygame.sprite.Group()
 
@@ -112,13 +113,16 @@ def game():
                 game_over = True
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    bullet = Bullet()
-                    bullet.rect.x = player.rect.x + 10
-                    bullet.rect.y = player.rect.y
+                    if bulletNum > 0:
+                        bulletNum -= 1
+                        bullet = Bullet()
+                        bullet.rect.x = player.rect.x + 10
+                        bullet.rect.y = player.rect.y
 
-                    bullet_list.add(bullet)
+                        bullet_list.add(bullet)
 
-                    all_sprites_list.add(bullet)
+                        all_sprites_list.add(bullet)
+                    #endif
                 #endif
             #End If
         #Next event
@@ -128,6 +132,7 @@ def game():
         ScoreText = Text(20,RED,52,50,'Score: '+str(score))
         RoundText = Text(20,RED,52,20,'Round: '+str(AddNum))
         RemainText = Text(20,RED,55,80,'Remain: '+str(RemainNum))
+        BulletText = Text(20,RED,55,140,'Bullet: '+str(bulletNum))
         if live > 1:
             LivesText = Text(20,RED,50,110,'Lives: '+str(live))
         else:
@@ -145,13 +150,26 @@ def game():
         for block in live_list:
             live -= 1
             score += 1
-            remain -= 1
+            RemainNum -= 1
             block_list.remove(block)
             all_sprites_list.remove(block)
 
             if live < 0:
                 game_over = True
                 finish(score)
+            elif RemainNum == 0:
+                    print("New wave created")
+                    AddNum+=1
+                    bulletNum += 1
+                    RemainNum = 10 + 2*(AddNum-1)
+                    for i in range(10 + (AddNum-1)*2):
+                        block = Block(CYAN, 20, 15)
+
+                        block.rect.x = randint(0,580)
+                        block.rect.y = randint(-900,-10)
+
+                        block_list.add(block)
+                        all_sprites_list.add(block)
                 
 
         for block in EndList_list:
@@ -160,9 +178,10 @@ def game():
 
         for bullet in bullet_list:
 
-            if bullet.rect.y <= -10:
+            if bullet.rect.y <= -1000:
                 bullet_list.remove(bullet)
                 all_sprites_list.remove(bullet)
+                bulletNum += 1
 
             blocks_hit_list = pygame.sprite.spritecollide(bullet, block_list, False)
 
@@ -172,11 +191,14 @@ def game():
                 all_sprites_list.remove(block)  
                 all_sprites_list.remove(bullet)
                 score += 1
+                bulletNum += 1
                 RemainNum = RemainNum - 1
                 if RemainNum == 0:
-                    print("New enemy created")
+                    print("New wave created")
                     AddNum+=1
-                    for i in range(10 + AddNum*2):
+                    bulletNum += 1
+                    RemainNum = 10 + 2*(AddNum-1)
+                    for i in range(10 + (AddNum-1)*2):
                         block = Block(CYAN, 20, 15)
 
                         block.rect.x = randint(0,580)
@@ -184,8 +206,6 @@ def game():
 
                         block_list.add(block)
                         all_sprites_list.add(block)
-
-                    RemainNum = 10 + 2*AddNum
 
         all_sprites_list.draw(screen)
         # -- flip display to reveal new position of objects
@@ -302,7 +322,7 @@ size = (600,600)
 screen = pygame.display.set_mode(size)
 
 # -- Title of new window/screen
-pygame.display.set_caption("Sprites")
+pygame.display.set_caption("Space Invader")
 
 clock =pygame.time.Clock()
     

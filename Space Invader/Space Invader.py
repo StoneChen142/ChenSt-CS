@@ -24,7 +24,7 @@ def createEnemy(row, column,block_list,all_sprites_list):
     for j in range(column):
         if j == 0:
             for i in range(row):
-                block = Monster1(1)
+                block = Monster1()
 
                 block.rect.x = 158 + 44*i
                 block.rect.y = 170
@@ -34,7 +34,7 @@ def createEnemy(row, column,block_list,all_sprites_list):
             #endfor
         elif j == 1:
             for i in range(row):
-                block = Monster1(1)
+                block = Monster1()
 
                 block.rect.x = 158 + 44*i
                 block.rect.y = 138
@@ -45,7 +45,7 @@ def createEnemy(row, column,block_list,all_sprites_list):
         #endif
         elif j == 2:
             for i in range(row):
-                block = Monster2(1)
+                block = Monster2()
 
                 block.rect.x = 158 + 44*i
                 block.rect.y = 106
@@ -56,7 +56,7 @@ def createEnemy(row, column,block_list,all_sprites_list):
         #endif
         elif j == 3:
             for i in range(row):
-                block = Monster2(1)
+                block = Monster2()
 
                 block.rect.x = 158 + 44*i
                 block.rect.y = 74
@@ -67,7 +67,7 @@ def createEnemy(row, column,block_list,all_sprites_list):
         #endif
         elif j == 4:
             for i in range(row):
-                block = Monster3(1)
+                block = Monster3()
 
                 block.rect.x = 163 + 44*i
                 block.rect.y = 42
@@ -139,7 +139,7 @@ def game():
     AddNum=1
     live = 3
     bulletNum = 8
-    direction = 1
+    moveCount = 1
 
     block_list = pygame.sprite.Group()
 
@@ -178,7 +178,7 @@ def game():
                 #endif
             #End If
         #Next event
-
+        
         screen.fill(BLACK)
 
         ScoreText = Text(20,RED,52,50,'Score: '+str(score))
@@ -193,8 +193,12 @@ def game():
 
         player.update()
 
-        
-        block_list.update(direction)
+        #Update enemies
+        time = pygame.time.get_ticks()
+        if time%150 == 0:
+            print(time)
+            block_list.update(moveCount)
+        #pygame.time.set_timer(block_list.update(moveCount),300)
         
         bullet_list.update()
 
@@ -333,10 +337,9 @@ class Block(pygame.sprite.Sprite):
 #endclass
 
 class Monster(pygame.sprite.Sprite):
-    def __init__(self,MLives):
+    def __init__(self):
         super().__init__()
         
-        self.live = MLives
     #endprocedure
 
     def update(self):
@@ -347,67 +350,89 @@ class Monster(pygame.sprite.Sprite):
 #endclass
 
 class Monster1(Monster):
-    def __init__(self,MLives):
-        super().__init__(MLives)
+    def __init__(self):
+        super().__init__()
         
         self.image = pygame.Surface([34,24])
         self.image = pygame.image.load("SpaceMonster1-1.png").convert()
         self.image = pygame.transform.scale(self.image, (34, 24))
         self.rect = self.image.get_rect()
+        self.numImage = 1
     #endprocedure
 
     def update(self,move):
         
-        self.rect.y += 1
+        self.rect.x += 44
+        if self.numImage == 1:
+            self.image = pygame.image.load("SpaceMonster1-2.png").convert()
+            self.image = pygame.transform.scale(self.image, (34, 24))
+            self.numImage = 2
+        else:
+            self.image = pygame.image.load("SpaceMonster1-1.png").convert()
+            self.image = pygame.transform.scale(self.image, (34, 24))
+            self.numImage = 1
 
         #endif
     #endprocedure
 #endclass
 
 class Monster2(Monster):
-    def __init__(self,MLives):
-        super().__init__(MLives)
-        
+    def __init__(self):
+        super().__init__()
+
         self.image = pygame.Surface([34,24])
         self.image = pygame.image.load("SpaceMonster3-1.png").convert()
         self.image = pygame.transform.scale(self.image, (34, 24))
         self.rect = self.image.get_rect()
-        self.lives = MLives
+        self.numImage = 1
         
-        image1 = pygame.image.load("SpaceMonster3-1.png").convert()
-        image1 = pygame.transform.scale(self.image, (34, 24))
-
-        image2 = pygame.image.load("SpaceMonster3-2.png").convert()
-        image2 = pygame.transform.scale(self.image, (34, 24))
     #endprocedure
 
     def update(self,move):
 
-        self.rect.y += 1
+        self.rect.x += 44
+        if self.numImage == 1:
+            self.image = pygame.image.load("SpaceMonster3-2.png").convert()
+            self.image = pygame.transform.scale(self.image, (34, 24))
+            self.numImage = 2
+        else:
+            self.image = pygame.image.load("SpaceMonster3-1.png").convert()
+            self.image = pygame.transform.scale(self.image, (34, 24))
+            self.numImage = 1
 
         #endif
+
+    def destroy(self):
+
+        self.image = pygame.image.load("SpaceMonsterExplode.png").convert()
+        self.image = pygame.transform.scale(self.image, (39, 24))
+        
     #endprocedure
 
-    def lives():
-        if self.lives = 0:
-            return True
-        else:
-            self.lives -= 1
 #endclass
 
 class Monster3(Monster):
-    def __init__(self,MLives):
-        super().__init__(MLives)
+    def __init__(self):
+        super().__init__()
         
         self.image = pygame.Surface([24,24])
         self.image = pygame.image.load("SpaceMonster2-1.png").convert()
         self.image = pygame.transform.scale(self.image, (24, 24))
         self.rect = self.image.get_rect()
+        self.numImage = 1
     #endprocedure
 
     def update(self,move):
 
-        self.rect.y += 1 
+        self.rect.x += 44
+        if self.numImage == 1:
+            self.image = pygame.image.load("SpaceMonster2-2.png").convert()
+            self.image = pygame.transform.scale(self.image, (24, 24))
+            self.numImage = 2
+        else:
+            self.image = pygame.image.load("SpaceMonster2-1.png").convert()
+            self.image = pygame.transform.scale(self.image, (24, 24))
+            self.numImage = 1
 
         #endif
     #endprocedure

@@ -135,11 +135,14 @@ def menu():
 def game():
     game_over = False
     score = 0
-    RemainNum = 40
+    RemainNum = 55
     AddNum=1
     live = 3
     bulletNum = 8
     moveCount = 1
+    moveTime = 3000
+    oldTime = 0
+    oldtime=pygame.time.get_ticks()
 
     block_list = pygame.sprite.Group()
 
@@ -184,7 +187,7 @@ def game():
         ScoreText = Text(20,RED,52,50,'Score: '+str(score))
         RoundText = Text(20,RED,52,20,'Round: '+str(AddNum))
         RemainText = Text(20,RED,55,80,'Enemy: '+str(RemainNum))
-        BulletText = Text(20,RED,55,140,'Bullet: '+str(bulletNum))
+        BulletText = Text(20,RED,51,140,'Bullet: '+str(bulletNum))
         if live > 1:
             LivesText = Text(20,RED,50,110,'Lives: '+str(live))
         else:
@@ -193,12 +196,14 @@ def game():
 
         player.update()
 
-        #Update enemies
-        time = pygame.time.get_ticks()
-        if time%150 == 0:
-            print(time)
+        newtime=pygame.time.get_ticks()
+
+        #Update Enemies
+        if newtime - oldtime > moveTime: #in milliseconds 
+
             block_list.update(moveCount)
-        #pygame.time.set_timer(block_list.update(moveCount),300)
+            moveCount += 1
+            oldtime=newtime
         
         bullet_list.update()
 
@@ -227,22 +232,8 @@ def game():
                 
 
         for block in EndList_list:
-            live -= 1
-            score += 1
-            RemainNum -= 1
-            block_list.remove(block)
-            all_sprites_list.remove(block)
-
-            if live < 0:
-                game_over = True
-                finish(score)
-            elif RemainNum == 0:
-                    print("New wave created")
-                    AddNum+=1
-                    bulletNum += 1
-                    RemainNum = 40
-                    createEnemy(11,5,block_list, all_sprites_list)
-            #endif
+            game_over = True
+            finish(score)
         #endfor
 
         for bullet in bullet_list:
@@ -259,10 +250,15 @@ def game():
                 bullet_list.remove(bullet) 
                 all_sprites_list.remove(bullet)
                 block_list.remove(block)
-                all_sprites_list.remove(block)
+                if oldTime == 0:
+                    block.destroy(oldTime)
+                newTime = pygame.time.get_ticks()
+                if newTime - oldTime > 4000:
+                    all_sprites_list.remove(block)
+                    oldTime = 0
                 score += 1
                 bulletNum += 1
-                RemainNum -= 1
+                RemainNum -= 1         
                 if RemainNum == 0:
                     print("New wave created")
                     AddNum+=1
@@ -341,12 +337,6 @@ class Monster(pygame.sprite.Sprite):
         super().__init__()
         
     #endprocedure
-
-    def update(self):
-        self.rect.y += 1
-
-        #endif
-    #endprocedure
 #endclass
 
 class Monster1(Monster):
@@ -358,22 +348,42 @@ class Monster1(Monster):
         self.image = pygame.transform.scale(self.image, (34, 24))
         self.rect = self.image.get_rect()
         self.numImage = 1
+
     #endprocedure
 
     def update(self,move):
-        
-        self.rect.x += 44
+
+        if move < 4 or move > 11 and move < 18 or move > 25 and move < 32 or move > 39 and move < 46 or move > 53 and move < 60 or move > 67 and move < 74 or move > 81 and move < 88:
+            self.rect.x += 44
+        elif (move - 4)%7 == 0 or move == 4:
+            self.rect.y += 32
+        elif move > 4 and move < 11 or move > 18 and move < 25 or move > 32 and move < 39 or move > 46 and move < 53 or move > 60 and move < 67 or move > 74 and move < 81 or move > 88 and move < 95:
+            self.rect.x -= 44
+        #endif
+            
         if self.numImage == 1:
             self.image = pygame.image.load("SpaceMonster1-2.png").convert()
             self.image = pygame.transform.scale(self.image, (34, 24))
             self.numImage = 2
-        else:
+        elif self.numImage == 2:
             self.image = pygame.image.load("SpaceMonster1-1.png").convert()
             self.image = pygame.transform.scale(self.image, (34, 24))
             self.numImage = 1
 
         #endif
     #endprocedure
+
+    def destroy(self,oldTime):
+        
+        self.numImage = -1000000
+        self.rect.x -= 2
+        self.image = pygame.image.load("MonsterExplode.png").convert()
+        self.image = pygame.transform.scale(self.image, (39, 24))
+
+        oldTime = pygame.time.get_ticks()
+     
+    #endprocedure
+        
 #endclass
 
 class Monster2(Monster):
@@ -390,23 +400,34 @@ class Monster2(Monster):
 
     def update(self,move):
 
-        self.rect.x += 44
+        if move < 4 or move > 11 and move < 18 or move > 25 and move < 32 or move > 39 and move < 46 or move > 53 and move < 60 or move > 67 and move < 74 or move > 81 and move < 88:
+            self.rect.x += 44
+        elif (move - 4)%7 == 0 or move == 4:
+            self.rect.y += 32
+        elif move > 4 and move < 11 or move > 18 and move < 25 or move > 32 and move < 39 or move > 46 and move < 53 or move > 60 and move < 67 or move > 74 and move < 81 or move > 88 and move < 95:
+            self.rect.x -= 44
+        #endif
+            
         if self.numImage == 1:
             self.image = pygame.image.load("SpaceMonster3-2.png").convert()
             self.image = pygame.transform.scale(self.image, (34, 24))
             self.numImage = 2
-        else:
+        elif self.numImage == 2:
             self.image = pygame.image.load("SpaceMonster3-1.png").convert()
             self.image = pygame.transform.scale(self.image, (34, 24))
             self.numImage = 1
-
         #endif
+    #endprocedure
 
-    def destroy(self):
-
-        self.image = pygame.image.load("SpaceMonsterExplode.png").convert()
-        self.image = pygame.transform.scale(self.image, (39, 24))
+    def destroy(self,oldTime):
         
+        self.numImage = -1000000
+        self.rect.x -= 2
+        self.image = pygame.image.load("MonsterExplode.png").convert()
+        self.image = pygame.transform.scale(self.image, (39, 24))
+
+        oldTime = pygame.time.get_ticks()
+     
     #endprocedure
 
 #endclass
@@ -424,18 +445,37 @@ class Monster3(Monster):
 
     def update(self,move):
 
-        self.rect.x += 44
+        if move < 4 or move > 11 and move < 18 or move > 25 and move < 32 or move > 39 and move < 46 or move > 53 and move < 60 or move > 67 and move < 74 or move > 81 and move < 88:
+            self.rect.x += 44
+        elif (move - 4)%7 == 0 or move == 4:
+            self.rect.y += 32
+        elif move > 4 and move < 11 or move > 18 and move < 25 or move > 32 and move < 39 or move > 46 and move < 53 or move > 60 and move < 67 or move > 74 and move < 81 or move > 88 and move < 95:
+            self.rect.x -= 44
+        #endif
+            
         if self.numImage == 1:
             self.image = pygame.image.load("SpaceMonster2-2.png").convert()
             self.image = pygame.transform.scale(self.image, (24, 24))
             self.numImage = 2
-        else:
+        elif self.numImage == 2:
             self.image = pygame.image.load("SpaceMonster2-1.png").convert()
             self.image = pygame.transform.scale(self.image, (24, 24))
             self.numImage = 1
 
         #endif
     #endprocedure
+
+    def destroy(self,oldTime):
+
+        self.image = pygame.image.load("MonsterExplode.png").convert()
+        self.image = pygame.transform.scale(self.image, (39, 24))
+        self.numImage = -1000000
+        self.rect.x -= 7
+
+        oldTime = pygame.time.get_ticks()
+     
+    #endprocedure
+        
 #endclass
 
 #Player class
@@ -483,7 +523,7 @@ class Bullet(pygame.sprite.Sprite):
  
     def update(self):
         
-        self.rect.y -= 3
+        self.rect.y -= 5
     #endprocedure
 #endclass
 

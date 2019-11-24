@@ -1,5 +1,5 @@
 import pygame
-from random import randint
+import random
 import time
 # -- Global Constants
 
@@ -20,24 +20,30 @@ LY = (255,255,204)
 NICE = (204,204,255)
 # -- Classes
 #Class - Template/Blueprint with attributes
+def shootBullet(x, y):
+    
+    mbullet = monsterBullet(x,y)
+
+#endprocedure
+    
 def createEnemy(row, column,block_list,all_sprites_list):
     for j in range(column):
         if j == 0:
             for i in range(row):
-                block = Monster1()
+                block = Monster2()
 
                 block.rect.x = 158 + 44*i
-                block.rect.y = 170
+                block.rect.y = 266
 
                 block_list.add(block)
                 all_sprites_list.add(block)
             #endfor
         elif j == 1:
             for i in range(row):
-                block = Monster1()
+                block = Monster2()
 
                 block.rect.x = 158 + 44*i
-                block.rect.y = 138
+                block.rect.y = 234
 
                 block_list.add(block)
                 all_sprites_list.add(block)
@@ -45,10 +51,10 @@ def createEnemy(row, column,block_list,all_sprites_list):
         #endif
         elif j == 2:
             for i in range(row):
-                block = Monster2()
+                block = Monster1()
 
                 block.rect.x = 158 + 44*i
-                block.rect.y = 106
+                block.rect.y = 202
 
                 block_list.add(block)
                 all_sprites_list.add(block)
@@ -56,10 +62,10 @@ def createEnemy(row, column,block_list,all_sprites_list):
         #endif
         elif j == 3:
             for i in range(row):
-                block = Monster2()
+                block = Monster1()
 
                 block.rect.x = 158 + 44*i
-                block.rect.y = 74
+                block.rect.y = 170
 
                 block_list.add(block)
                 all_sprites_list.add(block)
@@ -70,7 +76,7 @@ def createEnemy(row, column,block_list,all_sprites_list):
                 block = Monster3()
 
                 block.rect.x = 163 + 44*i
-                block.rect.y = 42
+                block.rect.y = 138
 
                 block_list.add(block)
                 all_sprites_list.add(block)
@@ -138,17 +144,37 @@ def game():
     RemainNum = 55
     AddNum=1
     live = 3
-    bulletNum = 8
+    bulletNum = 100
     moveCount = 1
-    moveTime = 3000
+    moveTime = 1500
     oldTime = 0
+    oldpTime = 0
+    olduTime = 0
+    p_posx = 0
+    p_posy = 0
+    i = 0
+    pause = False
+    UFOSpawned = False
+
+    shoot = 50
+    
     oldtime=pygame.time.get_ticks()
+    
+    explosion_list = pygame.sprite.Group()
+
+    ufoExplosion_list = pygame.sprite.Group()
 
     block_list = pygame.sprite.Group()
 
     bullet_list = pygame.sprite.Group()
 
+    mbullet_list = pygame.sprite.Group()
+
     all_sprites_list = pygame.sprite.Group()
+
+    player_list = pygame.sprite.Group()
+
+    ufo_list = pygame.sprite.Group()
 
     #Player
     THEEND = Block(600, 10)
@@ -156,10 +182,59 @@ def game():
     THEEND.rect.y = 600
 
     player = Player()
-    player.rect.x = 387
+    player.rect.x = 381
     all_sprites_list.add(player)
+    player_list.add(player)
+
+    live1 = PlayerLive()
+    live1.rect.y = 14
+    live1.rect.x = 640
+    all_sprites_list.add(live1)
+
+    live2 = PlayerLive()
+    live2.rect.y = 14
+    live2.rect.x = 689
+    all_sprites_list.add(live2)
+
+    live3 = PlayerLive()
+    live3.rect.y = 14
+    live3.rect.x = 738
+    all_sprites_list.add(live3)
+
+    ufo = UFO()
+    
+    all_sprites_list.add(ufo)
+    ufo_list.add(ufo)
     
     createEnemy(11,5,block_list, all_sprites_list)
+
+    barricade1 = Barricade()
+    barricade1.rect.x = 115
+    barricade1.rect.y = 450
+    all_sprites_list.add(barricade1)
+    bar1HP = 10
+
+    barricade2 = Barricade()
+    barricade2.rect.x = 237
+    barricade2.rect.y = 450
+    all_sprites_list.add(barricade2)
+    bar2HP = 10
+
+    barricade3 = Barricade()
+    barricade3.rect.x = 359
+    barricade3.rect.y = 450
+    all_sprites_list.add(barricade3)
+    bar3Hp = 10
+
+    barricade4 = Barricade()
+    barricade4.rect.x = 481
+    barricade4.rect.y = 450
+    all_sprites_list.add(barricade4)
+
+    barricade5 = Barricade()
+    barricade5.rect.x = 603
+    barricade5.rect.y = 450
+    all_sprites_list.add(barricade5)
         
     while game_over == False:
     # -- User input and controls
@@ -171,7 +246,7 @@ def game():
                     if bulletNum > 0:
                         bulletNum -= 1
                         bullet = Bullet()
-                        bullet.rect.x = player.rect.x + 11
+                        bullet.rect.x = player.rect.x + 18.8
                         bullet.rect.y = player.rect.y
 
                         bullet_list.add(bullet)
@@ -186,56 +261,66 @@ def game():
 
         ScoreText = Text(20,RED,52,50,'Score: '+str(score))
         RoundText = Text(20,RED,52,20,'Round: '+str(AddNum))
-        RemainText = Text(20,RED,55,80,'Enemy: '+str(RemainNum))
-        BulletText = Text(20,RED,51,140,'Bullet: '+str(bulletNum))
-        if live > 1:
-            LivesText = Text(20,RED,50,110,'Lives: '+str(live))
-        else:
-            LivesText = Text(20,RED,50,110,'Live: '+str(live))
+        BulletText = Text(20,RED,51,80,'Bullet: '+str(bulletNum))
+
+        if pause == False:
+
+            if UFOSpawned == True:
+                ufo.update()
+                if ufo.rect.x < -100:
+                    UFOSpawned = False
+                    ufo.rect.x = 900
+            else:
+                Surprise = random.randint(0,100)
+                if Surprise == 0:
+                    UFOSpawned = True
+            
+            player.update()
+
+            newtime=pygame.time.get_ticks()
+
+            #Update Enemies
+            if newtime - oldtime > moveTime: #in milliseconds 
+
+                block_list.update(moveCount)
+                moveCount += 1
+                moveTime -= 7
+                oldtime=newtime
+
+                selected_enemy = random.choice(block_list.sprites())
+                Class = str(selected_enemy.__class__.__name__)
+                if Class == "Monster1" or Class == "Monster2":
+                    mbullet = monsterBullet(selected_enemy.rect.x + 12, selected_enemy.rect.y - 24)
+                elif Class == "Monster3":
+                    mbullet = monsterBullet(selected_enemy.rect.x + 7, selected_enemy.rect.y - 24)
+                #endif
+                mbullet_list.add(mbullet)
+                all_sprites_list.add(mbullet)
+                      
+            #endif
+            
+            bullet_list.update()
+
+            mbullet_list.update()
+
         #endif
-
-        player.update()
-
-        newtime=pygame.time.get_ticks()
-
-        #Update Enemies
-        if newtime - oldtime > moveTime: #in milliseconds 
-
-            block_list.update(moveCount)
-            moveCount += 1
-            oldtime=newtime
-        
-        bullet_list.update()
 
         EndList_list = pygame.sprite.spritecollide(THEEND, block_list, False)
 
         live_list = pygame.sprite.spritecollide(player, block_list, False)
 
         for block in live_list:
-            live -= 1
-            score += 1
-            RemainNum -= 1
-            block_list.remove(block)
-            all_sprites_list.remove(block)
-
-            if live < 0:
-                game_over = True
-                finish(score)
-            elif RemainNum == 0:
-                    print("New wave created")
-                    AddNum+=1
-                    bulletNum += 1
-                    RemainNum = 40
-                    createEnemy(11,5,block_list, all_sprites_list)
+            game_over = True
+            finish(score)
             #endif
-        #endfor
-                
+        #endfor    
 
         for block in EndList_list:
             game_over = True
             finish(score)
         #endfor
 
+        #Update Bullet
         for bullet in bullet_list:
 
             if bullet.rect.y <= -1000:
@@ -246,28 +331,145 @@ def game():
 
             blocks_hit_list = pygame.sprite.spritecollide(bullet, block_list, False)
 
+            #Erase Block
             for block in blocks_hit_list:
+                
                 bullet_list.remove(bullet) 
                 all_sprites_list.remove(bullet)
+                
                 block_list.remove(block)
-                if oldTime == 0:
-                    block.destroy(oldTime)
-                newTime = pygame.time.get_ticks()
-                if newTime - oldTime > 4000:
-                    all_sprites_list.remove(block)
-                    oldTime = 0
-                score += 1
+                all_sprites_list.remove(block)
+
+                shoot -= 1
+ 
+                Class = str(block.__class__.__name__)
+                if Class == "Monster1" or Class == "Monster2":
+                    explosionExample = Explosion(1, block.rect.x, block.rect.y)
+                elif Class == "Monster3":
+                    explosionExample = Explosion(2, block.rect.x, block.rect.y)
+                oldTime=pygame.time.get_ticks()
+                explosion_list.add(explosionExample)
+                all_sprites_list.add(explosionExample)
+                score = block.addScore(score)
                 bulletNum += 1
                 RemainNum -= 1         
                 if RemainNum == 0:
-                    print("New wave created")
                     AddNum+=1
                     bulletNum += 1
-                    RemainNum = 40
+                    RemainNum = 55
                     createEnemy(11,5,block_list, all_sprites_list)
+                    moveTime = 3000 - (AddNum - 1)*50
+                    moveCount = 1
                 #endif
             #endfor
+
+            #Bullet hit UFO
+            ufo_hit_list = pygame.sprite.spritecollide(bullet, ufo_list, False)
+
+            #Reset UFO
+            for ufo in ufo_hit_list:
+                
+                bullet_list.remove(bullet) 
+                all_sprites_list.remove(bullet)
+
+                UFOSpawned = False
+
+                score += (300 + (random.randint(0,10))*10)
+ 
+                ufoExplosionExample = ufoExplosion(ufo.rect.x, ufo.rect.y)
+                ufo.rect.x = 900
+                olduTime = pygame.time.get_ticks()
+                ufoExplosion_list.add(ufoExplosionExample)
+                all_sprites_list.add(ufoExplosionExample)
+                bulletNum += 1
+                
+            #endfor
+
         #endfor
+
+        #Update Monster Bullet
+        for mbullet in mbullet_list:
+
+            if mbullet.rect.y > 650:
+                mbullet_list.remove(mbullet)
+                all_sprites_list.remove(mbullet)
+            #endif
+        #endfor
+
+        player_gethit_list = pygame.sprite.spritecollide(player, mbullet_list, False)
+
+        #Reduce player hp
+        for mbullet in player_gethit_list:
+                
+            mbullet_list.remove(mbullet) 
+            all_sprites_list.remove(mbullet)
+                
+            live -= 1
+
+            if live == 2:
+                all_sprites_list.remove(live3)
+            elif live == 1:
+                all_sprites_list.remove(live2)
+            elif live == 0:
+                all_sprites_list.remove(live1)
+
+            #player explosion
+            oldpTime = pygame.time.get_ticks()
+            i = 0
+            player.toggle(0,0)
+            pause = True
+            p_posx = player.rect.x
+            p_posy = player.rect.y
+            player.rect.x -= 4.5
+            player.rect.y -= 1.5
+            player.explosion1()
+        #endfor
+
+        #Explosion
+        for explosionExample in explosion_list:
+            newTime=pygame.time.get_ticks()
+            if newTime - oldTime > 160:
+                all_sprites_list.remove(explosionExample)
+                explosion_list.remove(explosionExample)
+            #endif
+        #endfor
+        
+        for ufoExplosionExample in ufoExplosion_list:
+            newuTime=pygame.time.get_ticks()
+            if newuTime - olduTime > 500:
+                all_sprites_list.remove(ufoExplosionExample)
+                ufoExplosion_list.remove(ufoExplosionExample)
+            #endif
+        #endfor
+
+        #Player Explosion
+        if pause == True:
+            newpTime = pygame.time.get_ticks()
+            if newpTime - oldpTime > 600 and i == 0:
+                oldpTime = newpTime
+                player.explosion2()
+                i += 1
+            elif newpTime - oldpTime > 600 and i == 1:
+                oldpTime = newpTime
+                player.explosion1()
+                i += 1
+            elif newpTime - oldpTime > 600 and i == 2:
+                oldpTime = newpTime
+                player.explosion2()
+                i += 1
+            elif newpTime - oldpTime > 600 and i == 3:
+                oldpTime = newpTime
+                player.explosion1()
+                i += 1
+            elif i == 4:    
+                explosion_list.remove(player)
+                pause = False
+                player.toggle(p_posx, p_posy)
+                if live == 0:
+                    game_over = True
+                    finish(score)
+            #endif
+        #endif
 
         all_sprites_list.draw(screen)
         # -- flip display to reveal new position of objects
@@ -371,18 +573,16 @@ class Monster1(Monster):
             self.numImage = 1
 
         #endif
+            
     #endprocedure
 
-    def destroy(self,oldTime):
-        
-        self.numImage = -1000000
-        self.rect.x -= 2
-        self.image = pygame.image.load("MonsterExplode.png").convert()
-        self.image = pygame.transform.scale(self.image, (39, 24))
+    def addScore(self,score):
 
-        oldTime = pygame.time.get_ticks()
-     
-    #endprocedure
+        score += 20
+
+        return score
+
+    #endfunction
         
 #endclass
 
@@ -417,18 +617,16 @@ class Monster2(Monster):
             self.image = pygame.transform.scale(self.image, (34, 24))
             self.numImage = 1
         #endif
+
     #endprocedure
 
-    def destroy(self,oldTime):
-        
-        self.numImage = -1000000
-        self.rect.x -= 2
-        self.image = pygame.image.load("MonsterExplode.png").convert()
-        self.image = pygame.transform.scale(self.image, (39, 24))
+    def addScore(self,score):
 
-        oldTime = pygame.time.get_ticks()
-     
-    #endprocedure
+        score += 10
+
+        return score
+
+    #endfunction
 
 #endclass
 
@@ -441,6 +639,7 @@ class Monster3(Monster):
         self.image = pygame.transform.scale(self.image, (24, 24))
         self.rect = self.image.get_rect()
         self.numImage = 1
+
     #endprocedure
 
     def update(self,move):
@@ -463,19 +662,68 @@ class Monster3(Monster):
             self.numImage = 1
 
         #endif
+        
     #endprocedure
 
-    def destroy(self,oldTime):
+    def addScore(self,score):
 
+        score += 40
+
+        return score
+
+    #endfunction
+        
+#endclass
+
+class PlayerLive(pygame.sprite.Sprite):
+
+    def __init__(self):
+        super().__init__()
+
+        self.image = pygame.Surface([39, 21])
+        self.image = pygame.image.load("Player.png").convert()
+        self.image = pygame.transform.scale(self.image, (39, 21))
+        self.rect = self.image.get_rect()
+
+    #endprocedure
+
+#endclass
+
+class Explosion(pygame.sprite.Sprite):
+
+    def __init__(self, ExType, x, y):
+        super().__init__()
+
+        self.image = pygame.Surface([39, 24])
         self.image = pygame.image.load("MonsterExplode.png").convert()
         self.image = pygame.transform.scale(self.image, (39, 24))
-        self.numImage = -1000000
-        self.rect.x -= 7
+        self.rect = self.image.get_rect()
 
-        oldTime = pygame.time.get_ticks()
-     
+        if ExType == 1:
+            self.rect.x = x - 2
+            self.rect.y = y
+
+        elif ExType == 2:
+            
+            self.rect.x = x - 7
+            self.rect.y = y
+
     #endprocedure
-        
+
+class ufoExplosion(pygame.sprite.Sprite):
+
+    def __init__(self, x, y):
+        super().__init__()
+
+        self.image = pygame.Surface([63, 24])
+        self.image = pygame.image.load("UFOExplode.png").convert()
+        self.image = pygame.transform.scale(self.image, (63, 24))
+        self.rect = self.image.get_rect()
+
+        self.rect.x = x - 12
+        self.rect.y = y - 3
+
+    #endprocedure
 #endclass
 
 #Player class
@@ -484,31 +732,84 @@ class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
  
-        self.image = pygame.Surface([26, 16])
+        self.image = pygame.Surface([39, 21])
         self.image = pygame.image.load("Player.png").convert()
-        self.image = pygame.transform.scale(self.image, (26, 16))
-        PlayerExplode1 = pygame.image.load("PlayerExplode1.png").convert()
-        PlayerExplode2 = pygame.image.load("PlayerExplode2.png").convert()
- 
+        self.image = pygame.transform.scale(self.image, (39, 21))
+         
         self.rect = self.image.get_rect()
 
-        self.rect.y = 570
+        self.rect.y = 565
+
+        self.activated = True
     #endprocedure
  
     def update(self):
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_a]:
-            self.rect.x -= 3
-        elif keys[pygame.K_d]:
-            self.rect.x += 3
-        elif keys[pygame.K_LEFT]:
-            self.rect.x -= 3
-        elif keys[pygame.K_RIGHT]:
-            self.rect.x += 3
-        #endif
+
+        if self.activated == True:
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_a]:
+                self.rect.x -= 3
+            elif keys[pygame.K_d]:
+                self.rect.x += 3
+            elif keys[pygame.K_LEFT]:
+                self.rect.x -= 3
+            elif keys[pygame.K_RIGHT]:
+                self.rect.x += 3
+            #endif
     #endprocedure
+
+    def explosion1(self):
+
+        self.image = pygame.image.load("PlayerExplode1.png").convert()
+        self.image = pygame.transform.scale(self.image, (48, 24))
+
+    #endprocedure
+
+    def explosion2(self):
+
+        self.image = pygame.image.load("PlayerExplode2.png").convert()
+        self.image = pygame.transform.scale(self.image, (48, 24))
+
+    #endprocedure
+
+    def toggle(self, x, y):
+
+        if self.activated == True:
+            self.activated = False
+        else:
+            self.activated = True
+            self.image = pygame.image.load("Player.png").convert()
+            self.image = pygame.transform.scale(self.image, (39, 21))
+            self.rect.x = x
+            self.rect.y = y
+
+    #endprocedure
+    
 #endclass
 
+#UFO class
+class UFO(pygame.sprite.Sprite):
+
+    def __init__(self):
+        super().__init__()
+ 
+        self.image = pygame.Surface([48, 21])
+        self.image = pygame.image.load("UFO.png").convert()
+        self.image = pygame.transform.scale(self.image, (48, 21))
+        self.rect = self.image.get_rect()
+
+        self.rect.x = 900
+        self.rect.y = 102
+        
+    #endprocedure
+ 
+    def update(self):
+        
+        self.rect.x -= 3
+        
+    #endprocedure
+#endclass
+        
 #Bullet class
 class Bullet(pygame.sprite.Sprite):
 
@@ -525,6 +826,53 @@ class Bullet(pygame.sprite.Sprite):
         
         self.rect.y -= 5
     #endprocedure
+#endclass
+
+class monsterBullet(pygame.sprite.Sprite):
+
+    def __init__(self,x,y):
+        super().__init__()
+ 
+        self.image = pygame.Surface([9, 21])
+        self.image = pygame.image.load("MonsterBullet.png").convert()
+        self.image = pygame.transform.scale(self.image, (9, 21))
+        self.rect = self.image.get_rect()
+
+        self.rect.x = x
+        self.rect.y = y
+        
+    #endprocedure
+ 
+    def update(self):
+        
+        self.rect.y += 5
+        
+    #endprocedure
+        
+#endclass
+
+#Barricader
+class Barricade(pygame.sprite.Sprite):
+
+    def __init__(self):
+        super().__init__()
+ 
+        self.image = pygame.Surface([72, 48])
+        self.image = pygame.image.load("Barricade.png").convert()
+        self.image = pygame.transform.scale(self.image, (72, 48))
+        self.rect = self.image.get_rect()
+        self.hp = 5
+        
+    #endprocedure
+ 
+    def update(self):
+        
+        self.hp -= 1
+
+        return self.hp
+        
+    #endprocedure
+        
 #endclass
 
 # -- Initialise PyGame

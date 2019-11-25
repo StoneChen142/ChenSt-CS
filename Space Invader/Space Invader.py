@@ -144,12 +144,25 @@ def game():
     RemainNum = 55
     AddNum=1
     live = 3
-    bulletNum = 100
+    bulletNum = 7
     moveCount = 1
-    moveTime = 1500
+    moveTime = 1400
     oldTime = 0
     oldpTime = 0
     olduTime = 0
+    
+    oldbTime1 = 0
+    oldbTime2 = 0
+    oldbTime3 = 0
+    oldbTime4 = 0
+    oldbTime5 = 0
+
+    oldb1Time1 = 0
+    oldb1Time2 = 0
+    oldb1Time3 = 0
+    oldb1Time4 = 0
+    oldb1Time5 = 0
+    
     p_posx = 0
     p_posy = 0
     i = 0
@@ -164,6 +177,18 @@ def game():
 
     ufoExplosion_list = pygame.sprite.Group()
 
+    barExplosion_list1 = pygame.sprite.Group()
+    barExplosion_list2 = pygame.sprite.Group()
+    barExplosion_list3 = pygame.sprite.Group()
+    barExplosion_list4 = pygame.sprite.Group()
+    barExplosion_list5 = pygame.sprite.Group()
+
+    barExplosion1_list1 = pygame.sprite.Group()
+    barExplosion1_list2 = pygame.sprite.Group()
+    barExplosion1_list3 = pygame.sprite.Group()
+    barExplosion1_list4 = pygame.sprite.Group()
+    barExplosion1_list5 = pygame.sprite.Group()
+
     block_list = pygame.sprite.Group()
 
     bullet_list = pygame.sprite.Group()
@@ -175,6 +200,12 @@ def game():
     player_list = pygame.sprite.Group()
 
     ufo_list = pygame.sprite.Group()
+
+    barricade1_list = pygame.sprite.Group()
+    barricade2_list = pygame.sprite.Group()
+    barricade3_list = pygame.sprite.Group()
+    barricade4_list = pygame.sprite.Group()
+    barricade5_list = pygame.sprite.Group()
 
     #Player
     THEEND = Block(600, 10)
@@ -212,29 +243,36 @@ def game():
     barricade1.rect.x = 115
     barricade1.rect.y = 450
     all_sprites_list.add(barricade1)
+    barricade1_list.add(barricade1)
     bar1HP = 10
 
     barricade2 = Barricade()
     barricade2.rect.x = 237
     barricade2.rect.y = 450
     all_sprites_list.add(barricade2)
+    barricade2_list.add(barricade2)
     bar2HP = 10
 
     barricade3 = Barricade()
     barricade3.rect.x = 359
     barricade3.rect.y = 450
     all_sprites_list.add(barricade3)
-    bar3Hp = 10
+    barricade3_list.add(barricade3)
+    bar3HP = 10
 
     barricade4 = Barricade()
     barricade4.rect.x = 481
     barricade4.rect.y = 450
     all_sprites_list.add(barricade4)
+    barricade4_list.add(barricade4)
+    bar4HP = 10
 
     barricade5 = Barricade()
     barricade5.rect.x = 603
     barricade5.rect.y = 450
     all_sprites_list.add(barricade5)
+    barricade5_list.add(barricade5)
+    bar5HP = 10
         
     while game_over == False:
     # -- User input and controls
@@ -271,7 +309,7 @@ def game():
                     UFOSpawned = False
                     ufo.rect.x = 900
             else:
-                Surprise = random.randint(0,100)
+                Surprise = random.randint(0,750)
                 if Surprise == 0:
                     UFOSpawned = True
             
@@ -305,6 +343,22 @@ def game():
 
         #endif
 
+        if bar1HP == 0:
+            all_sprites_list.remove(barricade1)
+            barricade1_list.remove(barricade1)
+        elif bar2HP == 0:
+            all_sprites_list.remove(barricade2)
+            barricade2_list.remove(barricade2)
+        elif bar3HP == 0:
+            all_sprites_list.remove(barricade3)
+            barricade3_list.remove(barricade3)
+        elif bar4HP == 0:
+            all_sprites_list.remove(barricade4)
+            barricade4_list.remove(barricade4)
+        elif bar5HP == 0:
+            all_sprites_list.remove(barricade5)
+            barricade5_list.remove(barricade5)
+            
         EndList_list = pygame.sprite.spritecollide(THEEND, block_list, False)
 
         live_list = pygame.sprite.spritecollide(player, block_list, False)
@@ -358,7 +412,7 @@ def game():
                     bulletNum += 1
                     RemainNum = 55
                     createEnemy(11,5,block_list, all_sprites_list)
-                    moveTime = 3000 - (AddNum - 1)*50
+                    moveTime = 3000 - (AddNum - 1)*100
                     moveCount = 1
                 #endif
             #endfor
@@ -385,6 +439,88 @@ def game():
                 
             #endfor
 
+            #Bullet hit Barricade
+            bar_hit_list1 = pygame.sprite.spritecollide(bullet, barricade1_list, False)
+            bar_hit_list2 = pygame.sprite.spritecollide(bullet, barricade2_list, False)
+            bar_hit_list3 = pygame.sprite.spritecollide(bullet, barricade3_list, False)
+            bar_hit_list4 = pygame.sprite.spritecollide(bullet, barricade4_list, False)
+            bar_hit_list5 = pygame.sprite.spritecollide(bullet, barricade5_list, False)
+            #Barriacde reduce hp
+            for barricade1 in bar_hit_list1:
+                
+                bullet_list.remove(bullet) 
+                all_sprites_list.remove(bullet)
+
+                bar1HP -= 1
+ 
+                explosionExample = Explosion(3, bullet.rect.x, bullet.rect.y)
+                oldbTime1 = pygame.time.get_ticks()
+                barExplosion_list1.add(explosionExample)
+                all_sprites_list.add(explosionExample)
+                bulletNum += 1
+                
+            #endfor
+
+            for barricade2 in bar_hit_list2:
+                
+                bullet_list.remove(bullet) 
+                all_sprites_list.remove(bullet)
+
+                bar2HP -= 1
+ 
+                explosionExample = Explosion(3, bullet.rect.x, bullet.rect.y)
+                oldbTime2 = pygame.time.get_ticks()
+                barExplosion_list2.add(explosionExample)
+                all_sprites_list.add(explosionExample)
+                bulletNum += 1
+                
+            #endfor
+
+            for barricade3 in bar_hit_list3:
+                
+                bullet_list.remove(bullet) 
+                all_sprites_list.remove(bullet)
+
+                bar3HP -= 1
+ 
+                explosionExample = Explosion(3, bullet.rect.x, bullet.rect.y)
+                oldbTime3 = pygame.time.get_ticks()
+                barExplosion_list3.add(explosionExample)
+                all_sprites_list.add(explosionExample)
+                bulletNum += 1
+
+            #endfor
+
+            for barricade4 in bar_hit_list4:
+                
+                bullet_list.remove(bullet) 
+                all_sprites_list.remove(bullet)
+
+                bar4HP -= 1
+ 
+                explosionExample = Explosion(3, bullet.rect.x, bullet.rect.y)
+                oldbTime4 = pygame.time.get_ticks()
+                barExplosion_list4.add(explosionExample)
+                all_sprites_list.add(explosionExample)
+                bulletNum += 1
+                
+            #endfor
+
+            for barricade5 in bar_hit_list5:
+                
+                bullet_list.remove(bullet) 
+                all_sprites_list.remove(bullet)
+
+                bar5HP -= 1
+ 
+                explosionExample = Explosion(3, bullet.rect.x, bullet.rect.y)
+                oldbTime5 = pygame.time.get_ticks()
+                barExplosion_list5.add(explosionExample)
+                all_sprites_list.add(explosionExample)
+                bulletNum += 1
+                
+            #endfor
+
         #endfor
 
         #Update Monster Bullet
@@ -395,6 +531,83 @@ def game():
                 all_sprites_list.remove(mbullet)
             #endif
         #endfor
+
+            #Bullet hit Barricade
+            bar1_hit_list1 = pygame.sprite.spritecollide(mbullet, barricade1_list, False)
+            bar1_hit_list2 = pygame.sprite.spritecollide(mbullet, barricade2_list, False)
+            bar1_hit_list3 = pygame.sprite.spritecollide(mbullet, barricade3_list, False)
+            bar1_hit_list4 = pygame.sprite.spritecollide(mbullet, barricade4_list, False)
+            bar1_hit_list5 = pygame.sprite.spritecollide(mbullet, barricade5_list, False)
+            #Barriacde reduce hp
+            for barricade1 in bar1_hit_list1:
+                
+                mbullet_list.remove(mbullet) 
+                all_sprites_list.remove(mbullet)
+
+                bar1HP -= 1
+ 
+                explosionExample = Explosion(3, mbullet.rect.x, mbullet.rect.y)
+                oldb1Time1 = pygame.time.get_ticks()
+                barExplosion1_list1.add(explosionExample)
+                all_sprites_list.add(explosionExample)
+                
+            #endfor
+
+            for barricade2 in bar1_hit_list2:
+                
+                mbullet_list.remove(mbullet) 
+                all_sprites_list.remove(mbullet)
+
+                bar2HP -= 1
+ 
+                explosionExample = Explosion(3, mbullet.rect.x, mbullet.rect.y)
+                oldb1Time2 = pygame.time.get_ticks()
+                barExplosion1_list2.add(explosionExample)
+                all_sprites_list.add(explosionExample)
+                
+            #endfor
+
+            for barricade3 in bar1_hit_list3:
+                
+                mbullet_list.remove(mbullet) 
+                all_sprites_list.remove(mbullet)
+
+                bar3HP -= 1
+ 
+                explosionExample = Explosion(3, mbullet.rect.x, mbullet.rect.y)
+                oldb1Time3 = pygame.time.get_ticks()
+                barExplosion1_list3.add(explosionExample)
+                all_sprites_list.add(explosionExample)
+
+            #endfor
+
+            for barricade4 in bar1_hit_list4:
+                
+                mbullet_list.remove(mbullet) 
+                all_sprites_list.remove(mbullet)
+
+                bar4HP -= 1
+ 
+                explosionExample = Explosion(3, mbullet.rect.x, mbullet.rect.y)
+                oldb1Time4 = pygame.time.get_ticks()
+                barExplosion1_list4.add(explosionExample)
+                all_sprites_list.add(explosionExample)
+                
+            #endfor
+
+            for barricade5 in bar1_hit_list5:
+                
+                mbullet_list.remove(mbullet) 
+                all_sprites_list.remove(mbullet)
+
+                bar5HP -= 1
+ 
+                explosionExample = Explosion(3, mbullet.rect.x, mbullet.rect.y)
+                oldb1Time5 = pygame.time.get_ticks()
+                barExplosion1_list5.add(explosionExample)
+                all_sprites_list.add(explosionExample)
+                
+            #endfor
 
         player_gethit_list = pygame.sprite.spritecollide(player, mbullet_list, False)
 
@@ -439,6 +652,89 @@ def game():
             if newuTime - olduTime > 500:
                 all_sprites_list.remove(ufoExplosionExample)
                 ufoExplosion_list.remove(ufoExplosionExample)
+            #endif
+        #endfor
+
+
+        #Barricade Explosion
+        for explosionExample in barExplosion_list1:
+            newbTime1=pygame.time.get_ticks()
+            if newbTime1 - oldbTime1 > 170:
+                all_sprites_list.remove(explosionExample)
+                barExplosion_list1.remove(explosionExample)
+            #endif
+        #endfor
+
+        for explosionExample in barExplosion_list2:
+            newbTime2=pygame.time.get_ticks()
+            if newbTime2 - oldbTime2 > 170:
+                all_sprites_list.remove(explosionExample)
+                barExplosion_list2.remove(explosionExample)
+            #endif
+        #endfor
+
+        for explosionExample in barExplosion_list3:
+            newbTime3=pygame.time.get_ticks()
+            if newbTime3 - oldbTime3 > 170:
+                all_sprites_list.remove(explosionExample)
+                barExplosion_list3.remove(explosionExample)
+            #endif
+        #endfor
+
+        for explosionExample in barExplosion_list4:
+            newbTime4=pygame.time.get_ticks()
+            if newbTime4 - oldbTime4 > 170:
+                all_sprites_list.remove(explosionExample)
+                barExplosion_list4.remove(explosionExample)
+            #endif
+        #endfor
+
+        for explosionExample in barExplosion_list5:
+            newbTime5=pygame.time.get_ticks()
+            if newbTime5 - oldbTime5 > 170:
+                all_sprites_list.remove(explosionExample)
+                barExplosion_list5.remove(explosionExample)
+            #endif
+        #endfor
+
+        #Mbullet
+        for explosionExample in barExplosion1_list1:
+            newb1Time1=pygame.time.get_ticks()
+            if newb1Time1 - oldb1Time1 > 170:
+                all_sprites_list.remove(explosionExample)
+                barExplosion1_list1.remove(explosionExample)
+            #endif
+        #endfor
+
+        for explosionExample in barExplosion1_list2:
+            newb1Time2=pygame.time.get_ticks()
+            if newb1Time2 - oldb1Time2 > 170:
+                all_sprites_list.remove(explosionExample)
+                barExplosion1_list2.remove(explosionExample)
+            #endif
+        #endfor
+
+        for explosionExample in barExplosion1_list3:
+            newb1Time3=pygame.time.get_ticks()
+            if newb1Time3 - oldb1Time3 > 170:
+                all_sprites_list.remove(explosionExample)
+                barExplosion1_list3.remove(explosionExample)
+            #endif
+        #endfor
+
+        for explosionExample in barExplosion1_list4:
+            newb1Time4=pygame.time.get_ticks()
+            if newb1Time4 - oldb1Time4 > 170:
+                all_sprites_list.remove(explosionExample)
+                barExplosion1_list4.remove(explosionExample)
+            #endif
+        #endfor
+
+        for explosionExample in barExplosion1_list5:
+            newb1Time5=pygame.time.get_ticks()
+            if newb1Time5 - oldb1Time5 > 170:
+                all_sprites_list.remove(explosionExample)
+                barExplosion1_list5.remove(explosionExample)
             #endif
         #endfor
 
@@ -708,6 +1004,11 @@ class Explosion(pygame.sprite.Sprite):
             self.rect.x = x - 7
             self.rect.y = y
 
+        elif ExType == 3:
+
+            self.rect.x = x - 17
+            self.rect.y = y - 9
+
     #endprocedure
 
 class ufoExplosion(pygame.sprite.Sprite):
@@ -861,15 +1162,6 @@ class Barricade(pygame.sprite.Sprite):
         self.image = pygame.image.load("Barricade.png").convert()
         self.image = pygame.transform.scale(self.image, (72, 48))
         self.rect = self.image.get_rect()
-        self.hp = 5
-        
-    #endprocedure
- 
-    def update(self):
-        
-        self.hp -= 1
-
-        return self.hp
         
     #endprocedure
         

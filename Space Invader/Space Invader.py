@@ -1081,6 +1081,12 @@ class Monster1(Monster):
         self.rect = self.image.get_rect()
         self.numImage = 1
 
+        self.pic1 = pygame.image.load("SpaceMonster1-2.png").convert()
+        self.pic1 = pygame.transform.scale(self.image, (34, 24))
+
+        self.pic2 = pygame.image.load("SpaceMonster1-1.png").convert()
+        self.pic2 = pygame.transform.scale(self.image, (34, 24))
+
     #endprocedure
 
     def update(self,move):
@@ -1094,12 +1100,10 @@ class Monster1(Monster):
         #endif
             
         if self.numImage == 1:
-            self.image = pygame.image.load("SpaceMonster1-2.png").convert()
-            self.image = pygame.transform.scale(self.image, (34, 24))
+            self.image = self.pic1
             self.numImage = 2
         elif self.numImage == 2:
-            self.image = pygame.image.load("SpaceMonster1-1.png").convert()
-            self.image = pygame.transform.scale(self.image, (34, 24))
+            self.image = self.pic2
             self.numImage = 1
 
         #endif
@@ -1125,6 +1129,12 @@ class Monster2(Monster):
         self.image = pygame.transform.scale(self.image, (34, 24))
         self.rect = self.image.get_rect()
         self.numImage = 1
+
+        self.pic1 = pygame.image.load("SpaceMonster3-2.png").convert()
+        self.pic1 = pygame.transform.scale(self.image, (34, 24))
+
+        self.pic2 = pygame.image.load("SpaceMonster3-1.png").convert()
+        self.pic2 = pygame.transform.scale(self.image, (34, 24))
         
     #endprocedure
 
@@ -1139,12 +1149,10 @@ class Monster2(Monster):
         #endif
             
         if self.numImage == 1:
-            self.image = pygame.image.load("SpaceMonster3-2.png").convert()
-            self.image = pygame.transform.scale(self.image, (34, 24))
+            self.image = self.pic1
             self.numImage = 2
         elif self.numImage == 2:
-            self.image = pygame.image.load("SpaceMonster3-1.png").convert()
-            self.image = pygame.transform.scale(self.image, (34, 24))
+            self.image = self.pic2
             self.numImage = 1
         #endif
 
@@ -1170,6 +1178,12 @@ class Monster3(Monster):
         self.rect = self.image.get_rect()
         self.numImage = 1
 
+        self.pic1 = pygame.image.load("SpaceMonster2-2.png").convert()
+        self.pic1 = pygame.transform.scale(self.image, (24, 24))
+
+        self.pic2 = pygame.image.load("SpaceMonster2-1.png").convert()
+        self.pic2 = pygame.transform.scale(self.image, (24, 24))
+
     #endprocedure
 
     def update(self,move):
@@ -1183,12 +1197,10 @@ class Monster3(Monster):
         #endif
             
         if self.numImage == 1:
-            self.image = pygame.image.load("SpaceMonster2-2.png").convert()
-            self.image = pygame.transform.scale(self.image, (24, 24))
+            self.image = self.pic1
             self.numImage = 2
         elif self.numImage == 2:
-            self.image = pygame.image.load("SpaceMonster2-1.png").convert()
-            self.image = pygame.transform.scale(self.image, (24, 24))
+            self.image = self.pic2
             self.numImage = 1
 
         #endif

@@ -18,6 +18,11 @@ DBLUE = (51,51,204)
 DGREEN = (0,51,0)
 LY = (255,255,204)
 NICE = (204,204,255)
+
+#Animations
+Monster1A = [pygame.transform.scale(pygame.image.load('SpaceMonster1-2.png'), (34, 24)), pygame.transform.scale(pygame.image.load('SpaceMonster1-1.png'), (34, 24))]
+Monster2A = [pygame.transform.scale(pygame.image.load('SpaceMonster3-2.png'), (34, 24)), pygame.transform.scale(pygame.image.load('SpaceMonster3-1.png'), (34, 24))]
+Monster3A = [pygame.transform.scale(pygame.image.load('SpaceMonster2-2.png'), (24, 24)), pygame.transform.scale(pygame.image.load('SpaceMonster2-1.png'), (24, 24))]
 # -- Classes
 #Class - Template/Blueprint with attributes
 def shootBullet(x, y):
@@ -1079,7 +1084,7 @@ class Monster1(Monster):
         self.image = pygame.image.load("SpaceMonster1-1.png").convert()
         self.image = pygame.transform.scale(self.image, (34, 24))
         self.rect = self.image.get_rect()
-        self.numImage = 1
+        self.numImage = 0
 
         self.pic1 = pygame.image.load("SpaceMonster1-2.png").convert()
         self.pic1 = pygame.transform.scale(self.image, (34, 24))
@@ -1099,12 +1104,12 @@ class Monster1(Monster):
             self.rect.x -= 11
         #endif
             
-        if self.numImage == 1:
-            self.image = self.pic1
-            self.numImage = 2
-        elif self.numImage == 2:
-            self.image = self.pic2
+        if self.numImage == 0:
+            self.image = Monster1A[self.numImage]
             self.numImage = 1
+        elif self.numImage == 1:
+            self.image = Monster1A[self.numImage]
+            self.numImage = 0
 
         #endif
             
@@ -1128,7 +1133,7 @@ class Monster2(Monster):
         self.image = pygame.image.load("SpaceMonster3-1.png").convert()
         self.image = pygame.transform.scale(self.image, (34, 24))
         self.rect = self.image.get_rect()
-        self.numImage = 1
+        self.numImage = 0
 
         self.pic1 = pygame.image.load("SpaceMonster3-2.png").convert()
         self.pic1 = pygame.transform.scale(self.image, (34, 24))
@@ -1148,12 +1153,12 @@ class Monster2(Monster):
             self.rect.x -= 11
         #endif
             
-        if self.numImage == 1:
-            self.image = self.pic1
-            self.numImage = 2
-        elif self.numImage == 2:
-            self.image = self.pic2
+        if self.numImage == 0:
+            self.image = Monster2A[self.numImage]
             self.numImage = 1
+        elif self.numImage == 1:
+            self.image = Monster2A[self.numImage]
+            self.numImage = 0
         #endif
 
     #endprocedure
@@ -1176,7 +1181,7 @@ class Monster3(Monster):
         self.image = pygame.image.load("SpaceMonster2-1.png").convert()
         self.image = pygame.transform.scale(self.image, (24, 24))
         self.rect = self.image.get_rect()
-        self.numImage = 1
+        self.numImage = 0
 
         self.pic1 = pygame.image.load("SpaceMonster2-2.png").convert()
         self.pic1 = pygame.transform.scale(self.image, (24, 24))
@@ -1196,12 +1201,12 @@ class Monster3(Monster):
             self.rect.x -= 11
         #endif
             
-        if self.numImage == 1:
-            self.image = self.pic1
-            self.numImage = 2
-        elif self.numImage == 2:
-            self.image = self.pic2
+        if self.numImage == 0:
+            self.image = Monster3A[self.numImage]
             self.numImage = 1
+        elif self.numImage == 1:
+            self.image = Monster3A[self.numImage]
+            self.numImage = 0
 
         #endif
         

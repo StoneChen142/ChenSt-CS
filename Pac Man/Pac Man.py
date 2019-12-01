@@ -30,6 +30,7 @@ up = False
 down = False
 pmoveCount = 0
 nextMove = [0]
+nextMove[0] = 0
 
 #Animations
 
@@ -63,41 +64,43 @@ class Player(pygame.sprite.Sprite):
         global down
 
         if n == 1:
-            if self.rect.x > 0:
-                self.rect.x -= 3
-                PlayerMoving = True
-            else:
-                self.image = notMoving
-                PlayerMoving = False
-                self.num = 0
-                up = False
+
+            self.rect.x -= 3
+            PlayerMoving = True
+            if self.rect.x < -36:
+
+                self.rect.x = 540
+
         elif n == 2:
-            if self.rect.x < 504:
-                self.rect.x += 3
-                PlayerMoving = True
-            else:
-                self.image = notMoving
-                PlayerMoving = False
-                self.num = 0
-                down = False
+            
+            self.rect.x += 3
+            PlayerMoving = True
+            if self.rect.x > 540:
+
+                self.rect.x = -36
+
+            #endif
+                
         elif n == 3:
-            if self.rect.y > 0:
-                self.rect.y -= 3
-                PlayerMoving = True
-            else:
-                self.image = notMoving
-                PlayerMoving = False
-                self.num = 0
-                left = False
+
+            self.rect.y -= 3
+            PlayerMoving = True
+            if self.rect.y < -36:
+
+                self.rect.y = 540
+
+            #endif
+
         elif n == 4:
-            if self.rect.y < 504:
-                self.rect.y += 3
-                PlayerMoving = True
-            else:
-                self.image = notMoving
-                PlayerMoving = False
-                self.num = 0
-                right = False
+
+            self.rect.y += 3
+            PlayerMoving = True
+            if self.rect.y > 540:
+
+                self.rect.y = -36
+
+            #endif
+
         #endif
 
     #endprocedure
@@ -196,12 +199,29 @@ class Node(pygame.sprite.Sprite):
         
     #endprocedure
 
+class vertical(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        
+        self.image = pygame.Surface([36,36])
+        self.rect = self.image.get_rect()
+        
+    #endprocedure
+
 #endclass
+
+class horizontal(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        
+        self.image = pygame.Surface([36,36])
+        self.rect = self.image.get_rect()
+        
+    #endprocedure
 
 def createMaze(node_list, block_list, all_sprites_list, lines):
     for j in range(15):
         line = lines[j]
-        print(line)
         for i in range(15):
             if str(line[i]) == "b":
                 block = Block()
@@ -218,9 +238,24 @@ def createMaze(node_list, block_list, all_sprites_list, lines):
                 node.rect.y = 36*j
 
                 node_list.add(node)
-            #endfor
+            elif str(line[i]) == "v":
+                vert = vertical()
 
-        #endwhile
+                vert.rect.x = 36*i
+                vert.rect.y = 36*j
+
+                vert_list.add(vert)
+            elif str(line[i]) == "h":
+                hori = horizontal()
+
+                hori.rect.x = 36*i
+                hori.rect.y = 36*j
+
+                hori_list.add(hori)
+            #endif
+
+        #endfor
+
     #endfor
 #endprocedure
     
@@ -253,11 +288,15 @@ block_list = pygame.sprite.Group()
 
 node_list = pygame.sprite.Group()
 
+vert_list = pygame.sprite.Group()
+
+hori_list = pygame.sprite.Group()
+
 player_list = pygame.sprite.Group()
 
 player = Player()
-player.rect.x = 36
-player.rect.y = 0
+player.rect.x = 252
+player.rect.y = 432
 all_sprites_list.add(player)
 player_list.add(player)
 
@@ -273,20 +312,16 @@ while game_over == False:
             game_over = True
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_a:
-                nextMove.pop(0)
-                nextMove.append(1)
+                nextMove[0] = 1
                 left = True
             elif event.key == pygame.K_d:
-                nextMove.pop(0)
-                nextMove.append(2)
+                nextMove[0] = 2
                 right = True
             elif event.key == pygame.K_w:
-                nextMove.pop(0)
-                nextMove.append(3)
+                nextMove[0] = 3
                 up = True
             elif event.key == pygame.K_s:
-                nextMove.pop(0)
-                nextMove.append(4)
+                nextMove[0] = 4
                 down = True
                 #endif
             #endif
@@ -300,7 +335,7 @@ while game_over == False:
     #Update PacMan
     newtime = pygame.time.get_ticks()
 
-    if newtime - oldtime > 100 and PlayerMoving == True: 
+    if newtime - oldtime > 50 and PlayerMoving == True: 
 
         player.animation(PlayerMove)
         oldtime=newtime
@@ -334,6 +369,14 @@ while game_over == False:
                 PlayerMoving = False
                 player.rect.x += 3
                 PlayerMove = 0
+
+            nextMove[0] = 0
+
+            PlayerMove = 0
+
+            PlayerMoving = False
+
+            player.animation(0)
                 
         #endfor
 
@@ -345,11 +388,49 @@ while game_over == False:
 
             if node.rect.x == player.rect.x and node.rect.y == player.rect.y:
 
+                if nextMove != []:
+                    
+                    PlayerMove = nextMove[0]
+
+                #endif
+
+            #endif
+                
+        #endfor
+
+    #endfor
+
+    for vert in vert_list:
+        
+        vertMove_list = pygame.sprite.spritecollide(vert, player_list, False)
+
+        for player in vertMove_list:
+
+            if nextMove[0] == 3 or nextMove[0] == 4:
+
                 PlayerMove = nextMove[0]
 
             #endif
                 
         #endfor
+
+    #endfor
+
+    for hori in hori_list:
+        
+        horiMove_list = pygame.sprite.spritecollide(hori, player_list, False)
+
+        for player in horiMove_list:
+
+            if nextMove[0] == 1 or nextMove[0] == 2:
+
+                PlayerMove = nextMove[0]
+
+            #endif
+                
+        #endfor
+
+    #endfor
             
     all_sprites_list.draw(screen)
     # -- flip display to reveal new position of objects

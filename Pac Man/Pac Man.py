@@ -99,88 +99,62 @@ class Player(pygame.sprite.Sprite):
         
     #endfunction
  
-    def update(self,n):
-        global PlayerMoving
+    def update(self,n,PlayerMoving):
         global left
         global right
         global up
         global down
-
-        if n == 1:
-
-            self.rect.x -= 3
-            PlayerMoving = True
-            if self.rect.x < -36:
-
-                self.rect.x = 540
-
-        elif n == 2:
-            
-            self.rect.x += 3
-            PlayerMoving = True
-            if self.rect.x > 540:
-
-                self.rect.x = -36
-
-            #endif
-                
-        elif n == 3:
-
-            self.rect.y -= 3
-            PlayerMoving = True
-            if self.rect.y < -36:
-
-                self.rect.y = 540
-
-            #endif
-
-        elif n == 4:
-
-            self.rect.y += 3
-            PlayerMoving = True
-            if self.rect.y > 540:
-
-                self.rect.y = -36
-
-            #endif
-
-        #endif
-
-    #endprocedure
-
-    def animation(self,num):
-        global left
-        global right
-        global up
-        global down
-        global PlayerMoving
-        global PlayerMove
 
         if PlayerMoving == True:
+            
+            if n == 1:
 
-            if num == 0:
+                self.rect.x -= 1
+                if self.rect.x < -36:
 
-                if PlayerMove == 1:
+                    self.rect.x = 540
+
+            elif n == 2:
+                
+                self.rect.x += 1
+                if self.rect.x > 540:
+
+                    self.rect.x = -36
+
+                #endif
                     
-                    self.image = notMovingLeft
+            elif n == 3:
 
-                elif PlayerMove == 2:
+                self.rect.y -= 1
+                if self.rect.y < -36:
 
-                    self.image = notMovingRight
-
-                elif PlayerMove == 3:
-
-                    self.image = notMovingUp
-
-                elif PlayerMove == 4:
-
-                    self.image = notMovingDown
+                    self.rect.y = 540
 
                 #endif
 
-                    
+            elif n == 4:
+
+                self.rect.y += 1
+                if self.rect.y > 540:
+
+                    self.rect.y = -36
+
+                #endif
+
+            #endif
+        #endif
+    #endprocedure
+
+    def animation(self,num,PlayerMoving):
+        global left
+        global right
+        global up
+        global down
+        global PlayerMove
+
+        if PlayerMoving == True:         
             
-            elif num == 1:
+            if num == 1:
                 if self.num == 0:
                     self.image = moveUp[self.num]
                     self.num += 1
@@ -238,7 +212,29 @@ class Player(pygame.sprite.Sprite):
                 #endif
             #endif
 
-        #endif
+        else:
+
+            if PlayerMove == 1:
+                
+                self.image = notMovingLeft
+
+            elif PlayerMove == 2:
+
+                self.image = notMovingRight
+
+            elif PlayerMove == 3:
+
+                self.image = notMovingUp
+
+            elif PlayerMove == 4:
+
+                self.image = notMovingDown
+
+            elif PlayerMove == 0:
+
+                self.image = notMovingRight
+
+            #endif
                
     #endprocedure   
                 
@@ -261,14 +257,14 @@ class Shadow(pygame.sprite.Sprite):
 
         if n == 1:
 
-            self.rect.x -= 3
+            self.rect.x -= 1
             if self.rect.x < -36:
 
                 self.rect.x = 540
 
         elif n == 2:
             
-            self.rect.x += 3
+            self.rect.x += 1
             if self.rect.x > 540:
 
                 self.rect.x = -36
@@ -277,7 +273,7 @@ class Shadow(pygame.sprite.Sprite):
                 
         elif n == 3:
 
-            self.rect.y -= 3
+            self.rect.y -= 1
             if self.rect.y < -36:
 
                 self.rect.y = 540
@@ -286,7 +282,7 @@ class Shadow(pygame.sprite.Sprite):
 
         elif n == 4:
 
-            self.rect.y += 3
+            self.rect.y += 1
             if self.rect.y > 540:
 
                 self.rect.y = -36
@@ -355,8 +351,6 @@ class Node(pygame.sprite.Sprite):
         super().__init__()
         
         self.image = pygame.Surface([width,height])
-        self.image = pygame.image.load("Brick.png").convert()
-        self.image = pygame.transform.scale(self.image, (width, height))
         self.rect = self.image.get_rect()
         
     #endprocedure
@@ -368,8 +362,6 @@ class DownRightNode(pygame.sprite.Sprite):
         super().__init__()
         
         self.image = pygame.Surface([width,height])
-        self.image = pygame.image.load("Brick.png").convert()
-        self.image = pygame.transform.scale(self.image, (width, height))
         self.rect = self.image.get_rect()
         
     #endprocedure
@@ -381,8 +373,6 @@ class DownVertNode(pygame.sprite.Sprite):
         super().__init__()
         
         self.image = pygame.Surface([width,height])
-        self.image = pygame.image.load("Brick.png").convert()
-        self.image = pygame.transform.scale(self.image, (width, height))
         self.rect = self.image.get_rect()
         
     #endprocedure
@@ -394,8 +384,6 @@ class UpVertNode(pygame.sprite.Sprite):
         super().__init__()
         
         self.image = pygame.Surface([width,height])
-        self.image = pygame.image.load("Brick.png").convert()
-        self.image = pygame.transform.scale(self.image, (width, height))
         self.rect = self.image.get_rect()
         
     #endprocedure
@@ -407,8 +395,6 @@ class DownLeftNode(pygame.sprite.Sprite):
         super().__init__()
         
         self.image = pygame.Surface([width,height])
-        self.image = pygame.image.load("Brick.png").convert()
-        self.image = pygame.transform.scale(self.image, (width, height))
         self.rect = self.image.get_rect()
         
     #endprocedure
@@ -420,8 +406,6 @@ class LeftVertNode(pygame.sprite.Sprite):
         super().__init__()
         
         self.image = pygame.Surface([width,height])
-        self.image = pygame.image.load("Brick.png").convert()
-        self.image = pygame.transform.scale(self.image, (width, height))
         self.rect = self.image.get_rect()
         
     #endprocedure
@@ -433,8 +417,6 @@ class RightVertNode(pygame.sprite.Sprite):
         super().__init__()
         
         self.image = pygame.Surface([width,height])
-        self.image = pygame.image.load("Brick.png").convert()
-        self.image = pygame.transform.scale(self.image, (width, height))
         self.rect = self.image.get_rect()
         
     #endprocedure
@@ -446,8 +428,6 @@ class UpRightNode(pygame.sprite.Sprite):
         super().__init__()
         
         self.image = pygame.Surface([width,height])
-        self.image = pygame.image.load("Brick.png").convert()
-        self.image = pygame.transform.scale(self.image, (width, height))
         self.rect = self.image.get_rect()
         
     #endprocedure
@@ -459,8 +439,6 @@ class UpLeftNode(pygame.sprite.Sprite):
         super().__init__()
         
         self.image = pygame.Surface([width,height])
-        self.image = pygame.image.load("Brick.png").convert()
-        self.image = pygame.transform.scale(self.image, (width, height))
         self.rect = self.image.get_rect()
         
     #endprocedure
@@ -472,8 +450,6 @@ class DownHoriNode(pygame.sprite.Sprite):
         super().__init__()
         
         self.image = pygame.Surface([width,height])
-        self.image = pygame.image.load("Brick.png").convert()
-        self.image = pygame.transform.scale(self.image, (width, height))
         self.rect = self.image.get_rect()
         
     #endprocedure
@@ -485,8 +461,6 @@ class UpHoriNode(pygame.sprite.Sprite):
         super().__init__()
         
         self.image = pygame.Surface([width,height])
-        self.image = pygame.image.load("Brick.png").convert()
-        self.image = pygame.transform.scale(self.image, (width, height))
         self.rect = self.image.get_rect()
         
     #endprocedure
@@ -498,8 +472,6 @@ class vertical(pygame.sprite.Sprite):
         super().__init__()
         
         self.image = pygame.Surface([width,height])
-        self.image = pygame.image.load("Brick.png").convert()
-        self.image = pygame.transform.scale(self.image, (width, height))
         self.rect = self.image.get_rect()
         
     #endprocedure
@@ -511,8 +483,6 @@ class horizontal(pygame.sprite.Sprite):
         super().__init__()
         
         self.image = pygame.Surface([width,height])
-        self.image = pygame.image.load("Brick.png").convert()
-        self.image = pygame.transform.scale(self.image, (width, height))
         self.rect = self.image.get_rect()
         
     #endprocedure
@@ -530,7 +500,7 @@ def createMaze(length, node_list, block_list, all_sprites_list, downRight_list, 
         line = lines[i-2]
         
         #x position
-        if line[1] == str(0):
+        if line[1] == "0":
             xpos = int(str(line[2])+str(line[3]))
         elif line[3] == str(0) and line[2] == str(0) and line[1] == str(0) :
             xpos = 0
@@ -601,7 +571,7 @@ def createMaze(length, node_list, block_list, all_sprites_list, downRight_list, 
 
         elif line[0] == str(6):
 
-            node = DownVertNode(width,height)
+            node = DownHoriNode(width,height)
             node.rect.x = xpos
             node.rect.y = ypos
             downHori_list.add(node)
@@ -609,7 +579,7 @@ def createMaze(length, node_list, block_list, all_sprites_list, downRight_list, 
 
         elif line[0] == str(7):
 
-            node = UpVertNode(width,height)
+            node = UpHoriNode(width,height)
             node.rect.x = xpos
             node.rect.y = ypos
             upHori_list.add(node)
@@ -729,8 +699,8 @@ def game():
     createMaze(length, node_list, block_list, all_sprites_list, downRight_list, downLeft_list, hori_list, vert_list, downHori_list, upHori_list, upRight_list, upLeft_list, leftVert_list, rightVert_list)
 
     player = Player()
-    player.rect.x = 253
-    player.rect.y = 425
+    player.rect.x = 238
+    player.rect.y = 424
     all_sprites_list.add(player)
     player_list.add(player)
 
@@ -741,9 +711,8 @@ def game():
     ghost_list.add(shadow)
 
     PlayerMove = 0
+    ShadowMove = 0
     PlayerMoving = False
-
-    ShadowMove = 1
 
     score = 0
     AddNum = 0
@@ -751,8 +720,6 @@ def game():
     while game_over == False:
     # -- User input and controls
         for event in pygame.event.get():
-            pos = pygame.mouse.get_pos()
-            print(pos)
             if event.type == pygame.QUIT:
                 game_over = True
             elif event.type == pygame.KEYDOWN:
@@ -778,7 +745,7 @@ def game():
         ScoreText = Text(20,RED,255,20,'Score: '+str(score))
         RoundText = Text(20,RED,52,20,'Round: '+str(AddNum))
 
-        player.update(PlayerMove)
+        player.update(PlayerMove,PlayerMoving)
 
         #Shadow Chasing Algorithm
 
@@ -791,7 +758,7 @@ def game():
 
         if newtime - oldtime > 50 and PlayerMoving == True: 
 
-            player.animation(PlayerMove)
+            player.animation(PlayerMove,PlayerMoving)
             oldtime=newtime
                 
         #endif
@@ -803,70 +770,126 @@ def game():
 
         #endif
 
-        #Colliding with box
-        for block in block_list:
+        for node in downRight_list:
             
-            collision_list = pygame.sprite.spritecollide(block, player_list, False)
+            DRmove_list = pygame.sprite.spritecollide(node, player_list, False)
 
-            for player in collision_list:
+            for player in DRmove_list:
 
-                if PlayerMove == 4:
-                    player.update(0)
-                    player.animation(0)
-                    PlayerMoving = False
-                    player.rect.y -= 3
-                    PlayerMove = 0
-                elif PlayerMove == 3:
-                    player.update(0)
-                    PlayerMoving = False
-                    player.rect.y += 3
-                    PlayerMove = 0
-                elif PlayerMove == 2:
-                    player.update(0)
-                    PlayerMoving = False
-                    player.rect.x -= 3
-                    PlayerMove = 0
-                elif PlayerMove == 1:
-                    player.update(0)
-                    PlayerMoving = False
-                    player.rect.x += 3
-                    PlayerMove = 0
+                if node.rect.x == player.rect.x and node.rect.y == player.rect.y:
 
-                nextMove[0] = 0
+                    if nextMove != [] and PlayerMove != 1 and PlayerMove != 3:
 
-                PlayerMove = 0
+                        if nextMove[0] == 4 or nextMove[0] == 2:
 
-                PlayerMoving = False
-                    
-            #endfor
+                            PlayerMove = nextMove[0]
+                            PlayerMoving = True
 
-            shadowCollision_list = pygame.sprite.spritecollide(block, ghost_list, False)
+                        #endif
 
-            for shadow in shadowCollision_list:
+                    elif PlayerMove == 1 or PlayerMove == 3:
 
-                if ShadowMove == 4:
-                    
-                    shadow.rect.y -= 3
-                    ShadowMove = 1
+                        PlayerMoving = False
+                        PlayerMove = 0
+                            
+                    #endif
 
-                elif ShadowMove == 3:
-
-                    shadow.rect.y += 3
-                    ShadowMove = 2
-
-                elif ShadowMove == 2:
-
-                    shadow.rect.x -= 3
-                    ShadowMove = 4
-
-                elif ShadowMove == 1:
-
-                    shadow.rect.x += 3
-                    ShadowMove = 3
-                    
                 #endif
                     
             #endfor
+
+        #endfor
+
+        for node in upRight_list:
+            
+            URmove_list = pygame.sprite.spritecollide(node, player_list, False)
+
+            for player in URmove_list:
+
+                if node.rect.x == player.rect.x and node.rect.y == player.rect.y:
+
+                    if nextMove != [] and PlayerMove != 1 and PlayerMove != 4:
+
+                        if nextMove[0] == 3 or nextMove[0] == 2:
+
+                            PlayerMove = nextMove[0]
+                            PlayerMoving = True
+
+                        #endif
+
+                    elif PlayerMove == 1 or PlayerMove == 4:
+
+                        PlayerMoving = False
+                        PlayerMove = 0
+                        print("Stopped Moving")
+                            
+                    #endif
+
+                #endif
+                    
+            #endfor
+
+        #endfor
+
+        for node in downLeft_list:
+            
+            DLmove_list = pygame.sprite.spritecollide(node, player_list, False)
+
+            for player in DLmove_list:
+
+                if node.rect.x == player.rect.x and node.rect.y == player.rect.y:
+
+                    if nextMove != [] and PlayerMove != 2 and PlayerMove != 3:
+
+                        if nextMove[0] == 4 or nextMove[0] == 1:
+
+                            PlayerMove = nextMove[0]
+                            PlayerMoving = True
+
+                        #endif
+
+                    elif PlayerMove == 2 or PlayerMove == 3:
+
+                        PlayerMoving = False
+                        PlayerMove = 0
+                            
+                    #endif
+
+                #endif
+                    
+            #endfor
+
+        #endfor
+
+        for node in upLeft_list:
+            
+            ULmove_list = pygame.sprite.spritecollide(node, player_list, False)
+
+            for player in ULmove_list:
+
+                if node.rect.x == player.rect.x and node.rect.y == player.rect.y:
+
+                    if nextMove != [] and PlayerMove != 2 and PlayerMove != 4:
+
+                        if nextMove[0] == 3 or nextMove[0] == 1:
+
+                            PlayerMove = nextMove[0]
+                            PlayerMoving = True
+
+                        #endif
+
+                    elif PlayerMove == 2 or PlayerMove == 4:
+
+                        PlayerMoving = False
+                        PlayerMove = 0
+                            
+                    #endif
+
+                #endif
+                    
+            #endfor
+
+        #endfor
 
         for node in node_list:
             
@@ -888,15 +911,16 @@ def game():
 
         #endfor
 
-        for vert in vert_list:
+        for node in vert_list:
             
-            vertMove_list = pygame.sprite.spritecollide(vert, player_list, False)
+            vertMove_list = pygame.sprite.spritecollide(node, player_list, False)
 
             for player in vertMove_list:
 
                 if nextMove[0] == 3 or nextMove[0] == 4:
 
                     PlayerMove = nextMove[0]
+                    PlayerMoving = True
 
                 #endif
                     
@@ -904,15 +928,136 @@ def game():
 
         #endfor
 
-        for hori in hori_list:
+        for node in hori_list:
             
-            horiMove_list = pygame.sprite.spritecollide(hori, player_list, False)
+            horiMove_list = pygame.sprite.spritecollide(node, player_list, False)
 
             for player in horiMove_list:
 
                 if nextMove[0] == 1 or nextMove[0] == 2:
 
                     PlayerMove = nextMove[0]
+                    PlayerMoving = True
+
+                #endif
+                    
+            #endfor
+
+        #endfor
+
+        for node in downHori_list:
+            
+            DHMove_list = pygame.sprite.spritecollide(node, player_list, False)
+
+            for player in DHMove_list:
+
+                if node.rect.x == player.rect.x and node.rect.y == player.rect.y:
+
+                    if nextMove != [] and PlayerMove != 3:
+
+                        if nextMove[0] == 4 or nextMove[0] == 1 or nextMove[0] == 2:
+
+                            PlayerMove = nextMove[0]
+                            PlayerMoving = True
+
+                        #endif
+
+                    elif PlayerMove == 3:
+
+                        PlayerMoving = False
+                        PlayerMove = 0
+                            
+                    #endif
+
+                #endif
+                    
+            #endfor
+
+        #endfor
+
+        for node in upHori_list:
+            
+            UHMove_list = pygame.sprite.spritecollide(node, player_list, False)
+
+            for player in UHMove_list:
+
+                if node.rect.x == player.rect.x and node.rect.y == player.rect.y:
+
+                    if nextMove != [] and PlayerMove != 4:
+
+                        if nextMove[0] == 3 or nextMove[0] == 1 or nextMove[0] == 2:
+
+                            PlayerMove = nextMove[0]
+                            PlayerMoving = True
+
+                        #endif
+
+                    elif PlayerMove == 4:
+
+                        PlayerMoving = False
+                        PlayerMove = 0
+                            
+                    #endif
+
+                #endif
+                    
+            #endfor
+
+        #endfor
+
+        for node in leftVert_list:
+            
+            LVMove_list = pygame.sprite.spritecollide(node, player_list, False)
+
+            for player in LVMove_list:
+
+                if node.rect.x == player.rect.x and node.rect.y == player.rect.y:
+
+                    if nextMove != [] and PlayerMove != 2:
+
+                        if nextMove[0] == 4 or nextMove[0] == 1 or nextMove[0] == 3:
+
+                            PlayerMove = nextMove[0]
+                            PlayerMoving = True
+
+                        #endif
+
+                    elif PlayerMove == 2:
+
+                        PlayerMoving = False
+                        PlayerMove = 0
+                            
+                    #endif
+
+                #endif
+                    
+            #endfor
+
+        #endfor
+
+        for node in rightVert_list:
+            
+            RVMove_list = pygame.sprite.spritecollide(node, player_list, False)
+
+            for player in RVMove_list:
+
+                if node.rect.x == player.rect.x and node.rect.y == player.rect.y:
+
+                    if nextMove != [] and PlayerMove != 1:
+
+                        if nextMove[0] == 4 or nextMove[0] == 2 or nextMove[0] == 3:
+
+                            PlayerMove = nextMove[0]
+                            PlayerMoving = True
+
+                        #endif
+
+                    else:
+
+                        PlayerMoving = False
+                        PlayerMove = 0
+                            
+                    #endif
 
                 #endif
                     
@@ -925,7 +1070,7 @@ def game():
         pygame.display.flip()
 
         # - The clock ticks over
-        clock.tick(60)
+        clock.tick(180)
 #endprocedure
 
 # -- Initialise PyGame

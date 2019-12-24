@@ -497,6 +497,19 @@ class Maze(pygame.sprite.Sprite):
 
 #endclass
 
+class Live(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        
+        self.image = pygame.Surface([26,26])
+        self.image = pygame.image.load("PacManRight2.png").convert()
+        self.image = pygame.transform.scale(self.image, (26, 26))
+        self.rect = self.image.get_rect()
+        
+    #endprocedure
+
+#endclass
+
 class Node(pygame.sprite.Sprite):
     def __init__(self,width,height):
         super().__init__()
@@ -835,8 +848,6 @@ def game(score,live):
     savedX = 0
     savedY = 0
 
-    live = 3
-
     release = False
     bounceTimes = 0
 
@@ -845,6 +856,7 @@ def game(score,live):
     Soldtime = 0
     Poldtime = 0
     oldPRtime = 0
+    oldScoreTime = 0
 
     all_sprites_list = pygame.sprite.Group()
 
@@ -909,8 +921,25 @@ def game(score,live):
     lastShadowMove = 0
     PokeyMove = 1
     PlayerMoving = False
+
+    live1 = Live()
+    live1.rect.x = 400
+    live1.rect.y = 572
+    all_sprites_list.add(live1)
+
+    live2 = Live()
+    live2.rect.x = 433
+    live2.rect.y = 572
+    all_sprites_list.add(live2)
+
+    live3 = Live()
+    live3.rect.x = 466
+    live3.rect.y = 572
+    all_sprites_list.add(live3)
     
     AddNum = 0
+
+    deadTime = 0
 
     start = 'sh'
     getNextNode = True
@@ -945,6 +974,14 @@ def game(score,live):
         ScoreText = Text(20,RED,255,20,'Score: '+str(score))
         RoundText = Text(20,RED,52,20,'Round: '+str(AddNum))
 
+        newScoreTime = pygame.time.get_ticks()
+        if newScoreTime - oldScoreTime > 1000:
+            score += 10
+            oldScoreTime = newScoreTime
+        #endif
+
+            
+
         if pause == True:
             newpTime = pygame.time.get_ticks()
             if newpTime - oldpTime > 1000:
@@ -952,7 +989,8 @@ def game(score,live):
                     game_over = True
                     finish(score)
                 #endif
-                game(score,live)
+                deadTime += 1
+                game(score,live-1)
             #endif
         #endif
         elif pause == False:
@@ -974,7 +1012,7 @@ def game(score,live):
                         bounceTimes += 1
                     #endif
                 elif bounceTimes == 11:
-                    pokey.rect.x = 276
+                    pokey.rect.x = 238
                     pokey.rect.y = 215
                     PokeyMove = 3
                     if pokey.rect.y == 215:
@@ -987,7 +1025,17 @@ def game(score,live):
             #endif
 
             pokey.update(PokeyMove)
-            
+
+            if live == 2:
+                all_sprites_list.remove(live3)
+            elif live == 1:
+                all_sprites_list.remove(live2)
+                all_sprites_list.remove(live3)
+            elif live == 0:
+                all_sprites_list.remove(live1)
+                all_sprites_list.remove(live2)
+                all_sprites_list.remove(live3)
+            #endif
 
             #Shadow Chasing Algorithm
 
@@ -1096,16 +1144,6 @@ def game(score,live):
 
         #Reduce player hp
         for shadow in playerGetHit_list:
-                
-            live -= 1
-            
-
-##            if live == 2:
-##                all_sprites_list.remove(live3)
-##            elif live == 1:
-##                all_sprites_list.remove(live2)
-##            if live == 0:
-##                all_sprites_list.remove(live1)
 
             #player explosion
             pokey.rect.x = 3000
@@ -1116,8 +1154,6 @@ def game(score,live):
         #endfor
 
         for pokey in playerGetHit_list:
-
-            live -= 1
 
             pokey.rect.x = 3000
             shadow.rect.x = 3000
@@ -1983,7 +2019,7 @@ def finish(Score):
                 pygame.quit()
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if pos>(275,385) and pos<(525,465):
+                if pos>(130,385) and pos<(380,465):
                     Continue = True
                     menu()
                 #endif
@@ -1992,12 +2028,11 @@ def finish(Score):
         
         screen.fill (BLACK)
 
-        MainText = Text(70,RED,400,200,'Game Over')
-        MainText2 = Text(70,RED,400,280,'Earth Got Destroyed')
-        ScoreText = Text(40,RED,400,340,'Your Score: '+str(Score))
+        MainText = Text(70,YELLOW,255,200,'Game Over')
+        ScoreText = Text(40,YELLOW,255,340,'Your Score: '+str(Score))
 
-        pygame.draw.rect(screen,PURPLE, (275, 385, 250, 80))
-        buttonText("CONTINUE", CYAN, 349, 400, 100,  50, size="small")
+        pygame.draw.rect(screen,YELLOW, (130, 385, 250, 80))
+        buttonText("CONTINUE", BLACK, 204, 400, 100,  50, size="small")
 
         pygame.display.flip()
 
@@ -2013,7 +2048,7 @@ pygame.init()
 clock = pygame.time.Clock()
 
 # -- Blank Screen
-size = (510,570)
+size = (510,600)
 screen = pygame.display.set_mode(size)
 
 # -- Title of new window/screen

@@ -43,6 +43,8 @@ while not game_over:
     else:
         circle_x_pos = -20
         circle_y_pos = 200
+    ### SRC - END IF
+        
 
     # -- Screen background is BLACK
     screen.fill (BLACK)

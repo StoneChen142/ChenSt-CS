@@ -7,6 +7,14 @@ nodes = f.readlines()
 nodesNum = len(nodes)
 f.close()
 
+#Images
+
+playerStanding = [pygame.transform.scale(pygame.image.load('NotMovingPlayerLeft.png'), (83, 112)), pygame.transform.scale(pygame.image.load('NotMovingPlayerRight.png'), (83, 112))]
+playerSlashing = [pygame.transform.scale(pygame.image.load('SlashPlayerLeft.png'), (83, 112)), pygame.transform.scale(pygame.image.load('SlashPlayerRight.png'), (83, 112))]
+slashSword1 = [pygame.transform.scale(pygame.image.load('SlashSword1Left.png'), (64, 20)), pygame.transform.scale(pygame.image.load('SlashSword1Right.png'), (64, 20))]
+warriorStanding = [pygame.transform.scale(pygame.image.load('NotMovingEnemy1Left.png'), (83, 112)), pygame.transform.scale(pygame.image.load('NotMovingEnemy1Right.png'), (83, 112))]
+warriorSlashing = [pygame.transform.scale(pygame.image.load('SlashEnemy1Left.png'), (83, 112)), pygame.transform.scale(pygame.image.load('SlashEnemy1Right.png'), (83, 112))]
+wSlashSword = [pygame.transform.scale(pygame.image.load('EnemySword1Left.png'), (83, 76)), pygame.transform.scale(pygame.image.load('EnemySword1Right.png'), (83, 76))]
 # -- Colours
 
 BLACK = (0,0,0)
@@ -56,10 +64,40 @@ class Player(pygame.sprite.Sprite):
         
         super().__init__()
  
-        self.image = pygame.Surface([45, 80])
-        self.image.fill(NICE)
+        self.image = pygame.Surface([83, 112])
+        self.image = playerStanding[0]
  
         self.rect = self.image.get_rect()
+
+    #endprocedure
+
+    def anime(self,face,state):
+
+        if state == 0:
+            
+            if face == "L":
+
+                self.image = playerStanding[0]
+
+            else:
+
+                self.image = playerStanding[1]
+
+            #endif
+
+        elif state == 1:
+            
+            if face == "L":
+
+                self.image = playerSlashing[0]
+
+            else:
+
+                self.image = playerSlashing[1]
+
+            #endif
+
+        #endif
 
     #endprocedure
  
@@ -79,29 +117,88 @@ class Player(pygame.sprite.Sprite):
 
 #endclass
 
-#Enemy Class
-class Enemy(pygame.sprite.Sprite):
+class Sword(pygame.sprite.Sprite):
 
-    def __init__(self, colour):
+    def __init__(self):
         
         super().__init__()
  
-        self.image = pygame.Surface([45, 80])
-        self.image.fill(colour)
+        self.image = pygame.Surface([64, 20])
+        self.image = pygame.transform.scale(pygame.image.load('SlashSword1Left.png'), (64, 20))
  
         self.rect = self.image.get_rect()
 
     #endprocedure
 
-    def move(self,xpos):
+    def slash(self,face):
 
-        if self.rect.x < xpos:
+        if face == "L":
 
-            self.rect.x += 3
+            self.image = slashSword1[0]
 
-        elif self.rect.x > xpos:
+        else:
+
+            self.image = slashSword1[1]
+
+        #endif
+
+    #endfunction
+
+#endclass
+
+#Enemy Class
+class Warrior(pygame.sprite.Sprite):
+
+    def __init__(self, colour):
+        
+        super().__init__()
+ 
+        self.image = pygame.Surface([83, 112])
+        self.image = warriorStanding[0]
+ 
+        self.rect = self.image.get_rect()
+
+    #endprocedure
+
+    def anime(self,face,state):
+
+        if state == 0:
+            
+            if face == "L":
+
+                self.image = warriorStanding[0]
+
+            else:
+
+                self.image = warriorStanding[1]
+
+            #endif
+
+        elif state == 1:
+            
+            if face == "L":
+
+                self.image = warriorSlashing[0]
+
+            else:
+
+                self.image = warriorSlashing[1]
+
+            #endif
+
+        #endif
+
+    #endprocedure
+ 
+    def update(self,move):
+        
+        if move == 1:
 
             self.rect.x -= 3
+
+        elif move == 2:
+
+            self.rect.x += 3
 
         #endif
 
@@ -109,7 +206,7 @@ class Enemy(pygame.sprite.Sprite):
 
 #endclass
 
-class BowMaster(Enemy):
+class BowMaster(pygame.sprite.Sprite):
 
     def __init__(self, colour):
 
@@ -117,20 +214,6 @@ class BowMaster(Enemy):
 
         self.speed = 0
         
-        #finish
-
-    #endprocedure
-
-#endclass
-
-class Warrior(Enemy)
-
-    def __init__(self, colour):
-
-        super().__init__(colour)
-
-        self.speed = 4
-
         #finish
 
     #endprocedure
@@ -187,6 +270,18 @@ def createBlock(nodesNum, block_list, all_sprites_list):
         #endif
 #endprocedure
 
+def loadify(img):
+    
+    return pygame.image.load(img).convert_alpha()
+
+#endfunction
+
+def backGroundPos(x,y,img):
+    
+    screen.blit(img, (x,y))
+
+#endfunction
+
 #game
 def game():
 
@@ -204,6 +299,18 @@ def game():
     changeTime = 0
     centered = False
     blocked = False
+    attack = False
+    attackStep = 1
+
+    #Player Attack More Attributes
+    startAttack = 0
+    endAttack = 0
+    startAttTimeBet = 0
+    endAttTimeBet = 0
+
+    facing = "L"
+
+    backGroundMove = 0
 
     player_list = pygame.sprite.Group()
 
@@ -219,7 +326,8 @@ def game():
 
     warrior_list = pygame.sprite.Group()
 
-    #Player
+    playerSword_list = pygame.sprite.Group()
+    
     ground = Block(GREEN, 3600, 100)
     ground.rect.x = 0
     ground.rect.y = 700
@@ -227,9 +335,11 @@ def game():
 
     player = Player()
     player.rect.x = 20
-    player.rect.y = 620
+    player.rect.y = 588
     player_list.add(player)
     all_sprites_list.add(player)
+
+    BackGround1 = pygame.transform.scale(loadify('BackGround1.png'), (1800, 700))
 
     enemy = Warrior(DBLUE)
     enemy.rect.y = 620
@@ -237,13 +347,13 @@ def game():
     all_sprites_list.add(enemy)
     enemy_list.add(enemy)
     warrior_list.add(enemy)
-
-    enemy = bowMaster(PINK)
-    enemy.rect.y = 620
-    enemy.rect.x = 1000
-    all_sprites_list.add(enemy)
-    enemy_list.add(enemy)
-    bow_list.add(enemy)
+##
+##    enemy = BowMaster(PINK)
+##    enemy.rect.y = 620
+##    enemy.rect.x = 1000
+##    all_sprites_list.add(enemy)
+##    enemy_list.add(enemy)
+##    bow_list.add(enemy)
 
     startArea = Block(GREEN,570, 700)
     startArea.rect.x = 0
@@ -251,6 +361,12 @@ def game():
     startEnd_list.add(startArea)
 
     createBlock(nodesNum, block_list, all_sprites_list)
+
+    playerSword = Sword()
+    playerSword.rect.x = -1000
+    playerSword.rect.y = -1000
+    all_sprites_list.add(playerSword)
+    playerSword_list.add(playerSword)
         
     while not game_over:
         
@@ -259,7 +375,8 @@ def game():
             if event.type == pygame.QUIT:
                 game_over = True
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
+                #Jump
+                if event.key == pygame.K_w:
                     if jumped == False:
                         changeTime = 0
                         jumped = True
@@ -270,10 +387,23 @@ def game():
                         changeTime = 0
                         vertSpeed = -5
                     #endif
+                #Left
                 if event.key == pygame.K_a:
+                    facing = "L"
                     horiSpeed = -4
+                #Right
                 if event.key == pygame.K_d:
+                    facing = "R"
                     horiSpeed = 4
+                #Attack
+                if event.key == pygame.K_SPACE and attack == False:
+                    endAttTimeBet = pygame.time.get_ticks()
+                    if endAttTimeBet - startAttTimeBet > 500:
+                        attackStep = 1
+                    #endif
+                    startAttTimeBet = 0
+                    endAttTimeBet = 0
+                    attack = True
                 #endif
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_a and horiSpeed < 0:
@@ -283,7 +413,7 @@ def game():
             #endif
         #endfor
 
-        screen.fill(BLACK)
+        screen.fill(WHITE)
 
         #Player Control   
         keys = pygame.key.get_pressed()
@@ -296,8 +426,106 @@ def game():
             vertSpeed += 0.1
         #endif
 
-        if player.rect.y >= 620 and vertSpeed >= 0:
-            player.rect.y = 620
+        if attack == False:
+
+            player.anime(facing,0)
+
+        #endif
+
+        #Player Attacks
+        if attack == True and attackStep == 1:
+
+            if startAttack == 0:
+                startAttack = pygame.time.get_ticks()
+            #endif
+            player.anime(facing,1)
+            if facing == "L":
+                playerSword.slash(facing)
+                playerSword.rect.x = player.rect.x - 45
+                playerSword.rect.y = player.rect.y + 51
+            else:
+                playerSword.slash(facing)
+                playerSword.rect.x = player.rect.x + 68
+                playerSword.rect.y = player.rect.y + 51
+            #endif
+
+            endAttack = pygame.time.get_ticks()
+
+            if endAttack - startAttack >= 300:
+                print("Slash")
+                player.anime(facing,0)
+                playerSword.rect.x = -1000
+                playerSword.rect.y = -1000
+                startAttack = 0
+                endAttack = 0
+                attackStep = 2
+                attack = False
+                startAttTimeBet = pygame.time.get_ticks()
+            #endif
+
+        elif attack == True and attackStep == 2:
+
+            if startAttack == 0:
+                startAttack = pygame.time.get_ticks()
+            #endif
+            player.anime(facing,1)
+            if facing == "L":
+                playerSword.slash(facing)
+                playerSword.rect.x = player.rect.x - 45
+                playerSword.rect.y = player.rect.y + 51
+            else:
+                playerSword.slash(facing)
+                playerSword.rect.x = player.rect.x + 68
+                playerSword.rect.y = player.rect.y + 51
+            #endif
+
+            endAttack = pygame.time.get_ticks()
+
+            if endAttack - startAttack >= 300:
+                print("Slash!")
+                player.anime(facing,0)
+                playerSword.rect.x = -1000
+                playerSword.rect.y = -1000
+                startAttack = 0
+                endAttack = 0
+                attackStep = 3
+                attack = False
+                startAttTimeBet = pygame.time.get_ticks()
+            #endif
+
+        elif attack == True and attackStep == 3:
+
+            if startAttack == 0:
+                startAttack = pygame.time.get_ticks()
+            #endif
+            player.anime(facing,1)
+            if facing == "L":
+                playerSword.slash(facing)
+                playerSword.rect.x = player.rect.x - 45
+                playerSword.rect.y = player.rect.y + 51
+            else:
+                playerSword.slash(facing)
+                playerSword.rect.x = player.rect.x + 68
+                playerSword.rect.y = player.rect.y + 51
+            #endif
+
+            endAttack = pygame.time.get_ticks()
+
+            if endAttack - startAttack >= 300:
+                print("Slash!!")
+                player.anime(facing,0)
+                playerSword.rect.x = -1000
+                playerSword.rect.y = -1000
+                startAttack = 0
+                endAttack = 0
+                attackStep = 1
+                attack = False
+            #endif
+
+        #endif
+
+        if player.rect.y >= 588 and vertSpeed >= 0:
+            player.rect.y = 588
             jumped = False
             vertSpeed = 0
         #endif
@@ -313,17 +541,27 @@ def game():
 
             centered = False
             player.rect.x += horiSpeed
+            if backGroundMove <= 600 and horiSpeed == 4:
+                backGroundMove += 0.2
+            elif backGroundMove >= 0 and horiSpeed == -4:
+                backGroundMove -= 0.2
+            #endif
 
         #endfor
-
-        
         
         if centered == True:
+
+            player.rect.x = 558.5
             
             for block in block_list:
 
                 block.rect.x -= horiSpeed
                 startArea.rect.x -= horiSpeed
+                if backGroundMove <= 600 and horiSpeed == 4:
+                    backGroundMove += 0.2
+                elif backGroundMove >= 0 and horiSpeed == -4:
+                    backGroundMove -= 0.2
+                #endif
                 
                 for enemy in enemy_list:
 
@@ -339,6 +577,11 @@ def game():
                         
                         block.rect.x += horiSpeed
                         startArea.rect.x += horiSpeed
+                        if horiSpeed == 4:
+                            backGroundMove -= 0.2
+                        elif horiSpeed == -4:
+                            backGroundMove += 0.2
+                        #endif
 
                     #endfor
 
@@ -376,7 +619,9 @@ def game():
             vertSpeed = 0
                 
         #endfor
-        
+
+        backGroundPos(0 - backGroundMove, 0, BackGround1)
+
         all_sprites_list.draw(screen)
         # -- flip display to reveal new position of objects
         pygame.display.flip()

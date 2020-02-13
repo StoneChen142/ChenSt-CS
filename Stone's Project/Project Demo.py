@@ -14,7 +14,7 @@ playerSlashing = [pygame.transform.scale(pygame.image.load('SlashPlayerLeft.png'
 slashSword1 = [pygame.transform.scale(pygame.image.load('SlashSword1Left.png'), (64, 20)), pygame.transform.scale(pygame.image.load('SlashSword1Right.png'), (64, 20))]
 warriorStanding = [pygame.transform.scale(pygame.image.load('NotMovingEnemy1Left.png'), (83, 112)), pygame.transform.scale(pygame.image.load('NotMovingEnemy1Right.png'), (83, 112))]
 warriorSlashing = [pygame.transform.scale(pygame.image.load('SlashEnemy1Left.png'), (83, 112)), pygame.transform.scale(pygame.image.load('SlashEnemy1Right.png'), (83, 112))]
-wSlashSword = [pygame.transform.scale(pygame.image.load('EnemySword1Left.png'), (83, 76)), pygame.transform.scale(pygame.image.load('EnemySword1Right.png'), (83, 76))]
+wSlashSword = [pygame.transform.scale(pygame.image.load('WarriorSword1Left.png'), (64, 20)), pygame.transform.scale(pygame.image.load('WarriorSword1Right.png'), (64, 20))]
 # -- Colours
 
 BLACK = (0,0,0)
@@ -33,6 +33,36 @@ LY = (255,255,204)
 NICE = (204,204,255)
 
 # -- Classes
+
+#Text_Object
+def text_objects(msg, color, size):
+    if size == "small":
+        font = pygame.font.Font('freesansbold.ttf',40)
+        textSurface = font.render(msg, True, color)
+    if size == "medium":
+        medfont = pygame.font.Font('freesandbolf,ttf',60)
+        textSurface = medfont.render(msg, True, color)
+    if size == "large":
+        largefont = pygame.font.Font('freesandbolf,ttf',80)
+        textSurface = largefont.render(msg, True, color)
+    #endif
+    return textSurface, textSurface.get_rect()
+#endfunction
+
+#Button
+def buttonText(msg, color, x, y, width, height, size):
+    textSurf, textRect = text_objects(msg,color,size)
+    textRect.center = ((x+(width/2)), y+(height/2))
+    screen.blit(textSurf, textRect)
+#endprocedure
+
+def Text(Size,Colour,x,y,text):
+    font = pygame.font.Font('freesansbold.ttf',Size)
+    text = font.render(text, True, Colour, BLACK) 
+    textRect = text.get_rect()
+    textRect.center = (x,y)
+    screen.blit(text, textRect)
+#endprocedure
 
 class Block(pygame.sprite.Sprite):
     def __init__(self,colour,width,height):
@@ -144,12 +174,26 @@ class Sword(pygame.sprite.Sprite):
 
     #endfunction
 
+    def enemySlash(self,face):
+
+        if face == "L":
+
+            self.image = wSlashSword[0]
+
+        else:
+
+            self.image = wSlashSword[1]
+
+        #endif
+
+    #endfunction
+
 #endclass
 
 #Enemy Class
 class Warrior(pygame.sprite.Sprite):
 
-    def __init__(self, colour):
+    def __init__(self):
         
         super().__init__()
  
@@ -282,6 +326,39 @@ def backGroundPos(x,y,img):
 
 #endfunction
 
+def Lose():
+
+    keepG = False
+    while keepG == False:
+        for event in pygame.event.get():
+            pos = pygame.mouse.get_pos()
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            #endif
+            
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if pos>(180,385) and pos<(330,465):
+                    keepG = True
+                    game()
+                #endif
+            #endif
+        #endfor
+        
+        screen.fill (BLACK)
+
+        MainText = Text(80,RED,255,280,'YOU LOSE')
+
+        #Button Code
+        pygame.draw.rect(screen,YELLOW, (180, 385, 150, 80))
+        buttonText("Retry", BLACK, 205, 400, 100,  50, size="small")
+
+        pygame.display.flip()
+
+        clock.tick(60)
+    #endwhile
+
+#endfunction
+
 #game
 def game():
 
@@ -301,14 +378,35 @@ def game():
     blocked = False
     attack = False
     attackStep = 1
+    playerHealth = 500
+    playerMaxHealth = 500
+    playerHealthDisplay = 300
+
+    phase = 0
+
+    Freeze = False
+    combatPhase = False
 
     #Player Attack More Attributes
     startAttack = 0
     endAttack = 0
     startAttTimeBet = 0
     endAttTimeBet = 0
+    playerGetHit = False
+
+    transition = False
 
     facing = "L"
+
+    #Warrior Attributes
+    warriorStartAttack = 0
+    warriorEndAttack = 0
+    warriorAttack = False
+    warriorHealth = 1000
+    warriorMaxHealth = 1000
+    warriorGetHit = False
+    warriorHori = 0
+    enemyFace = "L"
 
     backGroundMove = 0
 
@@ -327,6 +425,8 @@ def game():
     warrior_list = pygame.sprite.Group()
 
     playerSword_list = pygame.sprite.Group()
+
+    warriorSword_list = pygame.sprite.Group()
     
     ground = Block(GREEN, 3600, 100)
     ground.rect.x = 0
@@ -341,13 +441,6 @@ def game():
 
     BackGround1 = pygame.transform.scale(loadify('BackGround1.png'), (1800, 700))
 
-    enemy = Warrior(DBLUE)
-    enemy.rect.y = 620
-    enemy.rect.x = 2000
-    all_sprites_list.add(enemy)
-    enemy_list.add(enemy)
-    warrior_list.add(enemy)
-##
 ##    enemy = BowMaster(PINK)
 ##    enemy.rect.y = 620
 ##    enemy.rect.x = 1000
@@ -355,12 +448,23 @@ def game():
 ##    enemy_list.add(enemy)
 ##    bow_list.add(enemy)
 
-    startArea = Block(GREEN,570, 700)
+    startArea = Block(GREEN,558, 700)
     startArea.rect.x = 0
     startArea.rect.y = 0
     startEnd_list.add(startArea)
 
+    AreaOne = Block(GREEN, 1200, 700)
+    AreaOne.rect.x = 1800
+    AreaOne.rect.y = 0
+    startEnd_list.add(AreaOne)
+
     createBlock(nodesNum, block_list, all_sprites_list)
+
+    warriorSword = Sword()
+    warriorSword.rect.x = -1000
+    warriorSword.rect.y = -1500
+    all_sprites_list.add(warriorSword)
+    warriorSword_list.add(warriorSword)
 
     playerSword = Sword()
     playerSword.rect.x = -1000
@@ -374,7 +478,7 @@ def game():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 game_over = True
-            elif event.type == pygame.KEYDOWN:
+            elif event.type == pygame.KEYDOWN and Freeze == False:
                 #Jump
                 if event.key == pygame.K_w:
                     if jumped == False:
@@ -443,16 +547,34 @@ def game():
                 playerSword.slash(facing)
                 playerSword.rect.x = player.rect.x - 45
                 playerSword.rect.y = player.rect.y + 51
+                
             else:
                 playerSword.slash(facing)
                 playerSword.rect.x = player.rect.x + 68
                 playerSword.rect.y = player.rect.y + 51
             #endif
+            warriorHit_list = pygame.sprite.spritecollide(playerSword, warrior_list, False)
+            if warriorGetHit == False:
+                for warrior in warriorHit_list:
+                    if facing == "L":
+                        warrior.rect.x -= 30
+                    else:
+                        warrior.rect.x += 30
+                    #endif
+                    warriorHealth -= 20
+                    if warriorHealth < 0:
+                        warriorHealth = 0
+                    #endif
+                    warriorGetHit = True
+                    print("Got hit")
+                #endfor
+            #endif
 
             endAttack = pygame.time.get_ticks()
 
             if endAttack - startAttack >= 300:
-                print("Slash")
+                warriorGetHit = False
+                #print("Slash")
                 player.anime(facing,0)
                 playerSword.rect.x = -1000
                 playerSword.rect.y = -1000
@@ -478,11 +600,27 @@ def game():
                 playerSword.rect.x = player.rect.x + 68
                 playerSword.rect.y = player.rect.y + 51
             #endif
+            warriorHit_list = pygame.sprite.spritecollide(playerSword, warrior_list, False)
+            if warriorGetHit == False:
+                for warrior in warriorHit_list:
+                    if facing == "L":
+                        warrior.rect.x -= 30
+                    else:
+                        warrior.rect.x += 30
+                    #endif
+                    warriorHealth -= 30
+                    if warriorHealth < 0:
+                        warriorHealth = 0
+                    #endif
+                    warriorGetHit = True
+                #endfor
+            #endif
 
             endAttack = pygame.time.get_ticks()
 
             if endAttack - startAttack >= 300:
-                print("Slash!")
+                warriorGetHit = False
+                #print("Slash!")
                 player.anime(facing,0)
                 playerSword.rect.x = -1000
                 playerSword.rect.y = -1000
@@ -508,11 +646,28 @@ def game():
                 playerSword.rect.x = player.rect.x + 68
                 playerSword.rect.y = player.rect.y + 51
             #endif
+            warriorHit_list = pygame.sprite.spritecollide(playerSword, warrior_list, False)
+            if warriorGetHit == False:
+                for warrior in warriorHit_list:
+                    if facing == "L":
+                        warrior.rect.x -= 30
+                    else:
+                        warrior.rect.x += 30
+                    #endif
+                    warriorHealth -= 40
+                    if warriorHealth < 0:
+                        warriorHealth = 0
+                        phase = 6
+                    #endif
+                    warriorGetHit = True
+                #endfor
+            #endif
 
             endAttack = pygame.time.get_ticks()
 
             if endAttack - startAttack >= 300:
-                print("Slash!!")
+                warriorGetHit = False
+                #print("Slash!!")
                 player.anime(facing,0)
                 playerSword.rect.x = -1000
                 playerSword.rect.y = -1000
@@ -530,44 +685,159 @@ def game():
             vertSpeed = 0
         #endif
 
-        for enemy in enemy_list:
-
-            enemy.move(player.rect.x)
-
-        #endfor
-
         playerStartEnd_list = pygame.sprite.spritecollide(startArea, player_list, False)
         for player in playerStartEnd_list:
 
             centered = False
             player.rect.x += horiSpeed
             if backGroundMove <= 600 and horiSpeed == 4:
-                backGroundMove += 0.2
+                backGroundMove += 0.4
             elif backGroundMove >= 0 and horiSpeed == -4:
-                backGroundMove -= 0.2
+                backGroundMove -= 0.4
+            #endif
+
+        #endfor
+
+        playerAreaOne_list = pygame.sprite.spritecollide(AreaOne, player_list, False)
+        for player in playerAreaOne_list:
+
+            if transition == False:
+                centered = False
+                transition = True
+                Freeze = True
+                phase = 2
+            elif transition == True and phase == 2:
+                centered = False
+                player.rect.x -= 4
+                backGroundMove += 0.4
+                AreaOne.rect.x -= 4
+                if player.rect.x <= 20:
+                    player.rect.x = 20
+                    phase = 3
+                #endif
+            elif phase == 3:        
+                enemyWarrior = Warrior()
+                enemyWarrior.rect.x = 1093
+                enemyWarrior.rect.y = -300
+                all_sprites_list.add(enemyWarrior)
+                warrior_list.add(enemyWarrior)
+                all_sprites_list.remove(player)
+                all_sprites_list.add(player)
+                all_sprites_list.remove(playerSword)
+                all_sprites_list.add(playerSword)
+                phase = 4
+            elif phase == 4:
+                if enemyWarrior.rect.y >= 588:
+                    enemyWarrior.rect.y = 588
+                    phase = 5
+                elif enemyWarrior.rect.y < 300:
+                    enemyWarrior.rect.y += 20
+                elif enemyWarrior.rect.y >= 300:
+                    enemyWarrior.rect.y += 25
+                #endif
+
+            #BattlePhaseOne----------------------------------------------------------------Battle One       
+            elif transition == True and phase == 5:
+                AreaOne.rect.x = 0
+                centered = False
+                Freeze = False
+                combatPhase = True
+                player.rect.x += horiSpeed
+                if player.rect.x <= 0:
+                    player.rect.x = 0
+                elif player.rect.x >= 1113:
+                    player.rect.x = 1113
+                enemyWarrior.rect.x += warriorHori
+                if enemyWarrior.rect.x >= 1113:
+                    enemyWarrior.rect.x = 1113
+                elif enemyWarrior.rect.x <= 0:
+                    enemyWarrior.rect.x = 0
+                #endif
+                    
+                #EnemyMove
+                if warriorAttack == False:
+                    if enemyWarrior.rect.x < player.rect.x:
+                        warriorHori = 2
+                        enemyFace = "R"
+                    else:
+                        warriorHori = -2
+                        enemyFace = "L"
+                    #endif
+                    enemyWarrior.anime(enemyFace,0)
+                #endif
+                        
+                #Enemy Attack Player
+                if enemyWarrior.rect.x - player.rect.x <= 123 and enemyWarrior.rect.x - player.rect.x >= 83 and enemyFace == "L" and warriorAttack == False:
+                    warriorAttack = True
+                    warriorHori = 0
+                    enemyWarrior.anime(enemyFace,1)
+                    warriorStartAttack = pygame.time.get_ticks()
+                elif player.rect.x - enemyWarrior.rect.x <= 123 and player.rect.x - enemyWarrior.rect.x >= 83 and enemyFace == "R" and warriorAttack == False:
+                    warriorAttack = True
+                    warriorHori = 0
+                    enemyWarrior.anime(enemyFace,1)
+                    warriorStartAttack = pygame.time.get_ticks()
+                #endif
+
+                #Enemy Attacked
+                if warriorAttack == True:
+                    warriorEndAttack = pygame.time.get_ticks()
+                    if warriorEndAttack - warriorStartAttack >= 300:
+                        warriorAttack = False
+                        warriorSword.rect.y = -1040
+                        playerGetHit = False
+                    else:
+                        if enemyFace == "L":
+                            warriorSword.enemySlash(enemyFace)
+                            warriorSword.rect.x = enemyWarrior.rect.x - 45
+                            warriorSword.rect.y = enemyWarrior.rect.y + 51
+                        else:
+                            warriorSword.enemySlash(enemyFace)
+                            warriorSword.rect.x = enemyWarrior.rect.x + 68
+                            warriorSword.rect.y = enemyWarrior.rect.y + 51
+                        #endif
+
+                        warriorHitPlayer_list = pygame.sprite.spritecollide(warriorSword, player_list, False)
+                        if playerGetHit == False:
+                            for player in warriorHitPlayer_list:
+                                if facing == "L":
+                                    player.rect.x -= 30
+                                else:
+                                    player.rect.x += 30
+                                #endif
+                                playerHealth -= 40
+                                if playerHealth < 0:
+                                    playerHealth = 0
+                                    combatPhase= False
+                                    Lose()
+                                #endif
+                                playerGetHit = True
+                            #endfor
+                        #endif
+                    #endif
+
+            elif phase == 6:
+
+                MainText = Text(80,RED,255,280,'YOU WIN')
+                
             #endif
 
         #endfor
         
         if centered == True:
 
-            player.rect.x = 558.5
+            player.rect.x = 559
             
             for block in block_list:
 
                 block.rect.x -= horiSpeed
                 startArea.rect.x -= horiSpeed
+                AreaOne.rect.x -= horiSpeed
                 if backGroundMove <= 600 and horiSpeed == 4:
-                    backGroundMove += 0.2
+                    backGroundMove += 0.4
                 elif backGroundMove >= 0 and horiSpeed == -4:
-                    backGroundMove -= 0.2
+                    backGroundMove -= 0.4
                 #endif
-                
-                for enemy in enemy_list:
-
-                    enemy.rect.x -= horiSpeed
-
-                #endfor
 
                 playerBlock_list = pygame.sprite.spritecollide(block, player_list, False)
                 #Make player stand on platform
@@ -578,9 +848,9 @@ def game():
                         block.rect.x += horiSpeed
                         startArea.rect.x += horiSpeed
                         if horiSpeed == 4:
-                            backGroundMove -= 0.2
+                            backGroundMove -= 0.4
                         elif horiSpeed == -4:
-                            backGroundMove += 0.2
+                            backGroundMove += 0.4
                         #endif
 
                     #endfor
@@ -591,7 +861,9 @@ def game():
 
         #endif
 
-        centered = True
+        if transition == False:
+            centered = True
+        #endif
 
         if player.rect.x <= 0:
 
@@ -623,6 +895,12 @@ def game():
         backGroundPos(0 - backGroundMove, 0, BackGround1)
 
         all_sprites_list.draw(screen)
+
+        if combatPhase == True:
+            pygame.draw.rect(screen, RED, (60, 720, (playerHealth/playerMaxHealth)*300, 30))
+            pygame.draw.rect(screen, RED, (840, 720, (warriorHealth/warriorMaxHealth)*300, 30))
+        #endif
+            
         # -- flip display to reveal new position of objects
         pygame.display.flip()
 

@@ -314,6 +314,8 @@ def createBlock(nodesNum, block_list, all_sprites_list):
         #endif
 #endprocedure
 
+
+
 def loadify(img):
     
     return pygame.image.load(img).convert_alpha()

@@ -258,11 +258,12 @@ def CreateTutorialPlatform(tutorialBlock_list, tutorial_list, background_list, c
     tutorialBlock_list.add(block)
 
     moveInstruction = InstructionClass(1, 439, 27, 40, 670)
-    jumpInstruction = InstructionClass(2, 210, 25, 590, 670)
+    jumpInstruction = InstructionClass(2, 210, 25, 810, 670)
     attackInstruction = InstructionClass(3, 289, 25, 175.5, 200)
     rollInstruction = InstructionClass(4, 230, 20, 1005, 330)
-    dJumpInstruction = InstructionClass(5, 305, 25, 760, 560)
-    tutorial_list.add(moveInstruction, jumpInstruction, attackInstruction, rollInstruction, dJumpInstruction)
+    dJumpInstruction = InstructionClass(5, 305, 25, 760, 580)
+    blockInstruction = InstructionClass(6, 209, 20, 1230, 671)
+    tutorial_list.add(moveInstruction, jumpInstruction, attackInstruction, rollInstruction, dJumpInstruction, blockInstruction)
 
     pauseButton = Button(8, 60, 60, 0, 1430, 10) #Pause
     button_list.add(pauseButton)
@@ -771,6 +772,7 @@ class InstructionClass(pygame.sprite.Sprite): #Instruction is a sprite, because 
         self.dJump = [pygame.transform.scale(pygame.image.load('Game_Images/Text/DoubleJumpInstruction.png'), (305, 25))]
         self.attack = [pygame.transform.scale(pygame.image.load('Game_Images/Text/AttackInstruction.png'), (289, 25))]
         self.roll = [pygame.transform.scale(pygame.image.load('Game_Images/Text/RollInstruction.png'), (230, 20))]
+        self.block = [pygame.transform.scale(pygame.image.load('Game_Images/Text/BlockInstruction.png'), (209, 20))]
 
         if typeNum == 1:
 
@@ -791,6 +793,10 @@ class InstructionClass(pygame.sprite.Sprite): #Instruction is a sprite, because 
         elif typeNum == 5:
 
             self.image = self.dJump[0]
+
+        elif typeNum == 6:
+
+            self.image = self.block[0]
 
         #endif
 
@@ -985,6 +991,8 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
         self.attackStep = 1
         self.stopSelf = False 
         self.freeze = False
+        self.block = False
+        self.blocked = False
 
         #Background
         self.backMove = 0
@@ -996,6 +1004,8 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
         self.endAttack = 0
         self.startCombo = 0
         self.endCombo = 0
+        self.startBlock = 0
+        self.endBlock = 0
 
         #Counter
         self.idleCounter = 0
@@ -1005,6 +1015,8 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
         self.attackCounter1 = 0
         self.attackCounter2 = 0
         self.attackCounter3 = 0
+        self.blockCounter = 0
+        self.blockedCounter = 0
         
     #endprocedure
 
@@ -1020,7 +1032,7 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
             self.endAnimation = pygame.time.get_ticks() #Get current time for end time
             
-            if self.attacked == False and self.horiSpeed == 0 and self.jumped == False:
+            if self.attacked == False and self.horiSpeed == 0 and self.jumped == False and self.block == False:
 
                 animationPlayer.rect.y = self.rect.y - 38
                 animationPlayer.rect.x = self.rect.x - 100
@@ -1146,6 +1158,24 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
                 #endif
 
+            elif self.block == True and self.blocked == False:
+
+                animationPlayer.rect.y = self.rect.y - 38
+                animationPlayer.rect.x = self.rect.x - 100
+
+                if self.endAnimation - self.startAnimation >= 80:
+
+                    self.startAnimation = self.endAnimation #If player blocking
+                    animationPlayer.PlayerBlock(self.lastHoriSpeed, self.blockCounter)
+
+                    if self.blockCounter != 7: #If reached the end
+                        self.blockCounter += 1
+                    else:
+                        self.blockCounter = 0 #Start over
+                    #endif
+
+                #endif
+
             #endif
 
         #endfor
@@ -1158,6 +1188,7 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
             if self.jumped == False: #If player has not jumped yet
 
+                self.block = False
                 self.vertSpeed = 15
                 self.jumped = True
                 self.doubleJumped = False
@@ -1248,10 +1279,25 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
     #endprocedure
 
+    def BlockTrigger(self,num):
+
+        if self.attacked == False and self.jumped == False and self.horiSpeed == 0 and num == 1:
+
+            self.block = True
+
+        elif num == 0:
+
+            self.block = False
+
+        #endif
+
+    #endprocedure
+
     def AttackTrigger(self):
 
         if self.attacked == False and self.jumped == False:
 
+            self.block = False
             self.attacked = True
 
         #endif
@@ -1355,11 +1401,13 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
             if num == 0:
 
                 self.horiSpeed = -10
+                self.block = False
                 self.lastHoriSpeed = self.horiSpeed
 
             elif num == 1:
 
                 self.horiSpeed = 10
+                self.block = False
                 self.lastHoriSpeed = self.horiSpeed
 
             elif num == 2:
@@ -1607,10 +1655,10 @@ class PlayerAnimation(pygame.sprite.Sprite): #Class of player's animation
             add_str = str(x+1)
             self.playerAttack3.append(pygame.transform.scale(pygame.image.load("Game_Images/Player/HeroAttack3-" + add_str + ".png"), (250, 138)))
         #endfor
-        self.playerBlockIdle = [] #Attack 3
+        self.playerBlock = [] #Attack 3
         for x in range(8):
             add_str = str(x+1)
-            self.playerBlockIdle.append(pygame.transform.scale(pygame.image.load("Game_Images/Player/HeroBlock" + add_str + ".png"), (250, 138)))
+            self.playerBlock.append(pygame.transform.scale(pygame.image.load("Game_Images/Player/HeroBlock" + add_str + ".png"), (250, 138)))
         #endfor
         self.image = self.playerIdle[0]
             
@@ -1688,12 +1736,12 @@ class PlayerAnimation(pygame.sprite.Sprite): #Class of player's animation
 
     #endprocedure
 
-    def PlayerBlockIdle(self, speed, i):
+    def PlayerBlock(self, speed, i):
 
         if speed > 0:
-            self.image = self.playerBlockIdle[i]
+            self.image = self.playerBlock[i]
         else:
-            self.image = pygame.transform.flip(self.playerBlockIdle[i],1,0)
+            self.image = pygame.transform.flip(self.playerBlock[i],1,0)
         #endif
 
     #endprocedure
@@ -2323,6 +2371,7 @@ def Game():
     fileLoaded = False #If file has been loaded
     crownChecked = False
     levelToGo = 0
+    tutorialLevel = False
 
     block_list = pygame.sprite.Group() #Blocks list
 
@@ -2372,11 +2421,13 @@ def Game():
             elif event.type == pygame.MOUSEBUTTONDOWN: #Mouse Click
                 if level == 0 and pos[0] >= 595.5 and pos[1] >= 420 and pos[0] <= 904.5 and pos[1] <= 513: #Select save files
                     level = 3 #Start game
+                    tutorialLevel = False
                 elif level == 0 and pos[0] >= 442.5 and pos[1] >= 560 and pos[0] <= 1057.5 and pos[1] <= 653: #Select Settings
                     level = 1 #Settings
                 elif level == 0 and pos[0] >= 430.5 and pos[1] >= 700 and pos[0] <= 1069.5 and pos[1] <= 793: #Select tutorial
                     levelToGo = 2
                     level = -1 #Tutorial
+                    tutorialLevel = True
                 elif level == 1 and pos[0] >= 529.5 and pos[1] >= 300 and pos[0] <= 970.5 and pos[1] <= 420: #Select Difficulty
                     if difficulty == 0:
                         difficulty = 1
@@ -2429,7 +2480,7 @@ def Game():
                     currentSpeed = 1
                     horiSpeed = 1
                 if event.key == pygame.K_s:
-                    player.BlockTrigger()
+                    player.BlockTrigger(1)
                 #endif
             elif level >= 2 and event.type == pygame.KEYUP: #Release Key
                 if event.key == pygame.K_a and currentSpeed < 0:
@@ -2438,6 +2489,8 @@ def Game():
                 if event.key == pygame.K_d and currentSpeed > 0:
                     player.ChangeSpeed(2)
                     horiSpeed = 0
+                if event.key == pygame.K_s:
+                    player.BlockTrigger(0)
                 #endif
             #endif
         #endfor
@@ -2479,8 +2532,10 @@ def Game():
 
                             gameInitiated = True #Reset Loading
                             loadNum = 0
+                            load.Animation(loadNum)
                             startLoadTime = 0
                             endLoadTime = 0
+                            fileLoaded = False
                             level = 0 #Go to menu
 
                         #endif
@@ -2505,7 +2560,7 @@ def Game():
                 #endif
 
             #endif
-            elif gameInitiated == True:
+            elif gameInitiated == True and tutorialLevel == False:
 
                 endLoadTime = pygame.time.get_ticks() #Record current time
                 if endLoadTime - startLoadTime >= 700:
@@ -2519,10 +2574,13 @@ def Game():
                         if loadNum == 4: #If animation finished
 
                             loadNum = 0
+                            load.Animation(loadNum)
                             startLoadTime = 0
                             endLoadTime = 0
                             level = levelToGo #Go to gameplay
+                            fileLoaded = False
                             crownChecked = False
+                            
 
                         #endif
                             
@@ -2589,6 +2647,36 @@ def Game():
                     smallLevel = int(lines[2][1])
 
                 #endif
+
+            elif tutorialLevel == True:
+
+                endLoadTime = pygame.time.get_ticks() #Record current time
+                if endLoadTime - startLoadTime >= 500:
+
+                    startLoadTime = endLoadTime #Reset Timer
+                    for load in loading_list:
+
+                        load.Animation(loadNum) #Animation
+                        loadNum += 1
+
+                        if loadNum == 4: #If animation finished
+
+                            loadNum = 0
+                            load.Animation(loadNum)
+                            startLoadTime = 0
+                            endLoadTime = 0
+                            level = levelToGo #Go to gameplay
+                            fileLoaded = False
+                            crownChecked = False
+                            
+
+                        #endif
+                            
+                    #endfor
+
+                #endif
+
+                loading_list.draw(screen) #Display objects
 
             #endif
 

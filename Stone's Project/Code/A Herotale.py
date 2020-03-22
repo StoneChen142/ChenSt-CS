@@ -993,6 +993,8 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
         self.freeze = False
         self.block = False
         self.blocked = False
+        self.roll = False
+        self.hurt = False
 
         #Background
         self.backMove = 0
@@ -1006,6 +1008,8 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
         self.endCombo = 0
         self.startBlock = 0
         self.endBlock = 0
+        self.startRoll = 0
+        self.endRoll = 0
 
         #Counter
         self.idleCounter = 0
@@ -1017,6 +1021,7 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
         self.attackCounter3 = 0
         self.blockCounter = 0
         self.blockedCounter = 0
+        self.rollCounter = 0
         
     #endprocedure
 
@@ -1031,11 +1036,11 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
         for animationPlayer in playerAnimation_list:
 
             self.endAnimation = pygame.time.get_ticks() #Get current time for end time
-            
-            if self.attacked == False and self.horiSpeed == 0 and self.jumped == False and self.block == False:
 
-                animationPlayer.rect.y = self.rect.y - 38
-                animationPlayer.rect.x = self.rect.x - 100
+            animationPlayer.rect.y = self.rect.y - 38
+            animationPlayer.rect.x = self.rect.x - 100
+            
+            if self.attacked == False and self.horiSpeed == 0 and self.jumped == False and self.block == False and self.blocked == False:
 
                 if self.endAnimation - self.startAnimation >= 160: #If next image
                     
@@ -1050,10 +1055,7 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
                 #endif
 
-            elif self.attacked == False and self.horiSpeed != 0 and self.jumped == False:
-
-                animationPlayer.rect.y = self.rect.y - 38
-                animationPlayer.rect.x = self.rect.x - 100
+            elif self.attacked == False and self.horiSpeed != 0 and self.jumped == False and self.roll == False:
 
                 if self.endAnimation - self.startAnimation >= 80:
                     
@@ -1070,9 +1072,6 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
             elif self.jumped == True and self.vertSpeed >= 0:
 
-                animationPlayer.rect.y = self.rect.y - 38
-                animationPlayer.rect.x = self.rect.x - 100
-
                 if self.endAnimation - self.startAnimation >= 200:
 
                     self.startAnimation = self.endAnimation #If player jumping
@@ -1087,9 +1086,6 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
                 #endif
 
             elif self.jumped == True and self.vertSpeed < 0:
-
-                animationPlayer.rect.y = self.rect.y - 38
-                animationPlayer.rect.x = self.rect.x - 100
 
                 if self.endAnimation - self.startAnimation >= 200:
 
@@ -1106,9 +1102,6 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
             elif self.attacked == True and self.attackStep == 1:
 
-                animationPlayer.rect.y = self.rect.y - 38
-                animationPlayer.rect.x = self.rect.x - 100
-
                 if self.endAnimation - self.startAnimation >= 50:
 
                     self.startAnimation = self.endAnimation 
@@ -1123,9 +1116,6 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
                 #endif
 
             elif self.attacked == True and self.attackStep == 2:
-
-                animationPlayer.rect.y = self.rect.y - 38
-                animationPlayer.rect.x = self.rect.x - 100
 
                 if self.endAnimation - self.startAnimation >= 50:
 
@@ -1142,9 +1132,6 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
             elif self.attacked == True and self.attackStep == 3:
 
-                animationPlayer.rect.y = self.rect.y - 38
-                animationPlayer.rect.x = self.rect.x - 100
-
                 if self.endAnimation - self.startAnimation >= 50:
 
                     self.startAnimation = self.endAnimation 
@@ -1160,9 +1147,6 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
             elif self.block == True and self.blocked == False:
 
-                animationPlayer.rect.y = self.rect.y - 38
-                animationPlayer.rect.x = self.rect.x - 100
-
                 if self.endAnimation - self.startAnimation >= 80:
 
                     self.startAnimation = self.endAnimation #If player blocking
@@ -1176,6 +1160,21 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
                 #endif
 
+            elif self.roll == True:
+
+                if self.endAnimation - self.startAnimation >= 60:
+
+                    self.startAnimation = self.endAnimation #If player falling
+                    animationPlayer.PlayerRoll(self.lastHoriSpeed, self.rollCounter)
+
+                    if self.rollCounter != 8: #If reached the end
+                        self.rollCounter += 1
+                    else:
+                        self.rollCounter = 8 #Stay at the last frame
+                    #endif
+
+                #endif
+
             #endif
 
         #endfor
@@ -1184,7 +1183,7 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
     def Jump(self):
 
-        if self.freeze == False and self.attacked == False:
+        if self.freeze == False and self.attacked == False and self.roll == False:
 
             if self.jumped == False: #If player has not jumped yet
 
@@ -1279,10 +1278,22 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
     #endprocedure
 
+    def RollTrigger(self):
+
+        if self.attacked == False and self.jumped == False and self.blocked == False and self.hurt == False:
+
+            self.block = False
+            self.roll = True
+
+        #endif
+
+    #endprocedure
+
     def BlockTrigger(self,num):
 
-        if self.attacked == False and self.jumped == False and self.horiSpeed == 0 and num == 1:
+        if self.attacked == False and self.jumped == False and num == 1 and self.hurt == False:
 
+            self.horiSpeed = 0
             self.block = True
 
         elif num == 0:
@@ -1295,7 +1306,7 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
     def AttackTrigger(self):
 
-        if self.attacked == False and self.jumped == False:
+        if self.attacked == False and self.jumped == False and self.roll == False and self.hurt == False and self.blocked == False:
 
             self.block = False
             self.attacked = True
@@ -1310,6 +1321,31 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
             self.stopSelf = False
             self.horiSpeed = 0
+
+        #endif
+
+    #endprocedure
+
+    def Roll(self):
+
+        if self.roll == True:
+
+            if self.startRoll == 0:
+                self.startRoll = pygame.time.get_ticks()
+            #endif
+            self.endRoll = pygame.time.get_ticks()
+            if self.lastHoriSpeed < 0:
+                self.horiSpeed = -15
+            else:
+                self.horiSpeed = 15
+            #endif
+            if self.endRoll - self.startRoll > 540:
+                self.endRoll = 0
+                self.startRoll = 0
+                self.roll = False
+                self.horiSpeed = 0
+                self.rollCounter = 0
+            #endif
 
         #endif
 
@@ -1396,7 +1432,7 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
     def ChangeSpeed(self,num):
 
-        if self.freeze == False and self.attacked == False:
+        if self.freeze == False and self.attacked == False and self.roll == False and self.hurt == False:
 
             if num == 0:
 
@@ -1655,10 +1691,15 @@ class PlayerAnimation(pygame.sprite.Sprite): #Class of player's animation
             add_str = str(x+1)
             self.playerAttack3.append(pygame.transform.scale(pygame.image.load("Game_Images/Player/HeroAttack3-" + add_str + ".png"), (250, 138)))
         #endfor
-        self.playerBlock = [] #Attack 3
+        self.playerBlock = [] #Block
         for x in range(8):
             add_str = str(x+1)
             self.playerBlock.append(pygame.transform.scale(pygame.image.load("Game_Images/Player/HeroBlock" + add_str + ".png"), (250, 138)))
+        #endfor
+        self.playerRoll = [] #Roll
+        for x in range(9):
+            add_str = str(x+1)
+            self.playerRoll.append(pygame.transform.scale(pygame.image.load("Game_Images/Player/HeroRoll" + add_str + ".png"), (250, 138)))
         #endfor
         self.image = self.playerIdle[0]
             
@@ -1742,6 +1783,16 @@ class PlayerAnimation(pygame.sprite.Sprite): #Class of player's animation
             self.image = self.playerBlock[i]
         else:
             self.image = pygame.transform.flip(self.playerBlock[i],1,0)
+        #endif
+
+    #endprocedure
+
+    def PlayerRoll(self, speed, i):
+
+        if speed > 0:
+            self.image = self.playerRoll[i]
+        else:
+            self.image = pygame.transform.flip(self.playerRoll[i],1,0)
         #endif
 
     #endprocedure
@@ -2481,6 +2532,8 @@ def Game():
                     horiSpeed = 1
                 if event.key == pygame.K_s:
                     player.BlockTrigger(1)
+                if event.key == pygame.K_LSHIFT:
+                    player.RollTrigger()
                 #endif
             elif level >= 2 and event.type == pygame.KEYUP: #Release Key
                 if event.key == pygame.K_a and currentSpeed < 0:
@@ -2719,6 +2772,9 @@ def Game():
 
                 #Attack
                 player.Attack()
+
+                #Roll
+                player.Roll()
 
                 #Horizontal Movement
                 player.MoveHori(centered, block_list, tutorialBlock_list, startEnd_list, player_list, level, background_list) #Player move horizontally

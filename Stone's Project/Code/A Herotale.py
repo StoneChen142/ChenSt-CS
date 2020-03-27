@@ -981,6 +981,7 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
         self.rect.y = y
 
         #Attributes
+        self.speedX = 10
         self.horiSpeed = 0
         self.lastHoriSpeed = 4
         self.doubleJump = False
@@ -995,6 +996,7 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
         self.blocked = False
         self.roll = False
         self.hurt = False
+        self.keepMoving = False
 
         #Background
         self.backMove = 0
@@ -1299,6 +1301,15 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
         elif num == 0:
 
             self.block = False
+            if not self.keepMoving:
+                self.horiSpeed = 0
+            else:
+                if self.lastHoriSpeed < 0:
+                    self.horiSpeed = -self.speedX
+                elif self.lastHoriSpeed > 0:
+                    self.horiSpeed = self.speedX
+                #endif
+            #endif
 
         #endif
 
@@ -1315,12 +1326,30 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
     #endprocedure
 
+    def KeepMove(self, speed):
+
+        if speed == 0:
+            self.keepMoving = False
+        else:
+            self.keepMoving = True
+        #endif
+
+    #endprocedure
+
     def AttackChecker(self):
 
         if self.stopSelf: #If the player should stop
 
+            if not self.keepMoving:
+                self.horiSpeed = 0
+            else:
+                if self.lastHoriSpeed < 0:
+                    self.horiSpeed = -self.speedX
+                elif self.lastHoriSpeed > 0:
+                    self.horiSpeed = self.speedX
+                #endif
+            #endif
             self.stopSelf = False
-            self.horiSpeed = 0
 
         #endif
 
@@ -1335,15 +1364,23 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
             #endif
             self.endRoll = pygame.time.get_ticks()
             if self.lastHoriSpeed < 0:
-                self.horiSpeed = -15
+                self.horiSpeed = -13
             else:
-                self.horiSpeed = 15
+                self.horiSpeed = 13
             #endif
             if self.endRoll - self.startRoll > 540:
                 self.endRoll = 0
                 self.startRoll = 0
                 self.roll = False
-                self.horiSpeed = 0
+                if not self.keepMoving: #If keep going
+                    self.horiSpeed = 0
+                else:
+                    if self.lastHoriSpeed < 0:
+                        self.horiSpeed = -self.speedX
+                    elif self.lastHoriSpeed > 0:
+                        self.horiSpeed = self.speedX
+                    #endif
+                #endif
                 self.rollCounter = 0
             #endif
 
@@ -1436,13 +1473,13 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
             if num == 0:
 
-                self.horiSpeed = -10
+                self.horiSpeed = -self.speedX
                 self.block = False
                 self.lastHoriSpeed = self.horiSpeed
 
             elif num == 1:
 
-                self.horiSpeed = 10
+                self.horiSpeed = self.speedX
                 self.block = False
                 self.lastHoriSpeed = self.horiSpeed
 
@@ -2524,10 +2561,12 @@ def Game():
                     player.Jump()
                 if event.key == pygame.K_a:
                     player.ChangeSpeed(0)
+                    player.KeepMove(1)
                     currentSpeed = -1
                     horiSpeed = -1
                 if event.key == pygame.K_d:
                     player.ChangeSpeed(1)
+                    player.KeepMove(1)
                     currentSpeed = 1
                     horiSpeed = 1
                 if event.key == pygame.K_s:
@@ -2538,9 +2577,11 @@ def Game():
             elif level >= 2 and event.type == pygame.KEYUP: #Release Key
                 if event.key == pygame.K_a and currentSpeed < 0:
                     player.ChangeSpeed(2)
+                    player.KeepMove(0)
                     horiSpeed = 0
                 if event.key == pygame.K_d and currentSpeed > 0:
                     player.ChangeSpeed(2)
+                    player.KeepMove(0)
                     horiSpeed = 0
                 if event.key == pygame.K_s:
                     player.BlockTrigger(0)

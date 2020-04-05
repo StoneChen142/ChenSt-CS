@@ -1,6 +1,7 @@
 import pygame
 import os
 from decimal import *
+from random import randint
 
 #Colours
 
@@ -65,6 +66,45 @@ def CreateCharacters1(player_list, playerAnimation_list, playerAttack_list, play
     tutorial_list.add(animationPlayer)
 
 #endprocedure
+
+#Currency Creation
+def CreateMoney(tutorial_list, levelOne_list, levelTwo_list, levelThree_list, thousand_list, hundred_list, ten_list, one_list):
+
+    coin = ItemClass(1, 50, 50, 15, 10, 2)
+    tutorial_list.add(coin)
+    levelOne_list.add(coin)
+    levelTwo_list.add(coin)
+    levelThree_list.add(coin)
+
+    thousand = WordClass(0, 0, 24, 31, 85, 20)
+    thousand_list.add(thousand)
+    tutorial_list.add(thousand)
+    levelOne_list.add(thousand)
+    levelTwo_list.add(thousand)
+    levelThree_list.add(thousand)
+
+    hundred = WordClass(0, 0, 24, 31, 115, 20)
+    hundred_list.add(hundred)
+    tutorial_list.add(hundred)
+    levelOne_list.add(hundred)
+    levelTwo_list.add(hundred)
+    levelThree_list.add(hundred)
+
+    ten = WordClass(0, 0, 24, 31, 145, 20)
+    ten_list.add(ten)
+    tutorial_list.add(ten)
+    levelOne_list.add(ten)
+    levelTwo_list.add(ten)
+    levelThree_list.add(ten)
+
+    one = WordClass(0, 0, 24, 31, 175, 20)
+    one_list.add(one)
+    tutorial_list.add(one)
+    levelOne_list.add(one)
+    levelTwo_list.add(one)
+    levelThree_list.add(one)
+
+#endprocedure
     
 #Menu Creation
 def CreateMenu(menu_list, button_list):
@@ -120,14 +160,14 @@ def CreateFile(file_list, button_list, item_list, crown_list):
     button_list.add(select1)
     file_list.add(select1)
 
-    coin1 = ItemClass(1, 50, 50, 213.5, 200.5) #Coin etc 1
+    coin1 = ItemClass(1, 50, 50, 213.5, 200.5, 3) #Coin etc 1
     file_list.add(coin1)
     item_list.add(coin1)
 
-    heart1 = ItemClass(2, 50, 50, 213.5, 300.5)
+    heart1 = ItemClass(2, 50, 50, 213.5, 300.5, 3)
     file_list.add(heart1)
 
-    flag1 = ItemClass(3, 50, 50, 213.5, 400.5)
+    flag1 = ItemClass(3, 50, 50, 213.5, 400.5, 3)
     file_list.add(flag1)
 
     #Open File 1
@@ -147,14 +187,14 @@ def CreateFile(file_list, button_list, item_list, crown_list):
     button_list.add(select2)
     file_list.add(select2)
 
-    coin2 = ItemClass(1, 50, 50, 633.5, 200.5) #Coin etc 2
+    coin2 = ItemClass(1, 50, 50, 633.5, 200.5, 3) #Coin etc 2
     file_list.add(coin2)
     item_list.add(coin2)
 
-    heart2 = ItemClass(2, 50, 50, 633.5, 300.5)
+    heart2 = ItemClass(2, 50, 50, 633.5, 300.5, 3)
     file_list.add(heart2)
 
-    flag2 = ItemClass(3, 50, 50, 633.5, 400.5)
+    flag2 = ItemClass(3, 50, 50, 633.5, 400.5, 3)
     file_list.add(flag2)
 
     #Open File 2
@@ -174,14 +214,14 @@ def CreateFile(file_list, button_list, item_list, crown_list):
     button_list.add(select3)
     file_list.add(select3)
 
-    coin3 = ItemClass(1, 50, 50, 1053.5, 200.5) #Coin etc 3
+    coin3 = ItemClass(1, 50, 50, 1053.5, 200.5, 3) #Coin etc 3
     file_list.add(coin3)
     item_list.add(coin3)
 
-    heart3 = ItemClass(2, 50, 50, 1053.5, 300.5)
+    heart3 = ItemClass(2, 50, 50, 1053.5, 300.5, 3)
     file_list.add(heart3)
 
-    flag3 = ItemClass(3, 50, 50, 1053.5, 400.5)
+    flag3 = ItemClass(3, 50, 50, 1053.5, 400.5, 3)
     file_list.add(flag3)
 
     #Open File 3
@@ -288,7 +328,9 @@ def CreateTutorialPlatform(tutorialBlock_list, tutorial_list, background_list, c
     rollInstruction = InstructionClass(4, 230, 20, 1105, 330)
     dJumpInstruction = InstructionClass(5, 305, 25, 760, 580)
     blockInstruction = InstructionClass(6, 189, 20, 225.5, 120)
-    tutorial_list.add(moveInstruction, jumpInstruction, attackInstruction, rollInstruction, dJumpInstruction, blockInstruction)
+    coinInstruction = InstructionClass(8, 487, 27, 240, 26)
+    fakeInstruction = InstructionClass(9, 354, 20, 18, 65)
+    tutorial_list.add(moveInstruction, jumpInstruction, attackInstruction, rollInstruction, dJumpInstruction, blockInstruction, coinInstruction, fakeInstruction)
 
     pauseButton = Button(8, 60, 60, 0, 1430, 10) #Pause
     button_list.add(pauseButton)
@@ -297,7 +339,7 @@ def CreateTutorialPlatform(tutorialBlock_list, tutorial_list, background_list, c
 #endprocedure
 
 #LevelOneCreation
-def CreateLevelOnePlatform(block_list, levelOne_list, startEnd_list, background_list, cloud_list):
+def CreateLevelOnePlatform(block1_list, levelOne_list, startEnd_list, background_list, cloud_list):
 
     #Files
     f = open("Game_Files/Blocks.txt","r+") #Open platforms file
@@ -358,7 +400,7 @@ def CreateLevelOnePlatform(block_list, levelOne_list, startEnd_list, background_
         if line[0] == str(1): #If it is a normal block, create a normal platform
 
             block = BlockClass(typeOfBlock, width, height, xpos, ypos) #Creates a block with given width & height
-            block_list.add(block) #Used for later collision
+            block1_list.add(block) #Used for later collision
             levelOne_list.add(block) #Make it visible
 
         #endif
@@ -369,7 +411,7 @@ def CreateLevelOnePlatform(block_list, levelOne_list, startEnd_list, background_
     levelOne_list.add(ground) #Make it visible
 
     startBlock = BlockClass(0, 10, 800, -10, 0)
-    block_list.add(block)
+    block1_list.add(block)
 
     area = BlockClass(0, 717.5, 800, 0, 0)
     startEnd_list.add(area)
@@ -545,7 +587,7 @@ class Button(pygame.sprite.Sprite):
 #Item Class
 class ItemClass(pygame.sprite.Sprite):
 
-    def __init__(self, typeOfItem, width, height, x, y):
+    def __init__(self, typeOfItem, width, height, x, y, level):
         super().__init__()
 
         self.image = pygame.Surface([width,height])
@@ -556,19 +598,35 @@ class ItemClass(pygame.sprite.Sprite):
 
         self.item = typeOfItem
 
+        #Attributes
+        self.vertSpeed = 0
+        self.horiSpeed = 0
+        self.finalX = randint(-30,30)
+        if self.finalX > 0:
+            self.horiSpeed = 1
+        elif self.finalX < 0:
+            self.horiSpeed = -1
+        #endif
+        self.moveX = 0
+        self.level = level
+
+        #Coin
+        self.dropped = False
+        self.getCoin = False
+
         #Counters
         self.coinCounter = 0
 
         #Timers
         self.startAnimation = 0
         self.endAnimation = 0
+        self.startDisappear = 0
+        self.endDisappear = 0
 
         self.coins = []
-        for x in range(5):
+        for x in range(7):
             add_str = str(x+1)
-            if x < 5:
-                self.coins.append(pygame.transform.scale(pygame.image.load("Game_Images/Object/Coins/Coin" + add_str + ".png"), (50, 50)))
-            #endif
+            self.coins.append(pygame.transform.scale(pygame.image.load("Game_Images/Object/Coins/Coin" + add_str + ".png"), (width, height)))
         #endfor
 
         self.hearts = [pygame.transform.scale(pygame.image.load("Game_Images/Object/Hearts/Heart.png"), (50, 50))] #Hearts
@@ -597,7 +655,7 @@ class ItemClass(pygame.sprite.Sprite):
         #endif
 
         self.endAnimation = pygame.time.get_ticks() #Get current time for end time
-        if self.endAnimation - self.startAnimation >= 120 and self.item == 1:
+        if self.endAnimation - self.startAnimation >= 120 and self.item == 1 and not self.getCoin:
 
             self.startAnimation = self.endAnimation #Reset timer
 
@@ -608,6 +666,168 @@ class ItemClass(pygame.sprite.Sprite):
                 self.coinCounter += 1
             #endif
 
+        elif self.endAnimation - self.startAnimation >= 100 and self.item == 1 and self.getCoin:
+
+            if self.coinCounter < 5:
+                self.coinCounter = 5
+            #endif
+            self.startAnimation = self.endAnimation #Reset timer
+
+            self.image = self.coins[self.coinCounter]
+            if self.coinCounter == 6:
+                self.coinCounter = 6
+            elif self.coinCounter == 5:
+                self.coinCounter += 1
+            #endif
+
+        #endif
+
+    #endprocedure
+
+    def CoinUpdate(self, player_list, block1_list, tutorialBlock_list, tutorial_list, levelOne_list, coin_list, currency):
+
+        if not self.dropped:
+
+            self.dropped = True
+            self.vertSpeed = randint(5,6)
+
+        #endif
+
+        if not self.getCoin:
+
+            for player in player_list: #If player touch coin
+                if self.rect.colliderect(player.rect):
+                    self.getCoin = True
+                #endif
+            #endfor
+
+            if abs(self.moveX) < abs(self.finalX) and self.horiSpeed != 0:
+                self.rect.x += self.horiSpeed
+                self.moveX += self.horiSpeed
+            #endif
+
+            if self.level == 2:
+                for block in tutorialBlock_list:
+                    if self.rect.colliderect(block.rect):
+                        if self.horiSpeed > 0:
+                            self.rect.right = block.rect.left
+                        elif self.horiSpeed < 0:
+                            self.rect.left = block.rect.right
+                        #endif
+                        self.horiSpeed = 0
+                    #endif
+                #endfor
+            elif self.level == 4:
+                for block in block1_list:
+                    if self.rect.colliderect(block.rect):
+                        if self.horiSpeed > 0:
+                            self.rect.right = block.rect.left
+                        elif self.horiSpeed < 0:
+                            self.rect.left = block.rect.right
+                        #endif
+                        self.horiSpeed = 0
+                    #endif
+                #endfor
+            #endif
+
+            if self.vertSpeed == 0: #Keep testing if coin hits something
+                self.vertSpeed = -0.4
+            else: #Gravity
+                self.vertSpeed -= 0.6
+            #endif
+
+            if self.rect.y >= 780 and self.vertSpeed <= 0: #If sinks into the ground
+
+                self.rect.y = 780 #Stands on the ground
+                self.vertSpeed = 0
+
+            elif self.rect.y <= 0 and self.vertSpeed > 0:
+
+                self.rect.y = 0
+                self.vertSpeed = 0
+
+            #endif
+
+            self.rect.y -= self.vertSpeed #coin move vertically
+
+            if self.level == 4:
+                
+                coinVertBlock_list = pygame.sprite.spritecollide(self, block1_list, False)#If collide
+                for block in coinVertBlock_list:
+                    
+                    if self.vertSpeed <= 0: #If coin is falling
+
+                        self.rect.bottom = block.rect.top
+
+                    elif self.vertSpeed >= 0: #If coin is jumping
+
+                        self.rect.top = block.rect.bottom
+
+                    #endif
+
+                    self.vertSpeed = 0 #Stop coin
+
+                #endfor
+
+            elif self.level == 2:
+
+                coinVertBlock_list = pygame.sprite.spritecollide(self, tutorialBlock_list, False)#If collide
+                for block in coinVertBlock_list:
+                    
+                    if self.vertSpeed <= 0: #If coin is falling
+
+                        self.rect.bottom = block.rect.top
+
+                    elif self.vertSpeed >= 0: #If coin is jumping
+
+                        self.rect.top = block.rect.bottom
+
+                    #endif
+
+                    self.vertSpeed = 0 #Stop coin
+
+                #endfor
+
+            #endif
+
+        elif self.getCoin:
+
+            if self.startDisappear == 0: #If start timer has not started yet
+
+                self.startDisappear = pygame.time.get_ticks() #Record current time
+
+            #endif
+
+            self.endDisappear = pygame.time.get_ticks() #Get current time for end time
+            if self.endDisappear - self.startDisappear >= 200:
+
+                if self.level == 2:
+                    tutorial_list.remove(self)
+                elif self.level == 4:
+                    levelOne_list.remove(self)
+                #endif
+                coin_list.remove(self)
+                currency[3] += 1
+                if currency[3] == 10:
+                    currency[2] += 1
+                    currency[3] = 0
+                #endif
+                if currency[2] == 10:
+                    currency[1] += 1
+                    currency[2] = 0
+                #endif
+                if currency[1] == 10:
+                    currency[0] += 1
+                    currency[1] = 0
+                #endif
+                if currency[0] == 10:
+                    currency[0] = 0
+                    currency[1] = 0
+                    currency[2] = 0
+                    currency[3] = 0
+                #endif
+            #endif
+                
         #endif
 
     #endprocedure
@@ -639,7 +859,7 @@ class WordClass(pygame.sprite.Sprite):
         for x in range(10):
             add_str = str(x)
             if x < 10:
-                self.numbers.append(pygame.transform.scale(pygame.image.load("Game_Images/Object/Numbers/" + add_str + ".png"), (24, 31)))
+                self.numbers.append(pygame.transform.scale(pygame.image.load("Game_Images/Object/Numbers/" + add_str + ".png"), (width, height)))
             #endif
         #endfor
 
@@ -648,6 +868,12 @@ class WordClass(pygame.sprite.Sprite):
             self.image = self.numbers[int(self.num)]
 
         #endif
+
+    #endprocedure
+
+    def Update(self, num):
+
+        self.image = self.numbers[num]
 
     #endprocedure
 
@@ -664,7 +890,9 @@ def WriteWords(typeOfWord, line, x, y, file_list, level):
             width = 24
             height = 31
             xIncrement = 29
-            word = WordClass(0, line[i], width, height, x, y) #Create word
+            if line[i] != " ":
+                word = WordClass(0, line[i], width, height, x, y) #Create word
+            #endif
             x += xIncrement #Move Further
             
             if level == 3:
@@ -696,7 +924,7 @@ def SetCrown(crown_list):
         currency = int(lines[0].rstrip("\n"))
     #endif
 
-    if currency > maxMoney:
+    if currency >= maxMoney:
 
         maxMoney = currency
         xPos = 163.5
@@ -798,6 +1026,9 @@ class InstructionClass(pygame.sprite.Sprite): #Instruction is a sprite, because 
         self.attack = [pygame.transform.scale(pygame.image.load('Game_Images/Text/AttackInstruction.png'), (289, 25))]
         self.roll = [pygame.transform.scale(pygame.image.load('Game_Images/Text/RollInstruction.png'), (230, 20))]
         self.block = [pygame.transform.scale(pygame.image.load('Game_Images/Text/BlockInstruction.png'), (189, 20))]
+        self.minus = [pygame.transform.scale(pygame.image.load('Game_Images/Text/-.png'), (18, 8))]
+        self.coin = [pygame.transform.scale(pygame.image.load('Game_Images/Text/CoinsInstruction.png'), (487, 27))]
+        self.fake = [pygame.transform.scale(pygame.image.load('Game_Images/Text/FakeCoinInstruction.png'), (327, 20))]
 
         if typeNum == 1:
 
@@ -822,6 +1053,18 @@ class InstructionClass(pygame.sprite.Sprite): #Instruction is a sprite, because 
         elif typeNum == 6:
 
             self.image = self.block[0]
+
+        elif typeNum == 7:
+
+            self.image = self.minus[0]
+
+        elif typeNum == 8:
+
+            self.image = self.coin[0]
+
+        elif typeNum == 9:
+
+            self.image = self.fake[0]
 
         #endif
 
@@ -1352,7 +1595,7 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
                 #endif
             #endfor
         elif level == 4:
-            playerGetHit_list = pygame.sprite.spritecollide(self, attack_list, False)#If get hit
+            playerGetHit_list = pygame.sprite.spritecollide(self, dummyAttack_list, False)#If get hit
             for attack in playerGetHit_list:
                 if self.hurt == False and not self.death:
                     if self.block:
@@ -1565,6 +1808,32 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
     #endprocedure
 
     def Death(self, health_list):
+        
+        if self.death == True:
+
+            self.horiSpeed = 0
+            
+            if self.startDeath == 0:
+                self.startDeath = pygame.time.get_ticks()
+            #endif
+
+            self.endDeath = pygame.time.get_ticks()
+            if self.endDeath - self.startDeath > 3000:
+                self.endDeath = 0
+                self.startDeath = 0
+                self.death = False
+                self.deathCounter = 0
+                self.hp = 5
+                for health in health_list:
+                    health.Update(self.hp)
+                #endfor
+            #endif
+
+        #endif
+
+    #endprocedure
+
+    def Revive(self, health_list):
         
         if self.death == True:
 
@@ -2269,6 +2538,7 @@ class BanditClass(pygame.sprite.Sprite): #Class of the player
         self.death = False
         self.adle = False
         self.reduceHealth = False
+        self.dropCoin = False
 
         #Timers
         self.endAnimation = 0
@@ -2426,7 +2696,7 @@ class BanditClass(pygame.sprite.Sprite): #Class of the player
 
     #endprocedure
 
-    def Health(self, health_list):
+    def Health(self, health_list, coin_list, tutorial_list, levelOne_list, level):
 
         if self.reduceHealth == True:
 
@@ -2438,6 +2708,19 @@ class BanditClass(pygame.sprite.Sprite): #Class of the player
                 #endfor
             if self.hp == 0:
                 self.death = True
+                if not self.dropCoin:
+                    self.dropCoin = False
+                    for i in range(2):
+                        if level == 2:
+                            coin = ItemClass(1, 20, 20, self.rect.x + 10, self.rect.y + 70, 2)
+                            tutorial_list.add(coin)
+                        elif level == 4:
+                            coin = ItemClass(1, 20, 20, self.rect.x + 10, self.rect.y + 70, 4)
+                            levelOne_list.add(coin)
+                        #endif
+                        coin_list.add(coin)
+                    #endfor
+                #endif
             #endif
 
         #endif
@@ -2480,6 +2763,33 @@ class BanditClass(pygame.sprite.Sprite): #Class of the player
     #endprocedure
 
     def Death(self,health_list):
+        
+        if self.death == True:
+
+            self.horiSpeed = 0
+            
+            if self.startDeath == 0:
+                self.startDeath = pygame.time.get_ticks()
+            #endif
+
+            self.endDeath = pygame.time.get_ticks()
+            if self.endDeath - self.startDeath > 3000:
+                self.endDeath = 0
+                self.startDeath = 0
+                self.death = False
+                self.deathCounter = 0
+                self.hp = 3
+                self.dropCoin = False
+                for health in health_list:
+                    health.Update(self.hp)
+                #endfor
+            #endif
+
+        #endif
+
+    #endprocedure
+
+    def Revive(self,health_list):
         
         if self.death == True:
 
@@ -2953,10 +3263,9 @@ def Game():
     clock = pygame.time.Clock()
 
     #Variables
-    currency = 0 #Money
+    currency = [0,0,0,0] #Money
     live = 0 #Player's live
-    bigLevel = 0 #Big Level
-    smallLevel = 0 #Small Level
+    gameLevel = 1 #Game Level
 
     #Setting Variables
     difficulty = 0
@@ -2984,7 +3293,7 @@ def Game():
     levelToGo = 0
     tutorialLevel = False
 
-    block_list = pygame.sprite.Group() #Blocks list
+    block1_list = pygame.sprite.Group() #Blocks list 1
 
     tutorialBlock_list = pygame.sprite.Group() #Block tutorial list
 
@@ -3005,6 +3314,10 @@ def Game():
     startEnd_list = pygame.sprite.Group() #The area determines the start and end of a level
 
     levelOne_list = pygame.sprite.Group() #All visible object lists in level one
+
+    levelTwo_list = pygame.sprite.Group() #All visible object lists in level two
+
+    levelThree_list = pygame.sprite.Group() #All visible object lists in level three
 
     menu_list = pygame.sprite.Group() #All visible objects in menu
 
@@ -3035,6 +3348,16 @@ def Game():
     cloud_list = pygame.sprite.Group() #Clouds
 
     tutorial_list = pygame.sprite.Group() #Tutorial
+
+    coin_list = pygame.sprite.Group() #Coins
+
+    thousand_list = pygame.sprite.Group()
+
+    hundred_list = pygame.sprite.Group()
+
+    ten_list = pygame.sprite.Group()
+
+    one_list = pygame.sprite.Group()
 
     CreateLoad(loading_list)
 
@@ -3189,9 +3512,10 @@ def Game():
                     CreateFile(file_list, button_list, item_list, crown_list)
                     CreateMenu(menu_list, button_list)
                     CreateSettings(setting_list, button_list, easy_list, hard_list)
-                    CreateLevelOnePlatform(block_list, levelOne_list, startEnd_list, background_list, cloud_list) #Call create block function
+                    CreateLevelOnePlatform(block1_list, levelOne_list, startEnd_list, background_list, cloud_list) #Call create block function
                     CreateTutorialPlatform(tutorialBlock_list, tutorial_list, background_list, cloud_list, button_list)
                     CreateCharacters1(player_list, playerAnimation_list, playerAttack_list, playerHealth_list, dummyAnimation_list, levelOne_list, tutorial_list, enemy_list, tutorialEnemy_list, dummy_list, dummyAttack_list, dummyHealth_list)
+                    CreateMoney(tutorial_list, levelOne_list, levelTwo_list, levelThree_list, thousand_list, hundred_list, ten_list, one_list)
 
                 #endif
 
@@ -3279,8 +3603,7 @@ def Game():
                     #endif
 
                     #Set Level
-                    bigLevel = int(lines[2][0])
-                    smallLevel = int(lines[2][1])
+                    gameLevel = int(lines[2][0])
 
                 #endif
 
@@ -3339,6 +3662,19 @@ def Game():
                 tutorialReset = False
             #endif
 
+            for thousand in thousand_list:
+                thousand.Update(currency[0])
+            #endfor
+            for hundred in hundred_list:
+                hundred.Update(currency[1])
+            #endfor
+            for ten in ten_list:
+                ten.Update(currency[2])
+            #endfor
+            for one in one_list:
+                one.Update(currency[3])
+            #endfor
+
             for button in button_list: #Button Change
 
                 button.Change(pos, level)
@@ -3355,6 +3691,13 @@ def Game():
 
             #endfor
 
+            for coin in coin_list:
+
+                coin.Change()
+                coin.CoinUpdate(player_list, block1_list, tutorialBlock_list, tutorial_list, levelOne_list, coin_list, currency)
+
+            #endfor
+
             #Enemy Movement
             for enemy in tutorialEnemy_list:
 
@@ -3367,13 +3710,13 @@ def Game():
                 #endif
 
                 enemy.Attack(dummyAttack_list)
-                enemy.MoveHori(block_list, tutorialBlock_list, level)
+                enemy.MoveHori(block1_list, tutorialBlock_list, level)
                 enemy.AttackChecker()
-                enemy.MoveVert(block_list, tutorialBlock_list, level)
-                enemy.Death(dummyHealth_list)
+                enemy.MoveVert(block1_list, tutorialBlock_list, level)
+                enemy.Revive(dummyHealth_list)
                 enemy.Hurt()
                 enemy.EnemyAttackDetection(playerAttack_list,level)
-                enemy.Health(dummyHealth_list)
+                enemy.Health(dummyHealth_list, coin_list, tutorial_list, levelOne_list, level)
                 enemy.Animation(dummyAnimation_list)
 
             #endfor
@@ -3394,13 +3737,13 @@ def Game():
                 #Roll
                 player.Roll()
                 #Horizontal Movement
-                player.MoveHori(centered, block_list, tutorialBlock_list, startEnd_list, player_list, level, background_list) #Player move horizontally
+                player.MoveHori(centered, block1_list, tutorialBlock_list, startEnd_list, player_list, level, background_list) #Player move horizontally
                 #Attack Checker
                 player.AttackChecker()
                 #Vertical Movement
-                player.MoveVert(block_list, tutorialBlock_list, level)
+                player.MoveVert(block1_list, tutorialBlock_list, level)
                 #Death
-                player.Death(playerHealth_list)
+                player.Revive(playerHealth_list)
                 #Health
                 player.Health(playerHealth_list)
                 #Animation
@@ -3455,20 +3798,26 @@ def Game():
                     #endfor
                 #endfor
 
+                #Detection
+                player.EnemyAttackDetection(dummyAttack_list,level)
+                #Blocked
+                player.Blocked()
+                #Hurt
+                player.Hurt()
                 #Attack
-                player.Attack()
-
+                player.Attack(playerAttack_list)
+                #Roll
+                player.Roll()
                 #Horizontal Movement
-                player.MoveHori(centered, block_list, tutorialBlock_list, startEnd_list, player_list, level, background_list) #Player move horizontally
-
+                player.MoveHori(centered, block1_list, tutorialBlock_list, startEnd_list, player_list, level, background_list) #Player move horizontally
                 #Attack Checker
                 player.AttackChecker()
-
-                centered = True #Centered is true regardless of the situation, it will be verifies before next move
-
                 #Vertical Movement
-                player.MoveVert(block_list, tutorialBlock_list, level)
-
+                player.MoveVert(block1_list, tutorialBlock_list, level)
+                #Death
+                player.Death(playerHealth_list)
+                #Health
+                player.Health(playerHealth_list)
                 #Animation
                 player.Animation(playerAnimation_list)
 
@@ -3494,7 +3843,7 @@ size = (1500,900)
 screen = pygame.display.set_mode(size)
 
 # -- Title of new window/screen
-pygame.display.set_caption("2D RPG Game")
+pygame.display.set_caption("HEROTALE")
     
 ### -- Game Loop
 

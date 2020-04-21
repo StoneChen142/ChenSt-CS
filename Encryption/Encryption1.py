@@ -42,5 +42,6 @@ while i<length:
 #endwhile
 
 print("Decrypted text: ",decrypted_text)
+print(ord("!"))
 #ord()
 #chr()

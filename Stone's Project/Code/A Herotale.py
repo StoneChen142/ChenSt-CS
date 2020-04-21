@@ -1,5 +1,6 @@
 import pygame
 import os
+#from pydub import *
 from decimal import *
 from random import randint
 
@@ -30,40 +31,75 @@ def CreateLoad(loading_list):
 
 #endprocedure
 
-def CreateCharacters1(player_list, playerAnimation_list, playerAttack_list, playerHealth_list, dummyAnimation_list, levelOne_list, tutorial_list, enemy_list, tutorialEnemy_list, dummy_list, dummyAttack_list, dummyHealth_list):
+#Pause Panel Creation
+def CreatePause(button_list, optionBlock_list, pauseButton_list, panelButton_list, levelOne_list, levelTwo_list, levelThree_list):
 
-    player = PlayerClass(50, 700)
+    pauseButton = Button(8, 60, 60, 0, 1430, 10) #Pause
+    pauseButton_list.add(pauseButton)
+    button_list.add(pauseButton)
+    levelOne_list.add(pauseButton)
+    levelTwo_list.add(pauseButton)
+    levelThree_list.add(pauseButton)
+
+    closeButton = Button(10, 60, 60, 0, 1068, 234) #Pause
+    button_list.add(closeButton)
+    panelButton_list.add(closeButton)
+
+    quitButton = Button(11, 100, 40, 0, 700, 530)
+    button_list.add(quitButton)
+    panelButton_list.add(quitButton)
+
+    optionBox = BlockClass(6, 800, 475, 350, 212) #Option box
+    optionBlock_list.add(optionBox)
+
+    quitInstruction = InstructionClass(10, 698, 77, 401, 362) #Instruction
+    optionBlock_list.add(quitInstruction)
+
+#endprocedure
+
+#Characters
+def CreateCharacters1(player_list, playerAttack_list, tutorialEnemy_list, tutorial_list, levelOne_list, levelTwo_list, levelThree_list, enemyAttack_list, character1_list):
+
+    player = PlayerClass(50, 700, playerAttack_list)
     player_list.add(player)
+    character1_list.add(player)
 
-    animationPlayer = PlayerAnimation(player.rect.x, player.rect.y)
-    playerAnimation_list.add(animationPlayer)
-
-    playerAttack = AttackClass(120, 130, -1000, 0)
-    playerAttack_list.add(playerAttack)
-
-    dummy = BanditClass(295, 250)
+    dummy = BanditClass(1, 295, 250, tutorial_list, enemyAttack_list)
     tutorialEnemy_list.add(dummy) #Specify Level
-    enemy_list.add(dummy) #Specify Class
-    dummy_list.add(dummy) #Specify character
+    character1_list.add(dummy)
 
-    animationDummy = EnemyAnimation(1, 130, 130, dummy.rect.x, dummy.rect.y)
-    tutorial_list.add(animationDummy) #Make it visible
-    dummyAnimation_list.add(animationDummy) #Assign animation
+#endprocedure
 
-    dummyAttack = AttackClass(65, 130, -1000, 0)
-    dummyAttack_list.add(dummyAttack)
+def CreateCharacters2(levelOne_list, enemy_list, warlock_list, wordBox_list, nextButton_list, rogue_list, enemyAttack_list, rogueAttack_list, banditGroup1_list, banditGroup2_list, character1_list):
 
-    dummyHealth = HealthClass(1, 3, 100, 20, 290, 225)
-    tutorial_list.add(dummyHealth)
-    dummyHealth_list.add(dummyHealth)
+    warlock = WarlockClass(150,730,levelOne_list)
+    warlock_list.add(warlock)
+    character1_list.add(warlock)
 
-    playerHealth = HealthClass(1, 5, 100, 20, 25, 675)
-    tutorial_list.add(playerHealth)
-    levelOne_list.add(playerHealth)
-    playerHealth_list.add(playerHealth)
+    wordbox = BlockClass(5, 1065, 150, 217.5, 750)
+    wordBox_list.add(wordbox)
 
-    levelOne_list.add(animationPlayer) #Make the player's animation visible last to make sure it is on the top
-    tutorial_list.add(animationPlayer)
+    nextButton = Button(9, 60, 20, 0, 1195, 850)
+    nextButton_list.add(nextButton)
+
+    rogue = RogueClass(2260, 710, levelOne_list, enemyAttack_list, rogueAttack_list)
+    rogue_list.add(rogue)
+    character1_list.add(rogue)
+
+    for i in range(3):
+        bandit = BanditClass(1, 2140+i*100, 700, levelOne_list, enemyAttack_list)
+        banditGroup1_list.add(bandit) #Specify Level
+        character1_list.add(bandit)
+    #endfor
+
+    bandit1 = BanditClass(1, 1670, 450, levelOne_list, enemyAttack_list)
+    bandit2 = BanditClass(1, 1780, 450, levelOne_list, enemyAttack_list)
+    bandit3 = BanditClass(1, 2670, 450, levelOne_list, enemyAttack_list)
+    bandit4 = BanditClass(1, 2780, 450, levelOne_list, enemyAttack_list)
+    bandit5 = BanditClass(1, 2170, 700, levelOne_list, enemyAttack_list)
+    bandit6 = BanditClass(1, 2280, 700, levelOne_list, enemyAttack_list)
+    banditGroup2_list.add(bandit1, bandit2, bandit3, bandit4, bandit5, bandit6)
+    character1_list.add(bandit1, bandit2, bandit3, bandit4, bandit5, bandit6)
 
 #endprocedure
 
@@ -112,7 +148,8 @@ def CreateMenu(menu_list, button_list):
     herotale = Title() #Creates title
     menu_list.add(herotale) #Make it visible
 
-    startButton = Button(1, 309, 93, 0, 595.5, 420) #Start
+    #Start
+    startButton = Button(1, 309, 93, 0, 595.5, 420)
     button_list.add(startButton)
     menu_list.add(startButton)
 
@@ -149,6 +186,16 @@ def CreateSettings(setting_list, button_list, easy_list, hard_list):
 
 #endprocedure
 
+def RemoveFile(file_list):
+
+    for item in file_list:
+
+        file_list.remove(item)
+
+    #endfor
+
+#endprocedure
+
 #Save Files Creation
 def CreateFile(file_list, button_list, item_list, crown_list):
 
@@ -175,9 +222,9 @@ def CreateFile(file_list, button_list, item_list, crown_list):
     lines = f.readlines() #All data
     f.close() #Close
 
-    WriteWords(0, lines[0], 293.5, 210, file_list, 3) #Coin1 number
-    WriteWords(0, lines[1], 293.5, 310, file_list, 3) #Live1 number
-    WriteWords(0, lines[2], 293.5, 410, file_list, 3) #Level1 number
+    WriteWords(0, lines[0], 293.5, 210, file_list, crown_list, crown_list, crown_list, crown_list, 3, 0, 0) #Coin1 number
+    WriteWords(0, lines[1], 293.5, 310, file_list, crown_list, crown_list, crown_list, crown_list, 3, 0, 0) #Live1 number
+    WriteWords(0, lines[2], 293.5, 410, file_list, crown_list, crown_list, crown_list, crown_list, 3, 0, 0) #Level1 number
     
     #File 2
     fileBox2 = BlockClass(2, 333, 639, 583.5, 130.5) #File box 2
@@ -202,9 +249,9 @@ def CreateFile(file_list, button_list, item_list, crown_list):
     lines = f.readlines() #All data
     f.close() #Close
 
-    WriteWords(0, lines[0], 713.5, 210, file_list, 3) #Coin2 number
-    WriteWords(0, lines[1], 713.5, 310, file_list, 3) #Live2 number
-    WriteWords(0, lines[2], 713.5, 410, file_list, 3) #Level2 number
+    WriteWords(0, lines[0], 713.5, 210, file_list, crown_list, crown_list, crown_list, crown_list, 3, 0, 0) #Coin2 number
+    WriteWords(0, lines[1], 713.5, 310, file_list, crown_list, crown_list, crown_list, crown_list, 3, 0, 0) #Live2 number
+    WriteWords(0, lines[2], 713.5, 410, file_list, crown_list, crown_list, crown_list, crown_list, 3, 0, 0) #Level2 number
     
     #File 3
     fileBox3 = BlockClass(2, 333, 639, 1003.5, 130.5) #File box 3
@@ -229,9 +276,9 @@ def CreateFile(file_list, button_list, item_list, crown_list):
     lines = f.readlines() #All data
     f.close() #Close
 
-    WriteWords(0, lines[0], 1133.5, 210, file_list, 3) #Coin3 number
-    WriteWords(0, lines[1], 1133.5, 310, file_list, 3) #Live3 number
-    WriteWords(0, lines[2], 1133.5, 410, file_list, 3) #Level3 number
+    WriteWords(0, lines[0], 1133.5, 210, file_list, crown_list, crown_list, crown_list, crown_list, 3, 0, 0) #Coin3 number
+    WriteWords(0, lines[1], 1133.5, 310, file_list, crown_list, crown_list, crown_list, crown_list, 3, 0, 0) #Live3 number
+    WriteWords(0, lines[2], 1133.5, 410, file_list, crown_list, crown_list, crown_list, crown_list, 3, 0, 0) #Level3 number
 
     #Back
     back = Button(5, 106, 31 ,0, 50, 820) #Back Button
@@ -248,7 +295,7 @@ def CreateFile(file_list, button_list, item_list, crown_list):
 #endprocedure
 
 #LevelOneCreation
-def CreateTutorialPlatform(tutorialBlock_list, tutorial_list, background_list, cloud_list, button_list):
+def CreateTutorialPlatform(tutorialBlock_list, tutorial_list, button_list):
 
     #Files
     f = open("Game_Files/Tutorial.txt","r+") #Open platforms file
@@ -256,16 +303,12 @@ def CreateTutorialPlatform(tutorialBlock_list, tutorial_list, background_list, c
     nodesNum = len(nodes) #Number of platforms
     f.close() #Close
 
-    mountain1 = BackgroundClass(1, 0, 5120, 800, 0, 0)
-    mountain2 = BackgroundClass(1, 1, 2560, 800, 0, 0)
-    cloud1_1 = BackgroundClass(1, 2, 2560, 800, 0, 0)
-    cloud2_1 = BackgroundClass(1, 3, 2560, 800, 0, 0)
-    cloud1_2 = BackgroundClass(1, 2, 2560, 800, 2560, 0)
-    cloud2_2 = BackgroundClass(1, 3, 2560, 800, 2560, 0)
+    mountain1 = BackgroundClass(1, 0, 3000, 800, 0, 0)
+    mountain2 = BackgroundClass(1, 1, 3000, 800, 0, 0)
+    cloud1 = BackgroundClass(1, 2, 3000, 800, 0, 0)
+    cloud2 = BackgroundClass(1, 3, 3000, 800, 0, 0)
 
-    background_list.add(mountain1, mountain2)
-    cloud_list.add(cloud1_1, cloud1_2, cloud2_1, cloud2_2)
-    tutorial_list.add(cloud2_2, cloud2_1, cloud1_2, cloud1_1, mountain2, mountain1)
+    tutorial_list.add(cloud2, cloud2, mountain2, mountain1)
 
     #Nodes
     for i in range(nodesNum): 
@@ -332,36 +375,34 @@ def CreateTutorialPlatform(tutorialBlock_list, tutorial_list, background_list, c
     fakeInstruction = InstructionClass(9, 354, 20, 18, 65)
     tutorial_list.add(moveInstruction, jumpInstruction, attackInstruction, rollInstruction, dJumpInstruction, blockInstruction, coinInstruction, fakeInstruction)
 
-    pauseButton = Button(8, 60, 60, 0, 1430, 10) #Pause
-    button_list.add(pauseButton)
-    tutorial_list.add(pauseButton)
+    closeButton1 = Button(10, 60, 60, 0, 1430, 10) #Pause
+    button_list.add(closeButton1)
+    tutorial_list.add(closeButton1)
             
 #endprocedure
 
 #LevelOneCreation
-def CreateLevelOnePlatform(block1_list, levelOne_list, startEnd_list, background_list, cloud_list):
+def CreateLevelOnePlatform(block1_list, levelOne_list, startEnd_list, background1_list, cloud_list, ground1_list):
 
     #Files
-    f = open("Game_Files/Blocks.txt","r+") #Open platforms file
+    f = open("Game_Files/Level1Platform.txt","r+") #Open platforms file
     nodes = f.readlines() #All platforms
     nodesNum = len(nodes) #Number of platforms
     f.close() #Close
 
-    back1 = BackgroundClass(1, 0, 5120, 800, 0, 0)
-    back2 = BackgroundClass(1, 1, 2560, 800, 0, 0)
-    back3 = BackgroundClass(1, 2, 2560, 800, 0, 0)
-    back4 = BackgroundClass(1, 3, 2560, 800, 0, 0)
-    back5 = BackgroundClass(1, 2, 2560, 800, 2560, 0)
-    back6 = BackgroundClass(1, 3, 2560, 800, 2560, 0)
+    back1 = BackgroundClass(1, 0, 3000, 800, 0, 0)
+    back2 = BackgroundClass(1, 1, 3000, 800, 0, 0)
+    back3 = BackgroundClass(1, 2, 3000, 800, 0, 0)
+    back4 = BackgroundClass(1, 3, 3000, 800, 0, 0)
 
-    background_list.add(back1,back2)
-    cloud_list.add(back3, back4, back6, back5)
-    levelOne_list.add(back6, back4, back5, back3, back2, back1)
+    background1_list.add(back1,back2)
+    cloud_list.add(back3, back4)
+    levelOne_list.add(back4, back3, back2, back1)
 
     #Nodes
     for i in range(nodesNum): 
         
-        line = nodes[i-2] #Skip the last line because it is empty
+        line = nodes[i] #Skip the last line because it is empty
 
         #Type of Block
         typeOfBlock = int(line[0])
@@ -408,15 +449,44 @@ def CreateLevelOnePlatform(block1_list, levelOne_list, startEnd_list, background
     #endfor
 
     ground = GroundClass(1, 0, 800) #Creates ground
+    ground1_list.add(ground)
     levelOne_list.add(ground) #Make it visible
 
     startBlock = BlockClass(0, 10, 800, -10, 0)
     block1_list.add(block)
 
-    area = BlockClass(0, 717.5, 800, 0, 0)
+    area = BlockClass(0, 1500, 800, 0, 0)
     startEnd_list.add(area)
             
 #endprocedure
+
+def ReadScript(script1, script2, script3):
+
+    f = open("Game_Files/Level1Script.txt","r+") #Open
+    lines = f.readlines() #All lines
+    num = len(lines) #Number of lines
+    f.close() #Close
+    for i in range(num):
+        script1.append(lines[i])
+    #endfor
+
+    f = open("Game_Files/Level2Script.txt","r+") #Open
+    lines = f.readlines() #All lines
+    num = len(lines) #Number of lines
+    f.close() #Close
+    for i in range(num):
+        script2.append(lines[i])
+    #endfor
+
+    f = open("Game_Files/Level3Script.txt","r+") #Open
+    lines = f.readlines() #All lines
+    num = len(lines) #Number of lines
+    f.close() #Close
+    for i in range(num):
+        script3.append(lines[i])
+    #endfor
+
+#endfor
 
 #Menu Class ----------------------------------------------------------------------------------------
 
@@ -458,6 +528,9 @@ class Button(pygame.sprite.Sprite):
         self.easy = [pygame.transform.scale(pygame.image.load('Game_Images/Object/Buttons/Easy1.png'), (411, 120)), pygame.transform.scale(pygame.image.load('Game_Images/Object/Buttons/Easy2.png'), (411, 120))]
         self.hard = [pygame.transform.scale(pygame.image.load('Game_Images/Object/Buttons/Hard1.png'), (441, 120)), pygame.transform.scale(pygame.image.load('Game_Images/Object/Buttons/Hard2.png'), (441, 120))]
         self.pause = [pygame.transform.scale(pygame.image.load('Game_Images/Object/Buttons/Pause1.png'), (60, 60)), pygame.transform.scale(pygame.image.load('Game_Images/Object/Buttons/Pause2.png'), (60, 60))]
+        self.close = [pygame.transform.scale(pygame.image.load('Game_Images/Object/Buttons/Close1.png'), (60, 60)), pygame.transform.scale(pygame.image.load('Game_Images/Object/Buttons/Close2.png'), (60, 60))]
+        self.next = [pygame.transform.scale(pygame.image.load('Game_Images/Object/Buttons/Next1.png'), (60, 20)), pygame.transform.scale(pygame.image.load('Game_Images/Object/Buttons/Next2.png'), (60, 20))]
+        self.quit = [pygame.transform.scale(pygame.image.load('Game_Images/Object/Buttons/Quit1.png'), (width, height)), pygame.transform.scale(pygame.image.load('Game_Images/Object/Buttons/Quit2.png'), (width, height))]
 
         if self.imageNum == 1:
 
@@ -490,6 +563,18 @@ class Button(pygame.sprite.Sprite):
         elif self.imageNum == 8:
 
             self.image = self.pause[0]
+
+        elif self.imageNum == 9:
+
+            self.image = self.next[0]
+
+        elif self.imageNum == 10:
+
+            self.image = self.close[0]
+
+        elif self.imageNum == 11:
+
+            self.image = self.quit[0]
 
         #endif
         
@@ -537,9 +622,25 @@ class Button(pygame.sprite.Sprite):
             
             self.image = self.back[1] #Hover on back
 
-        elif level == 2 and pos[0] >= 1430 and pos[1] >= 10 and pos[0] <= 1490 and pos[1] <= 70 and self.imageNum == 8:
+        elif level == 2 and pos[0] >= 1430 and pos[1] >= 10 and pos[0] <= 1490 and pos[1] <= 70 and self.imageNum == 10:
             
-            self.image = self.pause[1] #Hover on back
+            self.image = self.close[1] #Hover on pause
+
+        elif level == 4 and pos[0] >= 1430 and pos[1] >= 10 and pos[0] <= 1490 and pos[1] <= 70 and self.imageNum == 8:
+            
+            self.image = self.pause[1] #Hover on close
+
+        elif level == 4 and pos[0] >= 1195 and pos[1] >= 850 and pos[0] <= 1255 and pos[1] <= 870 and self.imageNum == 9:
+
+            self.image = self.next[1]
+
+        elif level == 4 and pos[0] >= 1068 and pos[1] >= 234 and pos[0] <= 1128 and pos[1] <= 294 and self.imageNum == 10:
+
+            self.image = self.close[1]
+
+        elif level == 4 and pos[0] >= 700 and pos[1] >= 530 and pos[0] <= 800 and pos[1] <= 570 and self.imageNum == 11:
+
+            self.image = self.quit[1]
             
         else:
 
@@ -574,6 +675,18 @@ class Button(pygame.sprite.Sprite):
             elif self.imageNum == 8:
 
                 self.image = self.pause[0]
+
+            elif self.imageNum == 9:
+
+                self.image = self.next[0]
+
+            elif self.imageNum == 10:
+
+                self.image = self.close[0]
+
+            elif self.imageNum == 11:
+
+                self.image = self.quit[0]
 
             #endif
 
@@ -613,6 +726,7 @@ class ItemClass(pygame.sprite.Sprite):
         #Coin
         self.dropped = False
         self.getCoin = False
+        #self.coinSound = AudioSegment.from_wav('Game_Sounds/Object/coin.wav')
 
         #Counters
         self.coinCounter = 0
@@ -795,6 +909,7 @@ class ItemClass(pygame.sprite.Sprite):
             if self.startDisappear == 0: #If start timer has not started yet
 
                 self.startDisappear = pygame.time.get_ticks() #Record current time
+                #play(self.coinSound)
 
             #endif
 
@@ -834,6 +949,34 @@ class ItemClass(pygame.sprite.Sprite):
 
 #endclass
 
+#Timer Class
+class TimerClass():
+
+    def __init__(self):
+
+        #Timers
+        self.start = 0
+        self.end = 0
+
+    #endprocedure
+
+    def Counter(self, loTime, timeUp):
+
+        if self.start == 0:
+            self.start = pygame.time.get_ticks() #Record current time
+            timeUp[0] = 0
+        #endif
+        self.end = pygame.time.get_ticks() #Record current time
+        if self.end - self.start >= loTime:
+            timeUp[0] = 1
+            self.start = 0
+            self.end = 0
+        #endif
+
+    #endprocedure
+
+#endclass
+
 #Word
 class WordClass(pygame.sprite.Sprite):
 
@@ -858,14 +1001,44 @@ class WordClass(pygame.sprite.Sprite):
         self.numbers = [] #Numbers
         for x in range(10):
             add_str = str(x)
-            if x < 10:
-                self.numbers.append(pygame.transform.scale(pygame.image.load("Game_Images/Object/Numbers/" + add_str + ".png"), (width, height)))
-            #endif
+            self.numbers.append(pygame.transform.scale(pygame.image.load("Game_Images/Object/Numbers/" + add_str + ".png"), (width, height)))
         #endfor
+        self.small = []
+        for x in range(26):
+            add_str = str(x+1)
+            self.small.append(pygame.transform.scale(pygame.image.load("Game_Images/Object/Characters/Small" + add_str + ".png"), (width, height)))
+        #endfor
+        self.capital = []
+        for x in range(26):
+            add_str = str(x+1)
+            self.capital.append(pygame.transform.scale(pygame.image.load("Game_Images/Object/Characters/Capital" + add_str + ".png"), (width, height)))
+        #endfor
+        self.exclamation = [pygame.transform.scale(pygame.image.load("Game_Images/Object/Characters/Exclamation.png"), (width, height))]
+        self.comma = [pygame.transform.scale(pygame.image.load("Game_Images/Object/Characters/Comma.png"), (width, height))]
 
         if self.wordType == 0:
             
             self.image = self.numbers[int(self.num)]
+
+        elif self.wordType == 1:
+
+            if self.num >= 97 and self.num <= 122:
+                
+                self.image = self.small[self.num-97]
+
+            elif self.num >= 65 and self.num <= 90:
+
+                self.image = self.capital[self.num-65]
+
+            elif self.num == 44:
+
+                self.image = self.comma[0]
+
+            elif self.num == 33:
+
+                self.image = self.exclamation[0]
+
+            #endif
 
         #endif
 
@@ -880,10 +1053,12 @@ class WordClass(pygame.sprite.Sprite):
 #endclass
 
 #Write Words
-def WriteWords(typeOfWord, line, x, y, file_list, level):
+def WriteWords(typeOfWord, line, x, y, file_list, levelOne_list, levelTwo_list, levelThree_list, currentLine_list, level, gameLevel, pauseTime):
 
     line = line.rstrip("\n") #Get rid of next line (\n)
     length = len(str(line))
+    if typeOfWord == 1:
+        x = 242.5
     for i in range(length): #Loop
 
         if typeOfWord == 0: #If type is number
@@ -898,7 +1073,60 @@ def WriteWords(typeOfWord, line, x, y, file_list, level):
             if level == 3:
                 file_list.add(word) #Add to list
             #endif
-        #endif     
+
+        elif typeOfWord == 1:
+            officialY = y
+            charNum = ord(line[i])
+            xIncrement = 16
+            if line[i] != " ":
+                if charNum >= 97 and charNum <= 122:
+                    width = 14
+                    height = 20
+                    xIncrement = 16
+                    if charNum == 105 or charNum == 108:
+                        width = 4
+                        xIncrement = 6
+                    elif charNum == 121 or charNum == 103 or charNum == 112 or charNum == 113:
+                        height = 25
+                    elif charNum == 100 or charNum == 104 or charNum == 107 or charNum == 98:
+                        height = 25
+                        y = y - 5
+                    #endif
+                elif charNum >= 65 and charNum <= 90:
+                    width = 16
+                    height = 23
+                    xIncrement = 18
+                    y = y - 3
+                    if charNum == 73:
+                        width = 8
+                        xIncrement = 10
+                    #endif
+                elif charNum == 44:
+                    width = 4
+                    height = 8
+                    xIncrement = 6
+                    y = y + 12
+                elif charNum == 33:
+                    width = 4
+                    height = 25
+                    xIncrement = 6
+                    y = y - 5
+                #endif
+                word = WordClass(1, charNum, width, height, x, y) #Create word
+                currentLine_list.add(word)
+                y = officialY
+                if level == 4:
+                    if gameLevel == 1:
+                        levelOne_list.add(word)
+                    elif gameLevel == 2:
+                        levelTwo_list.add(word)
+                    elif gameLevel == 3:
+                        levelThree_list.add(word)
+                    #endif
+                #endif
+            #endif
+            x += xIncrement
+        #endif
 
     #endfor
 
@@ -1029,6 +1257,7 @@ class InstructionClass(pygame.sprite.Sprite): #Instruction is a sprite, because 
         self.minus = [pygame.transform.scale(pygame.image.load('Game_Images/Text/-.png'), (18, 8))]
         self.coin = [pygame.transform.scale(pygame.image.load('Game_Images/Text/CoinsInstruction.png'), (487, 27))]
         self.fake = [pygame.transform.scale(pygame.image.load('Game_Images/Text/FakeCoinInstruction.png'), (327, 20))]
+        self.quit = [pygame.transform.scale(pygame.image.load('Game_Images/Text/QuitInstruction.png'), (698, 77))]
 
         if typeNum == 1:
 
@@ -1066,6 +1295,10 @@ class InstructionClass(pygame.sprite.Sprite): #Instruction is a sprite, because 
 
             self.image = self.fake[0]
 
+        elif typeNum == 10:
+
+            self.image = self.quit[0]
+
         #endif
 
     #endprocedure
@@ -1073,6 +1306,19 @@ class InstructionClass(pygame.sprite.Sprite): #Instruction is a sprite, because 
 #endclass
 
 #Gameplay Class ------------------------------------------------------------------------------------
+#Draw / Remove object on / from Canvas
+def DrawOrRemove(num, listOne, listTwo):
+    if num == 0:
+        for stuff in listTwo:
+            listOne.remove(stuff)
+        #endfor
+    elif num == 1:
+        for stuff in listTwo:
+            listOne.add(stuff)
+        #endfor
+    #endif
+#endprocedure
+            
 #Convert Image
 def loadify(img):
     
@@ -1092,10 +1338,14 @@ class BlockClass(pygame.sprite.Sprite): #Block is a sprite, because I need to cr
         self.rect.x = x
         self.rect.y = y
 
+        self.originalX = x
+
         self.grassBlock = [pygame.transform.scale(pygame.image.load('Game_Images/Background/GroundBlock.png'), (240, 40))]
         self.saveFileBlock = [pygame.transform.scale(pygame.image.load('Game_Images/Text/SaveFileBox.png'), (333, 639))]
         self.crown = [pygame.transform.scale(pygame.image.load('Game_Images/Text/Crown.png'), (333, 141))]
         self.chooseDifficulty = [pygame.transform.scale(pygame.image.load('Game_Images/Text/ChooseDifficulty.png'), (1220, 202))]
+        self.wordBlock = [pygame.transform.scale(pygame.image.load('Game_Images/Text/TextBox.png'), (1065, 150))]
+        self.optionBlock = [pygame.transform.scale(pygame.image.load('Game_Images/Text/OptionBox.png'), (800, 475))]
 
         if typeOfBlock == 1:
 
@@ -1113,8 +1363,22 @@ class BlockClass(pygame.sprite.Sprite): #Block is a sprite, because I need to cr
 
             self.image = self.chooseDifficulty[0]
 
+        elif typeOfBlock == 5:
+
+            self.image = self.wordBlock[0]
+
+        elif typeOfBlock == 6:
+
+            self.image = self.optionBlock[0]
+
         #endif
         
+    #endprocedure
+
+    def Reset(self):
+
+        self.rect.x = self.originalX
+
     #endprocedure
 
 #endclass
@@ -1131,12 +1395,14 @@ class GroundClass(pygame.sprite.Sprite): #Block is a sprite, because I need to c
         self.rect.x = x
         self.rect.y = y
 
+        self.originalX = x
+
         self.num = num
 
         self.ground = []
         for x in range(1):
             add_str = str(x+1)
-            self.ground.append(pygame.transform.scale(loadify("Game_Images/Background/Ground" + add_str + ".png"), (1500, 100)))
+            self.ground.append(pygame.transform.scale(loadify("Game_Images/Background/Ground" + add_str + ".png"), (3000, 100)))
         #endfor
 
         if self.num == 1:
@@ -1147,9 +1413,13 @@ class GroundClass(pygame.sprite.Sprite): #Block is a sprite, because I need to c
         
     #endprocedure
 
-    def ChangeSkin(self, num):
+    def Update(self, num):
 
-        self.image = self.ground[num] #Changes the texture of itself
+        if num == 1:
+            self.rect.x -= 10
+        elif num == 0:
+            self.rect.x = self.originalX
+        #endif
 
     #endprocedure
 
@@ -1174,12 +1444,10 @@ class BackgroundClass(pygame.sprite.Sprite): #Class of the background
         self.typeBack = typeBackground
         self.num = picNum
 
-        self.mountains = [pygame.transform.scale(loadify("Game_Images/Background/Mountains/Mountain1.png"), (5120, 800))] #Mountains
-        for x in range(3):
-            add_str = str(x+2)
-            if x < 3:
-                self.mountains.append(pygame.transform.scale(loadify("Game_Images/Background/Mountains/Mountain" + add_str + ".png"), (2560, 800)))
-            #endif
+        self.mountains = [] #Mountains
+        for x in range(4):
+            add_str = str(x+1)
+            self.mountains.append(pygame.transform.scale(loadify("Game_Images/Background/Mountains/Mountain" + add_str + ".png"), (3000, 800)))
         #endfor
 
         if self.typeBack == 1:
@@ -1190,38 +1458,23 @@ class BackgroundClass(pygame.sprite.Sprite): #Class of the background
 
     #endprocedure
 
-    def BackUpdate(self, move):
-
-        neg = 1
-        if move < 0:
-            neg = -1
-        #endif
+    def BackUpdate(self):
             
         if self.num == 0:
             
-            self.scalex += neg*abs(move)
-            if self.scalex <= -36200 and move < 0:
-                self.scalex = -36200
-            elif self.scalex >= 0 and move > 0:
-                self.scalex = 0
-            #endif
+            self.scalex -= 12
 
         elif self.num == 1:
 
-            self.scalex += neg*(abs(move)-2)
-            if self.scalex <= -10600 and move < 0:
-                self.scalex = -10600
-            elif self.scalex >= 0 and move > 0:
-                self.scalex = 0
-            #endif
+            self.scalex -= 6
 
         elif self.num == 2:
 
-            self.scalex += neg*(abs(move)-3)
+            self.scalex -= 3
 
         elif self.num == 3:
 
-            self.scalex += neg*(abs(move)-4)
+            self.scalex -= 2
 
         #endif
                 
@@ -1242,6 +1495,10 @@ class BackgroundClass(pygame.sprite.Sprite): #Class of the background
         #endif
             
         self.rect.x = self.scalex//10
+
+        if self.rect.x <= -1500:
+            self.rect.x = 0
+        #endif
 
     #endprocedure
 
@@ -1303,7 +1560,7 @@ class HealthClass(pygame.sprite.Sprite): #Class of Attack
 #Player Class
 class PlayerClass(pygame.sprite.Sprite): #Class of the player
  
-    def __init__(self, x, y):
+    def __init__(self, x, y, playerAttack_list):
         
         super().__init__()
  
@@ -1313,8 +1570,14 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
         self.rect.x = x
         self.rect.y = y
 
+        self.playerAnimation = PlayerAnimation(self.rect.x, self.rect.y) #Animation
+        self.playerAttack = AttackClass(120, 130, -1000, 0) #Attack
+        playerAttack_list.add(self.playerAttack)
+        self.playerHealth = HealthClass(1, 5, 100, 20, 25, 675) #Health
+        
         #Attributes
         self.hp = 5
+        self.hp2 = 0
         self.reduceHealth = False
         self.speedX = 10
         self.horiSpeed = 0
@@ -1328,6 +1591,7 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
         self.stopSelf = False
         self.resetAttack = False
         self.freeze = False
+        self.freezeAnimation = False
         self.block = False
         self.blocked = False
         self.unblock = False
@@ -1373,7 +1637,77 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
         
     #endprocedure
 
-    def Animation(self, playerAnimation_list):
+    def DrawOnCanvas(self, tutorial_list, levelOne_list, levelTwo_list, levelThree_list):
+
+        tutorial_list.add(self.playerHealth, self.playerAnimation)
+        levelOne_list.add(self.playerHealth, self.playerAnimation)
+        levelTwo_list.add(self.playerHealth, self.playerAnimation)
+        levelThree_list.add(self.playerHealth, self.playerAnimation)
+
+    #endprocedure
+
+    def ResetLive(self, live):
+
+        self.hp = live[0]
+        self.playerHealth.Update(self.hp)
+
+    #endprocedure
+
+    def Reset(self):
+
+        self.lastHoriSpeed = 4
+        self.jumped = False
+        self.attacked = False
+        self.attackStep = 1
+        self.stopSelf = False
+        self.resetAttack = False
+        self.freeze = False
+        self.freezeAnimation = False
+        self.block = False
+        self.blocked = False
+        self.unblock = False
+        self.roll = False
+        self.hurt = False
+        self.keepMoving = False
+        self.death = False
+        self.jumpCounter = 0
+        self.fallCounter = 0
+        self.attackCounter1 = 0
+        self.attackCounter2 = 0
+        self.attackCounter3 = 0
+        self.blockedCounter = 0
+        self.rollCounter = 0
+        self.deathCounter = 0
+        self.hurtCounter = 0
+        self.rect.x = 50
+        self.rect.y = 700
+
+        self.playerAttack.rect.x = -1000
+        self.Animation()
+
+    #endprocedure
+
+    def FreezeTrigger(self, num):
+
+        if num == 1:
+            self.freeze = True
+        elif num != 1:
+            self.freeze = False
+        #endif
+
+    #endprocedure
+
+    def Freeze(self, num):
+
+        if num == 1:
+            self.freezeAnimation = True
+        else:
+            self.freezeAnimation = False
+        #endif
+
+    #endprocedure
+
+    def Animation(self):
 
         if self.startAnimation == 0: #If start timer has not started yet
 
@@ -1381,238 +1715,234 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
         #endif
 
-        for animationPlayer in playerAnimation_list:
+        self.endAnimation = pygame.time.get_ticks() #Get current time for end time
 
-            self.endAnimation = pygame.time.get_ticks() #Get current time for end time
+        self.playerAnimation.rect.y = self.rect.y - 38
+        self.playerAnimation.rect.x = self.rect.x - 100
 
-            animationPlayer.rect.y = self.rect.y - 38
-            animationPlayer.rect.x = self.rect.x - 100
+        if self.death == False and not self.freezeAnimation:
+        
+            if self.hurt == False and self.attacked == False and self.horiSpeed == 0 and self.jumped == False and self.block == False and self.blocked == False:
 
-            if self.death == False:
-            
-                if self.hurt == False and self.attacked == False and self.horiSpeed == 0 and self.jumped == False and self.block == False and self.blocked == False:
+                if self.endAnimation - self.startAnimation >= 160: #If next image
+                    
+                    self.startAnimation = self.endAnimation #If player is idle
+                    self.playerAnimation.PlayerIdle(self.lastHoriSpeed, self.idleCounter)
 
-                    if self.endAnimation - self.startAnimation >= 160: #If next image
-                        
-                        self.startAnimation = self.endAnimation #If player is idle
-                        animationPlayer.PlayerIdle(self.lastHoriSpeed, self.idleCounter)
-
-                        if self.idleCounter != 7: #If reached the end
-                            self.idleCounter += 1
-                        else:
-                            self.idleCounter = 0
-                        #endif
-
-                    #endif
-
-                elif not self.hurt and self.attacked == False and self.horiSpeed != 0 and self.jumped == False and self.roll == False:
-
-                    if self.endAnimation - self.startAnimation >= 80:
-                        
-                        self.startAnimation = self.endAnimation #If player running
-                        animationPlayer.PlayerRun(self.lastHoriSpeed, self.runCounter)
-
-                        if self.runCounter != 9: #If reached the end
-                            self.runCounter += 1
-                        else:
-                            self.runCounter = 0
-                        #endif
-
-                    #endif
-
-                elif self.jumped == True and self.vertSpeed >= 0:
-
-                    if self.endAnimation - self.startAnimation >= 200:
-
-                        self.startAnimation = self.endAnimation #If player jumping
-                        animationPlayer.PlayerJump(self.lastHoriSpeed, self.jumpCounter)
-
-                        if self.jumpCounter != 2: #If reached the end
-                            self.jumpCounter += 1
-                        else:
-                            self.jumpCounter = 2 #Stay at the last frame
-                        #endif
-
-                    #endif
-
-                elif self.jumped == True and self.vertSpeed < 0:
-
-                    if self.endAnimation - self.startAnimation >= 200:
-
-                        self.startAnimation = self.endAnimation #If player falling
-                        animationPlayer.PlayerFall(self.lastHoriSpeed, self.fallCounter)
-
-                        if self.fallCounter != 3: #If reached the end
-                            self.fallCounter += 1
-                        else:
-                            self.fallCounter = 3 #Stay at the last frame
-                        #endif
-
-                    #endif
-
-                elif self.attacked == True and self.attackStep == 1:
-
-                    if self.endAnimation - self.startAnimation >= 50:
-
-                        self.startAnimation = self.endAnimation 
-                        animationPlayer.PlayerAttack1(self.lastHoriSpeed, self.attackCounter1)
-
-                        if self.attackCounter1 != 5: 
-                            self.attackCounter1 += 1
-                        else:
-                            self.attackCounter1 = 5
-                        #endif
-
-                    #endif
-
-                elif self.attacked == True and self.attackStep == 2:
-
-                    if self.endAnimation - self.startAnimation >= 50:
-
-                        self.startAnimation = self.endAnimation 
-                        animationPlayer.PlayerAttack2(self.lastHoriSpeed, self.attackCounter2)
-
-                        if self.attackCounter2 != 5: 
-                            self.attackCounter2 += 1
-                        else:
-                            self.attackCounter2 = 5
-                        #endif
-
-                    #endif
-
-                elif self.attacked == True and self.attackStep == 3:
-
-                    if self.endAnimation - self.startAnimation >= 50:
-
-                        self.startAnimation = self.endAnimation 
-                        animationPlayer.PlayerAttack3(self.lastHoriSpeed, self.attackCounter3)
-
-                        if self.attackCounter3 != 7: 
-                            self.attackCounter3 += 1
-                        else:
-                            self.attackCounter3 = 7
-                        #endif
-
-                    #endif
-
-                elif self.block == True and self.blocked == False:
-
-                    if self.endAnimation - self.startAnimation >= 80:
-
-                        self.startAnimation = self.endAnimation #If player blocking
-                        animationPlayer.PlayerBlock(self.lastHoriSpeed, self.blockCounter)
-
-                        if self.blockCounter != 7: #If reached the end
-                            self.blockCounter += 1
-                        else:
-                            self.blockCounter = 0 #Start over
-                        #endif
-
-                    #endif
-
-                elif self.blocked:
-
-                    if self.endAnimation - self.startAnimation >= 80:
-
-                        self.startAnimation = self.endAnimation #If player blocking
-                        animationPlayer.PlayerBlocked(self.lastHoriSpeed, self.blockedCounter)
-
-                        if self.blockedCounter != 4: #If reached the end
-                            self.blockedCounter += 1
-                        else:
-                            self.blockedCounter = 4 #Stops
-                        #endif
-
-                    #endif
-
-                elif self.roll == True:
-
-                    if self.endAnimation - self.startAnimation >= 50:
-
-                        self.startAnimation = self.endAnimation #If player falling
-                        animationPlayer.PlayerRoll(self.lastHoriSpeed, self.rollCounter)
-
-                        if self.rollCounter != 8: #If reached the end
-                            self.rollCounter += 1
-                        else:
-                            self.rollCounter = 8 #Stay at the last frame
-                        #endif
-
-                    #endif
-
-                #endif
-
-                elif self.hurt == True:
-
-                    if self.endAnimation - self.startAnimation >= 80:
-
-                        self.startAnimation = self.endAnimation #If player is hurt
-                        animationPlayer.PlayerHurt(self.lastHoriSpeed, self.hurtCounter)
-
-                        if self.hurtCounter != 2: #If reached the end
-                            self.hurtCounter += 1
-                        else:
-                            self.hurtCounter = 2 #Stay at the last frame
-                        #endif
-
-                    #endif
-
-                #endif
-
-            elif self.death == True:
-
-                if self.endAnimation - self.startAnimation >= 75: #If next image
-                        
-                    self.startAnimation = self.endAnimation #If player is Dead
-                    animationPlayer.PlayerDeath(self.lastHoriSpeed, self.deathCounter)
-
-                    if self.deathCounter != 7: #If reached the end
-                        self.deathCounter += 1
+                    if self.idleCounter != 7: #If reached the end
+                        self.idleCounter += 1
                     else:
-                        self.deathCounter == 7
+                        self.idleCounter = 0
+                    #endif
+
+                #endif
+
+            elif not self.hurt and self.attacked == False and self.horiSpeed != 0 and self.jumped == False and self.roll == False:
+
+                if self.endAnimation - self.startAnimation >= 80:
+                    
+                    self.startAnimation = self.endAnimation #If player running
+                    self.playerAnimation.PlayerRun(self.lastHoriSpeed, self.runCounter)
+
+                    if self.runCounter != 9: #If reached the end
+                        self.runCounter += 1
+                    else:
+                        self.runCounter = 0
+                    #endif
+
+                #endif
+
+            elif self.jumped == True and self.vertSpeed >= 0:
+
+                if self.endAnimation - self.startAnimation >= 200:
+
+                    self.startAnimation = self.endAnimation #If player jumping
+                    self.playerAnimation.PlayerJump(self.lastHoriSpeed, self.jumpCounter)
+
+                    if self.jumpCounter != 2: #If reached the end
+                        self.jumpCounter += 1
+                    else:
+                        self.jumpCounter = 2 #Stay at the last frame
+                    #endif
+
+                #endif
+
+            elif self.jumped == True and self.vertSpeed < 0:
+
+                if self.endAnimation - self.startAnimation >= 200:
+
+                    self.startAnimation = self.endAnimation #If player falling
+                    self.playerAnimation.PlayerFall(self.lastHoriSpeed, self.fallCounter)
+
+                    if self.fallCounter != 3: #If reached the end
+                        self.fallCounter += 1
+                    else:
+                        self.fallCounter = 3 #Stay at the last frame
+                    #endif
+
+                #endif
+
+            elif self.attacked == True and self.attackStep == 1:
+
+                if self.endAnimation - self.startAnimation >= 60:
+
+                    self.startAnimation = self.endAnimation 
+                    self.playerAnimation.PlayerAttack1(self.lastHoriSpeed, self.attackCounter1)
+
+                    if self.attackCounter1 != 5: 
+                        self.attackCounter1 += 1
+                    else:
+                        self.attackCounter1 = 5
+                    #endif
+
+                #endif
+
+            elif self.attacked == True and self.attackStep == 2:
+
+                if self.endAnimation - self.startAnimation >= 60:
+
+                    self.startAnimation = self.endAnimation 
+                    self.playerAnimation.PlayerAttack2(self.lastHoriSpeed, self.attackCounter2)
+
+                    if self.attackCounter2 != 5: 
+                        self.attackCounter2 += 1
+                    else:
+                        self.attackCounter2 = 5
+                    #endif
+
+                #endif
+
+            elif self.attacked == True and self.attackStep == 3:
+
+                if self.endAnimation - self.startAnimation >= 60:
+
+                    self.startAnimation = self.endAnimation 
+                    self.playerAnimation.PlayerAttack3(self.lastHoriSpeed, self.attackCounter3)
+
+                    if self.attackCounter3 != 7: 
+                        self.attackCounter3 += 1
+                    else:
+                        self.attackCounter3 = 7
+                    #endif
+
+                #endif
+
+            elif self.block == True and self.blocked == False:
+
+                if self.endAnimation - self.startAnimation >= 80:
+
+                    self.startAnimation = self.endAnimation #If player blocking
+                    self.playerAnimation.PlayerBlock(self.lastHoriSpeed, self.blockCounter)
+
+                    if self.blockCounter != 7: #If reached the end
+                        self.blockCounter += 1
+                    else:
+                        self.blockCounter = 0 #Start over
+                    #endif
+
+                #endif
+
+            elif self.blocked:
+
+                if self.endAnimation - self.startAnimation >= 80:
+
+                    self.startAnimation = self.endAnimation #If player blocking
+                    self.playerAnimation.PlayerBlocked(self.lastHoriSpeed, self.blockedCounter)
+
+                    if self.blockedCounter != 4: #If reached the end
+                        self.blockedCounter += 1
+                    else:
+                        self.blockedCounter = 4 #Stops
+                    #endif
+
+                #endif
+
+            elif self.roll == True:
+
+                if self.endAnimation - self.startAnimation >= 50:
+
+                    self.startAnimation = self.endAnimation #If player falling
+                    self.playerAnimation.PlayerRoll(self.lastHoriSpeed, self.rollCounter)
+
+                    if self.rollCounter != 8: #If reached the end
+                        self.rollCounter += 1
+                    else:
+                        self.rollCounter = 8 #Stay at the last frame
                     #endif
 
                 #endif
 
             #endif
 
+            elif self.hurt == True:
+
+                if self.endAnimation - self.startAnimation >= 80:
+
+                    self.startAnimation = self.endAnimation #If player is hurt
+                    self.playerAnimation.PlayerHurt(self.lastHoriSpeed, self.hurtCounter)
+
+                    if self.hurtCounter != 2: #If reached the end
+                        self.hurtCounter += 1
+                    else:
+                        self.hurtCounter = 2 #Stay at the last frame
+                    #endif
+
+                #endif
+
+            #endif
+
+        elif self.death == True and not self.freezeAnimation:
+
+            if self.endAnimation - self.startAnimation >= 75: #If next image
+                    
+                self.startAnimation = self.endAnimation #If player is Dead
+                self.playerAnimation.PlayerDeath(self.lastHoriSpeed, self.deathCounter)
+
+                if self.deathCounter != 7: #If reached the end
+                    self.deathCounter += 1
+                else:
+                    self.deathCounter == 7
+                #endif
+
+            #endif
+
+        #endif
+
+    #endprocedure
+
+    def EnemyAttackDetection(self,attack_list):
+
+        playerGetHit_list = pygame.sprite.spritecollide(self, attack_list, False)#If get hit
+        for attack in playerGetHit_list:
+            if not self.hurt and not self.reduceHealth and not self.death and not self.freezeAnimation:
+                if self.block:
+                    self.blocked = True
+                elif not self.block and not self.roll:
+                    self.hurt = True
+                    self.reduceHealth = True
+                #endif
+            #endif
         #endfor
 
     #endprocedure
 
-    def EnemyAttackDetection(self,dummyAttack_list,level):
+    def RogueDetection(self,attack_list):
 
-        if level == 2:
-            playerGetHit_list = pygame.sprite.spritecollide(self, dummyAttack_list, False)#If get hit
-            for attack in playerGetHit_list:
-                if self.hurt == False and not self.death:
-                    if self.block:
-                        self.blocked = True
-                    elif not self.block and not self.roll:
-                        self.hurt = True
-                        self.reduceHealth = True
-                    #endif
-                #endif
-            #endfor
-        elif level == 4:
-            playerGetHit_list = pygame.sprite.spritecollide(self, dummyAttack_list, False)#If get hit
-            for attack in playerGetHit_list:
-                if self.hurt == False and not self.death:
-                    if self.block:
-                        self.blocked = True
-                    elif not self.block and not self.roll:
-                        self.hurt = True
-                        self.reduceHealth = True
-                    #endif
-                #endif
-            #endfor
-        #endif
+        playerGetHit_list = pygame.sprite.spritecollide(self, attack_list, False)#If get hit
+        for attack in playerGetHit_list:
+            if self.hurt == False and not self.death and not self.freezeAnimation:
+                self.hurt = True
+                self.reduceHealth = True
+                self.block = False
+                self.hp2 = -1
+            #endif
+        #endfor
 
     #endprocedure
 
     def Jump(self):
 
-        if self.freeze == False and self.blocked == False and self.hurt == False and self.attacked == False and self.roll == False and not self.death:
+        if not self.freeze and self.blocked == False and self.hurt == False and self.attacked == False and self.roll == False and not self.death:
 
             if self.jumped == False: #If player has not jumped yet
 
@@ -1636,9 +1966,9 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
     #endprocedure
 
-    def MoveVert(self, block_list, tutorialBlock_list, level):
+    def MoveVert(self, block_list):
 
-        if self.freeze == False:
+        if self.freezeAnimation == False:
 
             if self.vertSpeed == 0: #Keep testing if player hits something
                 self.vertSpeed = -0.4
@@ -1646,9 +1976,9 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
                 self.vertSpeed -= 0.6
             #endif
 
-            if self.rect.y >= 703 and self.vertSpeed <= 0: #If sinks into the ground
+            if self.rect.y >= 700 and self.vertSpeed <= 0: #If sinks into the ground
 
-                self.rect.y = 703 #Stands on the ground
+                self.rect.y = 700 #Stands on the ground
                 self.vertSpeed = 0
                 self.jumped = False
 
@@ -1660,48 +1990,24 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
             #endif
 
             self.rect.y -= self.vertSpeed #Player move
-
-            if level == 4:
                 
-                playerVertBlock_list = pygame.sprite.spritecollide(self, block_list, False)#If collide
-                for block in playerVertBlock_list:
-                    
-                    if self.vertSpeed <= 0: #If player is falling
+            playerVertBlock_list = pygame.sprite.spritecollide(self, block_list, False)#If collide
+            for block in playerVertBlock_list:
+                
+                if self.vertSpeed <= 0: #If player is falling
 
-                        self.rect.bottom = block.rect.top
-                        self.jumped = False
+                    self.rect.bottom = block.rect.top
+                    self.jumped = False
 
-                    elif self.vertSpeed >= 0: #If player is jumping
+                elif self.vertSpeed >= 0: #If player is jumping
 
-                        self.rect.top = block.rect.bottom
+                    self.rect.top = block.rect.bottom
 
-                    #endif
+                #endif
 
-                    self.vertSpeed = 0 #Stop player
+                self.vertSpeed = 0 #Stop player
 
-                #endfor
-
-            elif level == 2:
-
-                playerVertBlock_list = pygame.sprite.spritecollide(self, tutorialBlock_list, False)#If collide
-                for block in playerVertBlock_list:
-                    
-                    if self.vertSpeed <= 0: #If player is falling
-
-                        self.rect.bottom = block.rect.top
-                        self.jumped = False
-
-                    elif self.vertSpeed >= 0: #If player is jumping
-
-                        self.rect.top = block.rect.bottom
-
-                    #endif
-
-                    self.vertSpeed = 0 #Stop player
-
-                #endfor
-
-            #endif
+            #endfor
 
         #endif
 
@@ -1709,7 +2015,7 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
     def RollTrigger(self):
 
-        if self.attacked == False and self.jumped == False and self.blocked == False and self.hurt == False and not self.death:
+        if self.attacked == False and self.jumped == False and self.blocked == False and self.hurt == False and not self.death and not self.freeze:
 
             self.block = False
             self.roll = True
@@ -1720,13 +2026,13 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
     def BlockTrigger(self,num):
 
-        if self.attacked == False and self.jumped == False and num == 1 and self.hurt == False and not self.death:
+        if self.attacked == False and self.jumped == False and num == 1 and self.hurt == False and not self.death and not self.freeze:
 
             self.horiSpeed = 0
             self.block = True
             self.unblock = False
 
-        elif num == 0:
+        elif num == 0 and not self.freezeAnimation:
 
             self.block = False
             self.unblock = True
@@ -1748,7 +2054,7 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
     def Blocked(self):
 
-        if self.blocked:
+        if self.blocked and not self.freezeAnimation:
 
             self.horiSpeed = 0
             
@@ -1772,42 +2078,52 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
     #endprocedure
 
-    def Health(self, health_list):
+    def Health(self, live):
 
-        if self.reduceHealth == True:
+        if self.reduceHealth == True and not self.freezeAnimation:
 
             self.reduceHealth = False
             if self.hp > 0:
                 self.hp -= 1
-                for health in health_list:
-                    health.Update(self.hp)
-                #endfor
+                self.hp += self.hp2
+                self.hp2 = 0
+                if self.hp < 0:
+                    self.hp = 0
+                #endif
+                self.playerHealth.Update(self.hp)
             if self.hp == 0:
                 self.death = True
             #endif
+            live[0] = self.hp
 
         #endif
 
-        for health in health_list:
-
-            if self.hp == 5:
-                health.rect.x = self.rect.x - 25
-            elif self.hp == 4:
-                health.rect.x = self.rect.x - 15
-            elif self.hp == 3:
-                health.rect.x = self.rect.x - 5
-            elif self.hp == 2:
-                health.rect.x = self.rect.x + 5
-            elif self.hp == 1:
-                health.rect.x = self.rect.x + 15
-            #endif
-            health.rect.y = self.rect.y - 25
-
-        #endfor
+        if self.hp == 5:
+            self.playerHealth.rect.x = self.rect.x - 25
+        elif self.hp == 4:
+            self.playerHealth.rect.x = self.rect.x - 15
+        elif self.hp == 3:
+            self.playerHealth.rect.x = self.rect.x - 5
+        elif self.hp == 2:
+            self.playerHealth.rect.x = self.rect.x + 5
+        elif self.hp == 1:
+            self.playerHealth.rect.x = self.rect.x + 15
+        #endif
+        self.playerHealth.rect.y = self.rect.y - 25
 
     #endprocedure
 
-    def Death(self, health_list):
+    def Death(self):
+        
+        if self.death == True:
+
+            self.horiSpeed = 0
+
+        #endif
+
+    #endprocedure
+
+    def Revive(self, live):
         
         if self.death == True:
 
@@ -1823,36 +2139,9 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
                 self.startDeath = 0
                 self.death = False
                 self.deathCounter = 0
+                live[0] = 5
                 self.hp = 5
-                for health in health_list:
-                    health.Update(self.hp)
-                #endfor
-            #endif
-
-        #endif
-
-    #endprocedure
-
-    def Revive(self, health_list):
-        
-        if self.death == True:
-
-            self.horiSpeed = 0
-            
-            if self.startDeath == 0:
-                self.startDeath = pygame.time.get_ticks()
-            #endif
-
-            self.endDeath = pygame.time.get_ticks()
-            if self.endDeath - self.startDeath > 3000:
-                self.endDeath = 0
-                self.startDeath = 0
-                self.death = False
-                self.deathCounter = 0
-                self.hp = 5
-                for health in health_list:
-                    health.Update(self.hp)
-                #endfor
+                self.playerHealth.Update(self.hp)
             #endif
 
         #endif
@@ -1861,7 +2150,7 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
     def Hurt(self):
         
-        if self.hurt == True and self.death == False:
+        if self.hurt == True and self.death == False and not self.freezeAnimation:
 
             self.horiSpeed = 0
             
@@ -1892,7 +2181,7 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
     def AttackTrigger(self):
 
-        if self.attacked == False and self.jumped == False and self.roll == False and self.hurt == False and self.blocked == False and self.death == False:
+        if self.attacked == False and self.jumped == False and self.roll == False and self.hurt == False and self.blocked == False and self.death == False and not self.freeze:
 
             self.endRest = pygame.time.get_ticks()
             if self.endRest - self.startRest >= 100 and self.resetAttack:
@@ -1923,7 +2212,7 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
     def AttackChecker(self):
 
-        if self.stopSelf: #If the player should stop
+        if self.stopSelf and not self.freezeAnimation: #If the player should stop
 
             if not self.keepMoving:
                 self.horiSpeed = 0
@@ -1942,7 +2231,7 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
     def Roll(self):
 
-        if self.roll == True:
+        if self.roll == True and not self.freezeAnimation:
 
             if self.startRoll == 0:
                 self.startRoll = pygame.time.get_ticks()
@@ -1973,7 +2262,7 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
     #endprocedure
 
-    def Attack(self, playerAttack_list):
+    def Attack(self):
 
         if self.attacked == False:
             
@@ -1987,7 +2276,7 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
                 self.endCombo = 0
             #endif
         
-        elif self.attacked == True and self.freeze == False:
+        elif self.attacked == True and not self.freezeAnimation:
 
             self.horiSpeed = 0
             self.endCombo = 0
@@ -1997,21 +2286,21 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
                     self.startAttack = pygame.time.get_ticks()
                 #endif
                 self.endAttack = pygame.time.get_ticks()
-                for attack in playerAttack_list:
+                if self.attackCounter1 == 2 or self.attackCounter1 == 3:
                     if self.lastHoriSpeed > 0 and not self.hurt and not self.death:
-                        attack.rect.x = self.rect.x + 25
-                        attack.rect.y = self.rect.y - 30
+                        self.playerAttack.rect.x = self.rect.x + 35
+                        self.playerAttack.rect.y = self.rect.y - 30
                     elif self.lastHoriSpeed < 0 and not self.hurt and not self.death:
-                        attack.rect.x = self.rect.x - 95
-                        attack.rect.y = self.rect.y - 30
-                    elif self.hurt:
-                        attack.rect.x = -1000
+                        self.playerAttack.rect.x = self.rect.x - 105
+                        self.playerAttack.rect.y = self.rect.y - 30
                     #endif
-                #endfor
-                if self.endAttack - self.startAttack > 300:
-                    for attack in playerAttack_list:
-                        attack.rect.x = -1000
-                    #endfor
+                elif self.attackCounter1 != 2 and self.attackCounter1 != 3:
+                    self.playerAttack.rect.x = -1000
+                elif self.hurt:
+                    self.playerAttack.rect.x = -1000
+                #endif
+                if self.endAttack - self.startAttack > 360:
+                    self.playerAttack.rect.x = -1000
                     if self.lastHoriSpeed < 0:
                         self.horiSpeed = -7
                     else:
@@ -2029,21 +2318,21 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
                     self.startAttack = pygame.time.get_ticks()
                 #endif
                 self.endAttack = pygame.time.get_ticks()
-                for attack in playerAttack_list:
+                if self.attackCounter2 == 2 or self.attackCounter2 == 1:
                     if self.lastHoriSpeed > 0 and not self.hurt and not self.death:
-                        attack.rect.x = self.rect.x + 25
-                        attack.rect.y = self.rect.y - 30
+                        self.playerAttack.rect.x = self.rect.x + 35
+                        self.playerAttack.rect.y = self.rect.y - 30
                     elif self.lastHoriSpeed < 0 and not self.hurt and not self.death:
-                        attack.rect.x = self.rect.x - 95
-                        attack.rect.y = self.rect.y - 30
-                    elif self.hurt:
-                        attack.rect.x = -1000
+                        self.playerAttack.rect.x = self.rect.x - 105
+                        self.playerAttack.rect.y = self.rect.y - 30
                     #endif
-                #endfor
-                if self.endAttack - self.startAttack > 300:
-                    for attack in playerAttack_list:
-                        attack.rect.x = -1000
-                    #endfor
+                elif self.attackCounter2 != 2 and self.attackCounter2 != 1:
+                    self.playerAttack.rect.x = -1000
+                elif self.hurt:
+                    self.playerAttack.rect.x = -1000
+                #endif
+                if self.endAttack - self.startAttack > 360:
+                    self.playerAttack.rect.x = -1000
                     if self.lastHoriSpeed < 0:
                         self.horiSpeed = -7
                     else:
@@ -2061,21 +2350,21 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
                     self.startAttack = pygame.time.get_ticks()
                 #endif
                 self.endAttack = pygame.time.get_ticks()
-                for attack in playerAttack_list:
+                if self.attackCounter3 == 2 or self.attackCounter3 == 3:
                     if self.lastHoriSpeed > 0 and not self.hurt and not self.death:
-                        attack.rect.x = self.rect.x + 25
-                        attack.rect.y = self.rect.y - 30
+                        self.playerAttack.rect.x = self.rect.x + 35
+                        self.playerAttack.rect.y = self.rect.y - 30
                     elif self.lastHoriSpeed < 0 and not self.hurt and not self.death:
-                        attack.rect.x = self.rect.x - 95
-                        attack.rect.y = self.rect.y - 30
-                    elif self.hurt:
-                        attack.rect.x = -1000
+                        self.playerAttack.rect.x = self.rect.x - 105
+                        self.playerAttack.rect.y = self.rect.y - 30
                     #endif
-                #endfor
-                if self.endAttack - self.startAttack > 400:
-                    for attack in playerAttack_list:
-                        attack.rect.x = -1000
-                    #endfor
+                elif self.attackCounter3 != 2 and self.attackCounter3 != 3:
+                    self.playerAttack.rect.x = -1000
+                elif self.hurt:
+                    self.playerAttack.rect.x = -1000
+                #endif
+                if self.endAttack - self.startAttack > 480:
+                    self.playerAttack.rect.x = -1000
                     if self.lastHoriSpeed < 0:
                         self.horiSpeed = -9
                     else:
@@ -2094,7 +2383,7 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
         #endif
 
-    #endprocedure     
+    #endprocedure
 
     def ChangeSpeed(self,num):
 
@@ -2122,187 +2411,39 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
     #endprocedure
 
-    def MoveHori(self, centered, block_list, tutorialBlock_list, startEnd_list, player_list, level, background_list):
+    def MoveHori2(self):
 
-        if self.freeze == False:
+        self.rect.x += self.horiSpeed
+
+    #endprocedure
+
+    def MoveHori(self, block_list):
+
+        if self.freezeAnimation == False:
             
-            if centered == False: #If player is not required to be in the center, itself
-    #will move instead of the blocks
-                self.rect.x += self.horiSpeed
-
-                if level == 2:
-                    
-                    for block in tutorialBlock_list:
-                                
-                        if self.rect.colliderect(block.rect): #If player hit block
-                            if self.horiSpeed > 0:
-                                self.rect.right = block.rect.left
-                            else:
-                                self.rect.left = block.rect.right
-                            #endif
-                        #endif
-
-                    #endfor
-                                
-                elif level == 4:
-                    
-                    for block in block_list:
-                                
-                        if self.rect.colliderect(block.rect): #If player hit block
-                            if self.horiSpeed > 0:
-                                self.rect.right = block.rect.left
-                            else:
-                                self.rect.left = block.rect.right
-                            #endif
-                        #endif
-
-                    #endfor
-                                
+            self.rect.x += self.horiSpeed
+                
+            for block in block_list:
+                        
+                if self.rect.colliderect(block.rect): #If player hit block
+                    if self.horiSpeed > 0:
+                        self.rect.right = block.rect.left
+                    else:
+                        self.rect.left = block.rect.right
+                    #endif
                 #endif
 
-                if self.rect.x <= 0: #If player reach the end of screen
+            #endfor
 
-                    self.rect.x = 0
+            if self.rect.x <= 0: #If player reach the end of screen
 
-                elif self.rect.x >= 1435:
+                self.rect.x = 0
 
-                    self.rect.x = 1435
+            elif self.rect.x >= 1450:
 
-                #endif
-
-            else: #If player placed in the center, the blocks move instead of the player
-
-                self.rect.x = 717.5
-
-                if level == 4:
-                    
-                    for block in block_list:
-
-                        block.rect.x -= self.horiSpeed
-                        
-                        for back in background_list:
-
-                            if self.horiSpeed != 0:
-
-                                if self.horiSpeed < 0:
-                                    move = 5
-                                else:
-                                    move = -5
-                                #endif
-
-                                back.BackUpdate(move)
-
-                            #endif
-
-                        #endfor
-
-                        for area in startEnd_list:
-
-                            area.rect.x -= self.horiSpeed
-
-                        #endfor
-                        
-                        playerBlock_list = pygame.sprite.spritecollide(block, player_list, False)
-                        for player in playerBlock_list:
-
-                            for block in block_list:
-                                
-                                block.rect.x += self.horiSpeed
-                                for back in background_list:
-
-                                    if self.horiSpeed != 0:
-                                        
-                                        if self.horiSpeed < 0:
-                                            move = -5
-                                        else:
-                                            move = 5
-                                        #endif
-
-                                    #endif
-
-                                    back.BackUpdate(move)
-
-                                #endfor
-
-                                for area in startEnd_list:
-
-                                    area.rect.x += self.horiSpeed
-
-                                #endfor
-
-                            #endfor
-
-                        #endfor
-
-                    #endfor
-
-                elif level == 2:
-
-                    for block in tutorialBlock_list:
-
-                        block.rect.x -= self.horiSpeed
-                        
-                        for back in background_list:
-
-                            if self.horiSpeed != 0:
-
-                                if self.horiSpeed < 0:
-                                    move = 5
-                                else:
-                                    move = -5
-                                #endif
-
-                                back.BackUpdate(move)
-
-                            #endif
-
-                        #endfor
-
-                        for area in startEnd_list:
-
-                            area.rect.x -= self.horiSpeed
-
-                        #endfor
-                        
-                        playerBlock_list = pygame.sprite.spritecollide(block, player_list, False)
-                        for player in playerBlock_list:
-
-                            for block in tutorialBlock_list:
-                                
-                                block.rect.x += self.horiSpeed
-                                for back in background_list:
-
-                                    if self.horiSpeed != 0:
-                                        
-                                        if self.horiSpeed < 0:
-                                            move = -5
-                                        else:
-                                            move = 5
-                                        #endif
-
-                                    #endif
-
-                                    back.BackUpdate(move)
-
-                                #endfor
-
-                                for area in startEnd_list:
-
-                                    area.rect.x += self.horiSpeed
-
-                                #endfor
-
-                            #endfor
-
-                        #endfor
-
-                    #endfor
-
-                #endif
+                self.rect.x = 1450
 
             #endif
-
-        #endif
 
     #endprocedure
 
@@ -2512,9 +2653,9 @@ class PlayerAnimation(pygame.sprite.Sprite): #Class of player's animation
 
 #Enemy Class----------------------------------------------------------------
 #Bandit Class
-class BanditClass(pygame.sprite.Sprite): #Class of the player
+class BanditClass(pygame.sprite.Sprite): #Class of the bandit
  
-    def __init__(self, x, y):
+    def __init__(self, num , x, y, sprites_list, enemyAttack_list):
         
         super().__init__()
  
@@ -2524,10 +2665,31 @@ class BanditClass(pygame.sprite.Sprite): #Class of the player
         self.rect.x = x
         self.rect.y = y
 
+        self.originalX = x
+        self.originalY = y
+
+        self.num = num
+
+        if self.num == 1:
+            self.banditAnimation = EnemyAnimation(1, 130, 130, self.rect.x, self.rect.y)
+        #endif
+        self.banditAttack = AttackClass(65, 130, -1000, 0)
+        enemyAttack_list.add(self.banditAttack)
+        self.banditHealth = HealthClass(1, 3, 100, 20, self.rect.x - 5, self.rect.y - 25)
+        
+        sprites_list.add(self.banditAnimation, self.banditHealth)
+
         #Attributes
         self.hp = 3
+        if self.num == 1:
+            self.runningSpeed = randint(8,10)
+            self.jumpNum = randint(3,5)
+        elif self.num == 2:
+            self.runningSpeed = randint(9,11)
+            self.jumpNum = randint(2,4)
+        #endif
         self.horiSpeed = 0
-        self.lastHoriSpeed = 4
+        self.lastHoriSpeed = -4
         self.vertSpeed = -0.4
         self.jumped = False
         self.attacked = False
@@ -2539,21 +2701,32 @@ class BanditClass(pygame.sprite.Sprite): #Class of the player
         self.adle = False
         self.reduceHealth = False
         self.dropCoin = False
+        self.random = False
+        self.random2 = False
+        self.jumpTime = 0
 
         #Timers
         self.endAnimation = 0
         self.startAnimation = 0
         self.startAttack = 0
         self.endAttack = 0
+        self.startAttackRest = -1500
+        self.endAttackRest = 0
         self.startDeath = 0
         self.endDeath = 0
         self.startHurt = 0
         self.endHurt = 0
+        self.startRandom = 0
+        self.endRandom = 0
+        self.startRandom2 = 0
+        self.endRandom2 = 0
+        self.startAbove = 0
+        self.endAbove = 0
 
         #Counter
-        self.idleCounter = 0
-        self.adleCounter = 0
-        self.runCounter = 0
+        self.idleCounter = randint(0,3)
+        self.adleCounter = randint(0,3)
+        self.runCounter = randint(0,7)
         self.jumpCounter = 0
         self.fallCounter = 0
         self.attackCounter = 0
@@ -2562,7 +2735,68 @@ class BanditClass(pygame.sprite.Sprite): #Class of the player
         
     #endprocedure
 
-    def Animation(self, animation_list):
+    def Freeze(self, num):
+
+        if num == 1:
+            self.freeze = True
+        else:
+            self.freeze = False
+        #endif
+
+    #endprocedure
+
+    def Reset(self):
+
+        #Attributes
+        self.rect.x = self.originalX
+        self.rect.y = self.originalY
+        self.hp = 3
+        self.horiSpeed = 0
+        self.lastHoriSpeed = -4
+        self.vertSpeed = -0.4
+        self.jumped = False
+        self.attacked = False
+        self.attackPhase = 1
+        self.stopSelf = False 
+        self.freeze = False
+        self.hurt = False
+        self.death = False
+        self.adle = False
+        self.reduceHealth = False
+        self.dropCoin = False
+        self.random = False
+        self.random2 = False
+        self.jumpTime = 0
+
+        #Timers
+        self.startAttack = 0
+        self.endAttack = 0
+        self.startAttackRest = -1500
+        self.endAttackRest = 0
+        self.startDeath = 0
+        self.endDeath = 0
+        self.startHurt = 0
+        self.endHurt = 0
+        self.startRandom = 0
+        self.endRandom = 0
+        self.startRandom2 = 0
+        self.endRandom2 = 0
+
+        #Counter
+        self.jumpCounter = 0
+        self.attackCounter = 0
+        self.hurtCounter = 0
+        self.deathCounter = 0
+
+        self.banditAttack.rect.x = -1000
+        self.banditHealth.Update(self.hp)
+        self.banditHealth.rect.x = self.rect.x - 5
+        self.banditHealth.rect.y = self.rect.y - 25
+        self.Animation()
+
+    #endprocedure
+
+    def Animation(self):
 
         if self.startAnimation == 0: #If start timer has not started yet
 
@@ -2570,115 +2804,214 @@ class BanditClass(pygame.sprite.Sprite): #Class of the player
 
         #endif
 
-        for animation in animation_list:
+        self.endAnimation = pygame.time.get_ticks() #Get current time for end time
 
-            self.endAnimation = pygame.time.get_ticks() #Get current time for end time
+        self.banditAnimation.rect.y = self.rect.y - 30
+        self.banditAnimation.rect.x = self.rect.x - 40
 
-            animation.rect.y = self.rect.y - 30
-            animation.rect.x = self.rect.x - 40
+        if self.death == False and not self.freeze:
+        
+            if not self.hurt and self.attacked == False and self.horiSpeed == 0 and self.jumped == False and not self.adle:
 
-            if self.death == False:
-            
-                if not self.hurt and self.attacked == False and self.horiSpeed == 0 and self.jumped == False and not self.adle:
+                if self.endAnimation - self.startAnimation >= 160: #If next image
+                    
+                    self.startAnimation = self.endAnimation #If player is idle
+                    self.banditAnimation.Idle(-self.lastHoriSpeed, self.idleCounter)
 
-                    if self.endAnimation - self.startAnimation >= 160: #If next image
-                        
-                        self.startAnimation = self.endAnimation #If player is idle
-                        animation.Idle(-self.lastHoriSpeed, self.idleCounter)
-
-                        if self.idleCounter != 3: #If reached the end
-                            self.idleCounter += 1
-                        else:
-                            self.idleCounter = 0
-                        #endif
-
-                    #endif
-
-                elif not self.hurt and self.attacked == False and self.horiSpeed == 0 and self.jumped == False and self.adle:
-
-                    if self.endAnimation - self.startAnimation >= 160: #If next image
-                        
-                        self.startAnimation = self.endAnimation #If player is idle
-                        animation.Adle(-self.lastHoriSpeed, self.adleCounter)
-
-                        if self.adleCounter != 3: #If reached the end
-                            self.adleCounter += 1
-                        else:
-                            self.adleCounter = 0
-                        #endif
-
-                    #endif
-
-                elif not self.hurt and self.attacked == False and self.horiSpeed != 0 and self.jumped == False:
-
-                    if self.endAnimation - self.startAnimation >= 80:
-                        
-                        self.startAnimation = self.endAnimation #If player running
-                        animation.Run(-self.lastHoriSpeed, self.runCounter)
-
-                        if self.runCounter != 7: #If reached the end
-                            self.runCounter += 1
-                        else:
-                            self.runCounter = 0
-                        #endif
-
-                    #endif
-
-                elif self.jumped == True:
-
-                    if self.endAnimation - self.startAnimation >= 200:
-
-                        self.startAnimation = self.endAnimation #If player jumping
-                        animation.Jump(-self.lastHoriSpeed, self.jumpCounter)
-
-                        self.jumpCounter = 0
-
-                    #endif
-
-                
-                elif self.hurt == True:
-
-                    if self.endAnimation - self.startAnimation >= 100:
-
-                        self.startAnimation = self.endAnimation #If player is hurt
-                        animation.Hurt(-self.lastHoriSpeed, self.hurtCounter)
-
-                        if self.hurtCounter != 2: #If reached the end
-                            self.hurtCounter += 1
-                        else:
-                            self.hurtCounter = 2
-                        #endif
-
-                    #endif
-                        
-                elif self.attacked == True:
-
-                    if self.endAnimation - self.startAnimation >= 50:
-
-                        self.startAnimation = self.endAnimation 
-                        animation.Attack(-self.lastHoriSpeed, self.attackCounter)
-
-                        if self.attackPhase == 1 and self.attackCounter != 3: 
-                            self.attackCounter += 1
-                        elif self.attackPhase == 3 and self.attackCounter != 7:
-                            self.attackCounter += 1
-                        #endif
-
+                    if self.idleCounter != 3: #If reached the end
+                        self.idleCounter += 1
+                    else:
+                        self.idleCounter = 0
                     #endif
 
                 #endif
 
-            elif self.death:
+            elif not self.hurt and self.attacked == False and self.horiSpeed == 0 and self.jumped == False and self.adle:
+
+                if self.endAnimation - self.startAnimation >= 160: #If next image
+                    
+                    self.startAnimation = self.endAnimation #If player is idle
+                    self.banditAnimation.Adle(-self.lastHoriSpeed, self.adleCounter)
+
+                    if self.adleCounter != 3: #If reached the end
+                        self.adleCounter += 1
+                    else:
+                        self.adleCounter = 0
+                    #endif
+
+                #endif
+
+            elif not self.hurt and self.attacked == False and self.horiSpeed != 0 and self.jumped == False:
+
+                if self.endAnimation - self.startAnimation >= 80:
+                    
+                    self.startAnimation = self.endAnimation #If player running
+                    self.banditAnimation.Run(-self.lastHoriSpeed, self.runCounter)
+
+                    if self.runCounter != 7: #If reached the end
+                        self.runCounter += 1
+                    else:
+                        self.runCounter = 0
+                    #endif
+
+                #endif
+
+            elif self.jumped == True:
+
+                if self.endAnimation - self.startAnimation >= 200:
+
+                    self.startAnimation = self.endAnimation #If player jumping
+                    self.banditAnimation.Jump(-self.lastHoriSpeed, self.jumpCounter)
+
+                    self.jumpCounter = 0
+
+                #endif
+
+            
+            elif self.hurt == True:
+
+                if self.endAnimation - self.startAnimation >= 100:
+
+                    self.startAnimation = self.endAnimation #If player is hurt
+                    self.banditAnimation.Hurt(-self.lastHoriSpeed, self.hurtCounter)
+
+                    if self.hurtCounter != 2: #If reached the end
+                        self.hurtCounter += 1
+                    else:
+                        self.hurtCounter = 2
+                    #endif
+
+                #endif
+                    
+            elif self.attacked == True:
 
                 if self.endAnimation - self.startAnimation >= 50:
 
                     self.startAnimation = self.endAnimation 
-                    animation.Death(-self.lastHoriSpeed, self.deathCounter)
+                    self.banditAnimation.Attack(-self.lastHoriSpeed, self.attackCounter)
 
-                    self.deathCounter = 0
+                    if self.attackPhase == 1 and self.attackCounter != 3: 
+                        self.attackCounter += 1
+                    elif self.attackPhase == 3 and self.attackCounter != 7:
+                        self.attackCounter += 1
+                    #endif
 
                 #endif
-                        
+
+            #endif
+
+        elif self.death and not self.freeze:
+
+            if self.endAnimation - self.startAnimation >= 50:
+
+                self.startAnimation = self.endAnimation 
+                self.banditAnimation.Death(-self.lastHoriSpeed, self.deathCounter)
+
+                self.deathCounter = 0
+
+            #endif
+                    
+        #endif
+
+    #endprocedure
+
+    def Control(self, player_list):
+
+        for player in player_list:
+
+            if not self.random and not self.random2 and not self.freeze:
+
+                if player.rect.y == self.rect.y:
+                    self.ChangeSpeed(2)
+                    self.startAbove = 0
+                    self.endAbove = 0
+                    if self.rect.x - player.rect.x < 90 and self.rect.x - player.rect.x > 0:
+                        self.AttackTrigger()
+                        self.random2 = True
+                    elif player.rect.x - self.rect.x > 0 and player.rect.x - self.rect.x <= 90:
+                        self.AttackTrigger()
+                        self.random2 = True
+                    elif player.rect.x <= self.rect.x and abs(player.rect.x - self.rect.x) >= 90:
+                        self.ChangeSpeed(0)
+                    elif player.rect.x > self.rect.x and abs(player.rect.x - self.rect.x) >= 90:
+                        self.ChangeSpeed(1)
+                    #endif
+                elif player.rect.y > self.rect.y:
+                    self.ChangeSpeed(2)
+                    if self.startAbove == 0: #If start timer has not started yet
+                        self.startAbove = pygame.time.get_ticks() #Record current time
+                    #endif
+                    self.endAbove = pygame.time.get_ticks()
+                    if self.endAbove - self.startAbove >= 2000:
+                        self.random2 = True
+                        self.startAbove = 0
+                        self.endAbove = 0
+                    #endif
+                    if player.rect.x <= self.rect.x and abs(player.rect.x - self.rect.x) >= 90:
+                        self.ChangeSpeed(0)
+                    elif player.rect.x > self.rect.x and abs(player.rect.x - self.rect.x) >= 90:
+                        self.ChangeSpeed(1)
+                    #endif
+                elif player.rect.y < self.rect.y:
+                    self.startAbove = 0
+                    self.endAbove = 0
+                    self.ChangeSpeed(2)
+                    if player.rect.x <= self.rect.x and abs(player.rect.x - self.rect.x) >= 90:
+                        self.ChangeSpeed(0)
+                    elif player.rect.x > self.rect.x and abs(player.rect.x - self.rect.x) >= 90:
+                        self.ChangeSpeed(1)
+                    #endif
+                    self.Jump()
+                    if self.jumpTime > self.jumpNum:
+                        self.random = True
+                    #endif
+                #endif
+
+            elif self.random and not self.freeze:
+
+                if self.startRandom == 0: #If start timer has not started yet
+                    self.startRandom = pygame.time.get_ticks() #Record current time
+                #endif
+                self.jumpTime = 0
+                self.endRandom = pygame.time.get_ticks()
+                if self.endRandom - self.startRandom > 1500:
+                    self.startRandom = self.endRandom
+                    self.ChangeSpeed(randint(0,1))
+                    self.Jump()
+                #endif
+                if player.rect.y >= self.rect.y:
+                    self.startRandom = 0
+                    self.endRandom = 0
+                    self.random = False
+                #endif
+
+            elif self.random2 and not self.freeze:
+
+                if self.startRandom2 == 0: #If start timer has not started yet
+
+                    self.startRandom2 = pygame.time.get_ticks() #Record current time
+                    self.ChangeSpeed(randint(0,1))
+
+                #endif
+                    
+                self.endRandom2 = pygame.time.get_ticks()
+                if self.endRandom2 - self.startRandom2 > 800:
+                    self.startRandom2 = 0
+                    self.endRandom2 = 0
+                    self.random2 = False
+
+                #endif
+                    
+            #endif
+
+            if self.rect.x <= 0: #If player reach the end of screen
+
+                self.rect.x = 0
+
+            elif self.rect.x >= 1450:
+
+                self.rect.x = 1450
+
             #endif
 
         #endfor
@@ -2696,28 +3029,25 @@ class BanditClass(pygame.sprite.Sprite): #Class of the player
 
     #endprocedure
 
-    def Health(self, health_list, coin_list, tutorial_list, levelOne_list, level):
+    def Health(self, coin_list, sprite_list, level, gameLevel):
 
-        if self.reduceHealth == True:
+        if self.reduceHealth == True and not self.freeze:
 
             self.reduceHealth = False
             if self.hp > 0:
                 self.hp -= 1
-                for health in health_list:
-                    health.Update(self.hp)
-                #endfor
+                self.banditHealth.Update(self.hp)
             if self.hp == 0:
                 self.death = True
                 if not self.dropCoin:
-                    self.dropCoin = False
+                    self.dropCoin = True
                     for i in range(2):
                         if level == 2:
                             coin = ItemClass(1, 20, 20, self.rect.x + 10, self.rect.y + 70, 2)
-                            tutorial_list.add(coin)
                         elif level == 4:
                             coin = ItemClass(1, 20, 20, self.rect.x + 10, self.rect.y + 70, 4)
-                            levelOne_list.add(coin)
                         #endif
+                        sprite_list.add(coin)
                         coin_list.add(coin)
                     #endfor
                 #endif
@@ -2725,44 +3055,55 @@ class BanditClass(pygame.sprite.Sprite): #Class of the player
 
         #endif
 
-        for health in health_list:
+        if self.hp == 3:
+            self.banditHealth.rect.x = self.rect.x - 5
+        elif self.hp == 2:
+            self.banditHealth.rect.x = self.rect.x + 5
+        elif self.hp == 1:
+            self.banditHealth.rect.x = self.rect.x + 15
+        #endif
+        self.banditHealth.rect.y = self.rect.y - 25
 
-            if self.hp == 3:
-                health.rect.x = self.rect.x - 5
-            elif self.hp == 2:
-                health.rect.x = self.rect.x + 5
-            elif self.hp == 1:
-                health.rect.x = self.rect.x + 15
+    #endprocedure
+
+    def EnemyAttackDetection(self,playerAttack_list):
+        
+        enemyGetHit_list = pygame.sprite.spritecollide(self, playerAttack_list, False)#If get hit
+        for attack in enemyGetHit_list:
+            if self.hurt == False and not self.death and not self.freeze:
+                self.hurt = True
+                self.reduceHealth = True
             #endif
-            health.rect.y = self.rect.y - 25
-
         #endfor
 
     #endprocedure
 
-    def EnemyAttackDetection(self,playerAttack_list,level):
+    def Death(self):
+        
+        if self.death == True and not self.freeze:
 
-        if level == 2:
-            enemyGetHit_list = pygame.sprite.spritecollide(self, playerAttack_list, False)#If get hit
-            for attack in enemyGetHit_list:
-                if self.hurt == False and not self.death:
-                    self.hurt = True
-                    self.reduceHealth = True
-                #endif
-            #endfor
-        elif level == 4:
-            enemyGetHit_list = pygame.sprite.spritecollide(self, attack_list, False)#If get hit
-            for attack in enemyGetHit_list:
-                if self.hurt == False and not self.death:
-                    self.hurt = True
-                    self.reduceHealth = True
-                #endif
-            #endfor
+            self.horiSpeed = 0
+            
+            if self.startDeath == 0:
+                self.startDeath = pygame.time.get_ticks()
+            #endif
+
+            self.endDeath = pygame.time.get_ticks()
+            if self.endDeath - self.startDeath > 3000:
+                self.endDeath = 0
+                self.startDeath = 0
+                self.death = False
+                self.deathCounter = 0
+                self.hp = 3
+                self.dropCoin = False
+                self.banditHealth.Update(self.hp)
+            #endif
+
         #endif
 
     #endprocedure
 
-    def Death(self,health_list):
+    def Revive(self):
         
         if self.death == True:
 
@@ -2780,35 +3121,7 @@ class BanditClass(pygame.sprite.Sprite): #Class of the player
                 self.deathCounter = 0
                 self.hp = 3
                 self.dropCoin = False
-                for health in health_list:
-                    health.Update(self.hp)
-                #endfor
-            #endif
-
-        #endif
-
-    #endprocedure
-
-    def Revive(self,health_list):
-        
-        if self.death == True:
-
-            self.horiSpeed = 0
-            
-            if self.startDeath == 0:
-                self.startDeath = pygame.time.get_ticks()
-            #endif
-
-            self.endDeath = pygame.time.get_ticks()
-            if self.endDeath - self.startDeath > 3000:
-                self.endDeath = 0
-                self.startDeath = 0
-                self.death = False
-                self.deathCounter = 0
-                self.hp = 3
-                for health in health_list:
-                    health.Update(self.hp)
-                #endfor
+                self.banditHealth.Update(self.hp)
             #endif
 
         #endif
@@ -2817,7 +3130,7 @@ class BanditClass(pygame.sprite.Sprite): #Class of the player
 
     def Hurt(self):
         
-        if self.hurt == True:
+        if self.hurt == True and not self.freeze:
 
             self.horiSpeed = 0
             
@@ -2826,7 +3139,7 @@ class BanditClass(pygame.sprite.Sprite): #Class of the player
             #endif
 
             self.endHurt = pygame.time.get_ticks()
-            if self.endHurt - self.startHurt > 400:
+            if self.endHurt - self.startHurt > 300:
                 self.endHurt = 0
                 self.startHurt = 0
                 self.hurt = False
@@ -2843,7 +3156,8 @@ class BanditClass(pygame.sprite.Sprite): #Class of the player
 
             if self.jumped == False: #If player has not jumped yet
 
-                self.vertSpeed = 19
+                self.jumpTime += 1
+                self.vertSpeed = 18
                 self.jumped = True
                 self.jumpCounter = 0
                 self.fallCounter = 0
@@ -2854,7 +3168,7 @@ class BanditClass(pygame.sprite.Sprite): #Class of the player
 
     #endprocedure
 
-    def MoveVert(self, block_list, tutorialBlock_list, level):
+    def MoveVert(self, block1_list, block2_list, block3_list, tutorialBlock_list, level, gameLevel):
 
         if self.freeze == False:
 
@@ -2864,9 +3178,9 @@ class BanditClass(pygame.sprite.Sprite): #Class of the player
                 self.vertSpeed -= 0.6
             #endif
 
-            if self.rect.y >= 703 and self.vertSpeed <= 0: #If sinks into the ground
+            if self.rect.y >= 700 and self.vertSpeed <= 0: #If sinks into the ground
 
-                self.rect.y = 703 #Stands on the ground
+                self.rect.y = 700 #Stands on the ground
                 self.vertSpeed = 0
                 self.jumped = False
 
@@ -2881,13 +3195,16 @@ class BanditClass(pygame.sprite.Sprite): #Class of the player
 
             if level == 4:
                 
-                selfVertBlock_list = pygame.sprite.spritecollide(self, block_list, False)#If collide
+                selfVertBlock_list = pygame.sprite.spritecollide(self, block1_list, False)#If collide
                 for block in selfVertBlock_list:
                     
                     if self.vertSpeed <= 0: #If player is falling
 
                         self.rect.bottom = block.rect.top
                         self.jumped = False
+                        self.startRandom = 0
+                        self.endRandom = 0
+                        self.random = False
 
                     elif self.vertSpeed >= 0: #If player is jumping
 
@@ -2908,6 +3225,9 @@ class BanditClass(pygame.sprite.Sprite): #Class of the player
 
                         self.rect.bottom = block.rect.top
                         self.jumped = False
+                        self.startRandom = 0
+                        self.endRandom = 0
+                        self.random = False
 
                     elif self.vertSpeed >= 0: #If player is jumping
 
@@ -2927,9 +3247,13 @@ class BanditClass(pygame.sprite.Sprite): #Class of the player
 
     def AttackTrigger(self):
 
-        if self.attacked == False and self.jumped == False and self.death == False:
+        self.endAttackRest = pygame.time.get_ticks() #Get current time for end time
+        
+        if self.attacked == False and self.jumped == False and self.death == False and self.endAttackRest - self.startAttackRest >= 1500 and not self.freeze:
 
             self.attacked = True
+            self.endAttackRest = 0
+            self.startAttackRest = 0
 
         #endif
 
@@ -2946,7 +3270,7 @@ class BanditClass(pygame.sprite.Sprite): #Class of the player
 
     #endprocedure
 
-    def Attack(self, attack_list):
+    def Attack(self):
         
         if self.attacked == True and self.freeze == False:
 
@@ -2972,24 +3296,22 @@ class BanditClass(pygame.sprite.Sprite): #Class of the player
                 #endif
             elif self.attackPhase == 3:
                 self.endAttack = pygame.time.get_ticks()
-                for attack in attack_list:
-                    if self.lastHoriSpeed > 0 and not self.hurt and not self.death:
-                        attack.rect.x = self.rect.x + 25
-                        attack.rect.y = self.rect.y - 30
-                    elif self.lastHoriSpeed < 0 and not self.hurt and not self.death:
-                        attack.rect.x = self.rect.x - 40
-                        attack.rect.y = self.rect.y - 30
-                    elif self.hurt:
-                        attack.rect.x = -1000
-                    #endif
-                #endfor
+                if self.lastHoriSpeed > 0 and not self.hurt and not self.death and self.attackCounter < 6:
+                    self.banditAttack.rect.x = self.rect.x + 25
+                    self.banditAttack.rect.y = self.rect.y - 30
+                elif self.lastHoriSpeed < 0 and not self.hurt and not self.death and self.attackCounter < 6:
+                    self.banditAttack.rect.x = self.rect.x - 40
+                    self.banditAttack.rect.y = self.rect.y - 30
+                elif self.attackCounter > 6:
+                    self.banditAttack.rect.x = -1000
+                elif self.hurt:
+                    self.banditAttack.rect.x = -1000
+                #endif
                 if self.endAttack - self.startAttack > 200:
                     self.endAttack = 0
                     self.startAttack = 0
                     self.attackPhase = 4
-                    for attack in attack_list:
-                        attack.rect.x = -1000
-                    #endfor
+                    self.banditAttack.rect.x = -1000
                 #endif
             elif self.attackPhase == 4:
                 self.endAttack = pygame.time.get_ticks()
@@ -2999,6 +3321,7 @@ class BanditClass(pygame.sprite.Sprite): #Class of the player
                     self.attacked = False
                     self.attackPhase = 1
                     self.attackCounter = 0
+                    self.startAttackRest = pygame.time.get_ticks() #Record current time
                 #endif
             #endif
 
@@ -3008,7 +3331,7 @@ class BanditClass(pygame.sprite.Sprite): #Class of the player
 
     def ChangeSpeed(self,num):
 
-        if self.freeze == False and self.attacked == False:
+        if self.freeze == False and self.attacked == False and not self.death:
 
             if num == 0:
 
@@ -3030,9 +3353,9 @@ class BanditClass(pygame.sprite.Sprite): #Class of the player
 
     #endprocedure
 
-    def MoveHori(self, block_list, tutorialBlock_list, level):
+    def MoveHori(self, block1_list, block2_list, block3_list, tutorialBlock_list, level, gameLevel):
 
-        if self.freeze == False:
+        if self.freeze == False and not self.death:
             
             self.rect.x += self.horiSpeed
 
@@ -3052,7 +3375,7 @@ class BanditClass(pygame.sprite.Sprite): #Class of the player
                             
             elif level == 4:
                 
-                for block in block_list:
+                for block in block1_list:
                             
                     if self.rect.colliderect(block.rect): #If player hit block
                         if self.horiSpeed > 0:
@@ -3066,15 +3389,907 @@ class BanditClass(pygame.sprite.Sprite): #Class of the player
                             
             #endif
 
-            if self.rect.x <= 0: #If player reach the end of screen
+        #endif
 
-                self.rect.x = 0
+    #endprocedure
 
-            elif self.rect.x >= 1435:
+#endclass
 
-                self.rect.x = 1435
+#Warlock Class
+class WarlockClass(pygame.sprite.Sprite): #Class of the warlock
+ 
+    def __init__(self, x, y, levelOne_list):
+        
+        super().__init__()
+ 
+        self.image = pygame.Surface([80, 70])
+        self.rect = self.image.get_rect()
+
+        self.rect.x = x
+        self.rect.y = y
+
+        self.originalX = x
+        self.originalY = y
+
+        self.warlockAnimation = EnemyAnimation(2, 160, 160, 150, 730)
+        self.warlockHealth = HealthClass(1, 5, 100, 20, self.rect.x - 10, self.rect.y - 35)
+        levelOne_list.add(self.warlockAnimation, self.warlockHealth)
+
+        #Attributes
+        self.hp = 1
+        self.horiSpeed = 0
+        self.lastHoriSpeed = -4
+        self.vertSpeed = -0.4
+        self.attacked = False
+        self.freeze = False
+        self.hurt = False
+        self.death = False
+        self.reduceHealth = False
+
+        #Timers
+        self.endAnimation = 0
+        self.startAnimation = 0
+        self.startAttack = 0
+        self.endAttack = 0
+        self.startDeath = 0
+        self.endDeath = 0
+        self.startHurt = 0
+        self.endHurt = 0
+
+        #Counter
+        self.idleCounter = 0
+        self.runCounter = 0
+        self.attackCounter = 0
+        self.hurtCounter = 0
+        self.deathCounter = 0
+        
+    #endprocedure
+
+    def Reset(self):
+
+        #Attributes
+        self.rect.x = self.originalX
+        self.rect.y = self.originalY
+        self.hp = 1
+        self.horiSpeed = 0
+        self.lastHoriSpeed = -4
+        self.vertSpeed = -0.4
+        self.attacked = False
+        self.freeze = False
+        self.hurt = False
+        self.death = False
+        self.reduceHealth = False
+
+        #Timers
+        self.endAnimation = 0
+        self.startAnimation = 0
+        self.startAttack = 0
+        self.endAttack = 0
+        self.startDeath = 0
+        self.endDeath = 0
+        self.startHurt = 0
+        self.endHurt = 0
+
+        #Counter
+        self.attackCounter = 0
+        self.hurtCounter = 0
+        self.deathCounter = 0
+        
+        self.warlockHealth.Update(5)
+        self.warlockHealth.rect.x = self.rect.x - 10
+        self.warlockHealth.rect.y = self.rect.y - 35
+        self.Animation()
+
+    #endprocedure
+
+    def Freeze(self, num):
+
+        if num == 1:
+            self.freeze = True
+        else:
+            self.freeze = False
+        #endif
+
+    #endprocedure
+
+    def Animation(self):
+
+        if self.startAnimation == 0: #If start timer has not started yet
+
+            self.startAnimation = pygame.time.get_ticks() #Record current time
+
+        #endif
+
+        self.endAnimation = pygame.time.get_ticks() #Get current time for end time
+
+        self.warlockAnimation.rect.y = self.rect.y - 90
+        self.warlockAnimation.rect.x = self.rect.x - 40
+
+        if self.death == False and self.freeze == False:
+        
+            if not self.hurt and self.horiSpeed == 0:
+
+                if self.endAnimation - self.startAnimation >= 70: #If next image
+                    
+                    self.startAnimation = self.endAnimation #If player is idle
+                    self.warlockAnimation.Idle(self.lastHoriSpeed, self.idleCounter)
+
+                    if self.idleCounter != 11: #If reached the end
+                        self.idleCounter += 1
+                    else:
+                        self.idleCounter = 0
+                    #endif
+
+                #endif
+
+            elif not self.hurt and self.horiSpeed != 0:
+
+                if self.endAnimation - self.startAnimation >= 100:
+                    
+                    self.startAnimation = self.endAnimation #If player running
+                    self.warlockAnimation.Run(self.lastHoriSpeed, self.runCounter)
+
+                    if self.runCounter != 7: #If reached the end
+                        self.runCounter += 1
+                    else:
+                        self.runCounter = 0
+                    #endif
+
+                #endif
+            
+            elif self.hurt == True:
+
+                if self.endAnimation - self.startAnimation >= 100:
+
+                    self.startAnimation = self.endAnimation #If player is hurt
+                    self.warlockAnimation.Hurt(self.lastHoriSpeed, self.hurtCounter)
+
+                    if self.hurtCounter != 3: #If reached the end
+                        self.hurtCounter += 1
+                    #endif
+
+                #endif
 
             #endif
+
+        elif self.death:
+
+            if self.endAnimation - self.startAnimation >= 50:
+
+                self.startAnimation = self.endAnimation 
+                self.warlockAnimation.Death(self.lastHoriSpeed, self.deathCounter)
+
+                if self.deathCounter != 12:
+                    self.deathCounter += 1
+                #endif
+
+            #endif
+                    
+        #endif
+
+    #endprocedure
+
+    def Health(self):
+
+        if self.reduceHealth == True and not self.freeze:
+
+            self.reduceHealth = False
+            self.hp = 0
+            self.death = True
+            self.warlockHealth.Update(self.hp)
+
+        #endif
+
+        self.warlockHealth.rect.x = self.rect.x - 10
+        self.warlockHealth.rect.y = self.rect.y - 35
+
+    #endprocedure
+
+    def EnemyAttackDetection(self,attack_list):
+
+        enemyGetHit_list = pygame.sprite.spritecollide(self, attack_list, False)#If get hit
+        for attack in enemyGetHit_list:
+            if self.hurt == False and not self.death and not self.freeze:
+                self.hurt = True
+                self.reduceHealth = True
+            #endif
+        #endfor
+
+    #endprocedure
+
+    def Hurt(self):
+        
+        if self.hurt == True and not self.freeze:
+
+            self.horiSpeed = 0
+            
+            if self.startHurt == 0:
+                self.startHurt = pygame.time.get_ticks()
+            #endif
+
+            self.endHurt = pygame.time.get_ticks()
+            if self.endHurt - self.startHurt > 390:
+                self.endHurt = 0
+                self.startHurt = 0
+                self.hurt = False
+                self.hurtCounter = 0
+            #endif
+
+        #endif
+
+    #endprocedure
+
+    def MoveVert(self, block_list):
+
+        if self.freeze == False:
+
+            if self.vertSpeed == 0: #Keep testing if player hits something
+                self.vertSpeed = -0.4
+            else: #Gravity
+                self.vertSpeed -= 0.6
+            #endif
+
+            if self.rect.y >= 730 and self.vertSpeed <= 0: #If sinks into the ground
+
+                self.rect.y = 730 #Stands on the ground
+                self.vertSpeed = 0
+                self.jumped = False
+
+            elif self.rect.y <= 0 and self.vertSpeed > 0:
+
+                self.rect.y = 0
+                self.vertSpeed = 0
+
+            #endif
+
+            self.rect.y -= self.vertSpeed #Player move
+                
+            selfVertBlock_list = pygame.sprite.spritecollide(self, block_list, False)#If collide
+            for block in selfVertBlock_list:
+                
+                if self.vertSpeed <= 0: #If player is falling
+
+                    self.rect.bottom = block.rect.top
+                    self.jumped = False
+
+                elif self.vertSpeed >= 0: #If player is jumping
+
+                    self.rect.top = block.rect.bottom
+
+                #endif
+
+                self.vertSpeed = 0 #Stop player
+
+            #endfor
+
+        #endif
+
+    #endprocedure
+
+    def ChangeSpeed(self,num):
+
+        if self.freeze == False and self.attacked == False and not self.death:
+
+            if num == 0:
+
+                self.horiSpeed = -7
+                self.lastHoriSpeed = self.horiSpeed
+
+            elif num == 1:
+
+                self.horiSpeed = 7
+                self.lastHoriSpeed = self.horiSpeed
+
+            elif num == 2:
+
+                self.horiSpeed = 0
+
+            #endif
+
+        #endif
+
+    #endprocedure
+
+    def MoveHori(self, block_list):
+
+        if self.freeze == False:
+            
+            self.rect.x += self.horiSpeed
+                
+            for block in block_list:
+                        
+                if self.rect.colliderect(block.rect): #If player hit block
+                    if self.horiSpeed > 0:
+                        self.rect.right = block.rect.left
+                    else:
+                        self.rect.left = block.rect.right
+                    #endif
+                #endif
+
+            #endfor
+
+        #endif
+
+    #endprocedure
+
+#endclass
+
+#Rogue Class
+class RogueClass(pygame.sprite.Sprite): #Class of the rogue
+ 
+    def __init__(self, x, y, levelOne_list, enemyAttack_list, rogueAttack_list):
+        
+        super().__init__()
+ 
+        self.image = pygame.Surface([80, 90])
+        self.rect = self.image.get_rect()
+
+        self.rect.x = x
+        self.rect.y = y
+
+        self.originalX = x
+        self.originalY = y
+
+        self.rogueAnimation = EnemyAnimation(3, 160, 160, -1000, -1000)
+        self.rogueAttack = AttackClass(200, 70, -1000, 0)
+        self.rogueSaAttack = AttackClass(200, 70, -1000, 0)
+        rogueAttack_list.add(self.rogueSaAttack)
+        enemyAttack_list.add(self.rogueAttack)
+        self.rogueHealth = HealthClass(1, 5, 100, 20, self.rect.x - 10, self.rect.y - 25)
+        levelOne_list.add(self.rogueAnimation, self.rogueHealth)
+
+        #Attributes
+        self.hp = 5
+        self.horiSpeed = 0
+        self.lastHoriSpeed = -4
+        self.vertSpeed = -0.4
+        self.attacked = False
+        self.sa = False
+        self.saMove = False
+        self.freeze = False
+        self.hurt = False
+        self.death = False
+        self.spell = False
+        self.reduceHealth = False
+        self.preyPosX = 0
+        self.random = False
+        self.attackCount = 0
+        self.skill = False
+        self.dropCoin = False
+
+        #Timers
+        self.endAnimation = 0
+        self.startAnimation = 0
+        self.startAttack = 0
+        self.endAttack = 0
+        self.startAttackRest = -750
+        self.endAttackRest = 0
+        self.startDeath = 0
+        self.endDeath = 0
+        self.startHurt = 0
+        self.endHurt = 0
+        self.startRandom = 0
+        self.endRandom = 0
+
+        #Counter
+        self.idleCounter = 0
+        self.runCounter = 0
+        self.attackCounter = 0
+        self.hurtCounter = 0
+        self.deathCounter = 0
+        self.saCounter = 0
+        
+    #endprocedure
+
+    def Freeze(self, num):
+
+        if num == 1:
+            self.freeze = True
+        elif num != 1:
+            self.freeze = False
+        #endif
+
+    #endprocedure
+
+    def Unrandom(self):
+
+        self.random = False
+
+    #endprocedure
+
+    def Reset(self):
+
+        #Attributes
+        self.hp = 5
+        self.horiSpeed = 0
+        self.lastHoriSpeed = -4
+        self.vertSpeed = -0.4
+        self.attacked = False
+        self.sa = False
+        self.saMove = False
+        self.freeze = False
+        self.hurt = False
+        self.death = False
+        self.spell = False
+        self.reduceHealth = False
+        self.preyPosX = 0
+        self.random = False
+        self.attackCount = 0
+        self.skill = False
+        self.dropCoin = False
+        self.rect.x = self.originalX
+        self.rect.y = self.originalY
+
+        #Timers
+        self.endAnimation = 0
+        self.startAnimation = 0
+        self.startAttack = 0
+        self.endAttack = 0
+        self.startAttackRest = -750
+        self.endAttackRest = 0
+        self.startDeath = 0
+        self.endDeath = 0
+        self.startHurt = 0
+        self.endHurt = 0
+        self.startRandom = 0
+        self.endRandom = 0
+
+        #Counter
+        self.attackCounter = 0
+        self.hurtCounter = 0
+        self.deathCounter = 0
+        self.saCounter = 0
+        
+        self.rogueAttack.rect.x = -1000
+        self.rogueSaAttack.rect.x = -1000
+        self.rogueHealth.Update(self.hp)
+        self.rogueHealth.rect.x = self.rect.x - 10
+        self.rogueHealth.rect.y = self.rect.y - 30
+        self.Animation()
+
+    #endprocedure
+
+    def Animation(self):
+
+        if self.startAnimation == 0: #If start timer has not started yet
+
+            self.startAnimation = pygame.time.get_ticks() #Record current time
+
+        #endif
+
+        self.endAnimation = pygame.time.get_ticks() #Get current time for end time
+
+        if self.death == False and not self.freeze:
+
+            
+            self.rogueAnimation.rect.y = self.rect.y - 160
+            self.rogueAnimation.rect.x = self.rect.x - 85
+        
+            if not self.hurt and self.horiSpeed == 0 and not self.attacked and not self.sa:
+
+                if self.endAnimation - self.startAnimation >= 70: #If next image
+                    
+                    self.startAnimation = self.endAnimation #If player is idle
+                    self.rogueAnimation.Idle(self.lastHoriSpeed, self.idleCounter)
+
+                    if self.idleCounter != 10: #If reached the end
+                        self.idleCounter += 1
+                    else:
+                        self.idleCounter = 0
+                    #endif
+
+                #endif
+
+            elif not self.hurt and self.horiSpeed != 0 and not self.attacked and not self.sa:
+
+                if self.endAnimation - self.startAnimation >= 80:
+                    
+                    self.startAnimation = self.endAnimation #If player running
+                    self.rogueAnimation.Run(self.lastHoriSpeed, self.runCounter)
+
+                    if self.runCounter != 9: #If reached the end
+                        self.runCounter += 1
+                    else:
+                        self.runCounter = 0
+                    #endif
+
+                #endif
+            
+            elif self.hurt == True:
+
+                if self.endAnimation - self.startAnimation >= 100:
+
+                    self.startAnimation = self.endAnimation #If player is hurt
+                    self.rogueAnimation.Hurt(self.lastHoriSpeed, self.hurtCounter)
+
+                    if self.hurtCounter != 2: #If reached the end
+                        self.hurtCounter += 1
+                    #endif
+
+                #endif
+
+            elif self.attacked == True and not self.hurt and not self.sa:
+
+                if self.endAnimation - self.startAnimation >= 50:
+
+                    self.startAnimation = self.endAnimation #If player is attacking
+                    self.rogueAnimation.Attack(self.lastHoriSpeed, self.attackCounter)
+
+                    if self.attackCounter != 9: #If reached the end
+                        self.attackCounter += 1
+                    #endif
+
+                #endif
+
+            elif self.sa == True and not self.hurt and not self.attacked:
+
+                if self.endAnimation - self.startAnimation >= 80:
+
+                    self.saMove = True
+                    self.startAnimation = self.endAnimation #If player is special attacking
+                    self.rogueAnimation.SA(self.lastHoriSpeed, self.saCounter)
+
+                    if self.saCounter != 17: #If reached the end
+                        self.saCounter += 1
+                    #endif
+
+                #endif
+
+            elif self.spell == True and not self.hurt:
+
+                if self.endAnimation - self.startAnimation >= 90:
+
+                    self.startAnimation = self.endAnimation #If player is casting spell
+                    self.rogueAnimation.Spell(self.lastHoriSpeed, self.spellCounter)
+
+                    if self.spellCounter != 11: #If reached the end
+                        self.spellCounter += 1
+                    #endif
+
+                #endif
+
+            #endif
+
+        elif self.death and not self.freeze:
+
+            if self.endAnimation - self.startAnimation >= 70:
+
+                self.startAnimation = self.endAnimation 
+                self.rogueAnimation.Death(self.lastHoriSpeed, self.deathCounter)
+
+                if self.deathCounter != 13:
+                    self.deathCounter += 1
+                #endif
+
+            #endif
+                    
+        #endif
+
+    #endprocedure
+
+    def AttackTrigger(self):
+
+        self.endAttackRest = pygame.time.get_ticks() #Get current time for end time
+        
+        if not self.freeze and self.attacked == False and self.jumped == False and self.death == False and self.endAttackRest - self.startAttackRest >= 750:
+
+            self.attacked = True
+            self.endAttackRest = 0
+            self.startAttackRest = 0
+            self.attackCount += 1
+            
+        #endif
+
+    #endprocedure
+
+    def AttackChecker(self):
+
+        if self.stopSelf: #If the enemy should stop
+
+            self.stopSelf = False
+            self.horiSpeed = 0
+
+        #endif
+
+    #endprocedure
+
+    def Attack(self):
+        
+        if self.attacked == True and self.freeze == False:
+
+            self.horiSpeed = 0
+
+            if self.lastHoriSpeed > 0 and not self.hurt and not self.death and self.attackCounter == 4:
+                self.rogueAttack.rect.x = self.rect.x - 50
+                self.rogueAttack.rect.y = self.rect.y
+            elif self.lastHoriSpeed < 0 and not self.hurt and not self.death and self.attackCounter == 4:
+                self.rogueAttack.rect.x = self.rect.x - 70
+                self.rogueAttack.rect.y = self.rect.y
+            elif self.attackCounter != 4:
+                self.rogueAttack.rect.x = -1000
+            elif self.hurt or self.death:
+                self.rogueAttack.rect.x = -1000
+            #endif
+            if self.attackCounter == 9:
+                self.rogueAttack.rect.x = -1000
+                self.attacked = False
+                self.attackCounter = 0
+                if self.attackCount == 3:
+                    self.attackCount = 0
+                    self.skill = True
+                #endif
+            #endif
+
+        #endif
+
+    #endprocedure
+
+    def Control(self, x):
+
+        if not self.freeze:
+
+            if not self.random and not self.skill:
+
+                self.ChangeSpeed(2)
+                if self.rect.x - x < 100 and self.rect.x - x > 0:
+                    self.AttackTrigger()
+                elif x - self.rect.x > 0 and x - self.rect.x <= 130:
+                    self.AttackTrigger()
+                elif x <= self.rect.x and abs(x - self.rect.x) >= 100:
+                    self.ChangeSpeed(0)
+                elif x > self.rect.x and abs(x - self.rect.x) >= 130:
+                    self.ChangeSpeed(1)
+                #endif
+
+            elif self.skill:
+
+                self.ChangeSpeed(2)
+                self.SATrigger(x)
+
+            elif self.random:
+
+                if self.startRandom == 0: #If start timer has not started yet
+
+                    self.startRandom = pygame.time.get_ticks() #Record current time
+                    self.ChangeSpeed(randint(0,1))
+
+                #endif
+                    
+                self.endRandom = pygame.time.get_ticks()
+                if self.endRandom - self.startRandom > 400:
+                    self.startRandom = 0
+                    self.endRandom = 0
+                    self.random = False
+
+                #endif
+
+            #endif
+                
+        #endif
+
+        if self.rect.x <= 0: #If player reach the end of screen
+
+            self.rect.x = 0
+
+        elif self.rect.x >= 1420:
+
+            self.rect.x = 1420
+
+        #endif
+
+    #endprocedure
+
+    def SATrigger(self, xPos):
+
+        if not self.attacked and not self.hurt and not self.death and not self.freeze:
+
+            self.sa = True
+            self.preyPosX = xPos - 15
+
+        #endif
+
+    #endprocedure
+
+    def SA(self):
+
+        if self.sa == True and self.freeze == False:
+
+            self.horiSpeed = 0
+            self.vertSpeed = 0
+            
+            if self.saCounter == 8:
+                self.rect.x = self.preyPosX
+                self.rect.y = 110
+            #endif
+            if self.saCounter >= 9 and self.saCounter <= 12 and self.saMove:
+                self.rect.y += 150
+                self.saMove = False
+            #endif
+            if self.lastHoriSpeed > 0 and not self.hurt and not self.death and self.saCounter >= 12 and self.saCounter <= 14:
+                self.rogueSaAttack.rect.x = self.rect.x - 35
+                self.rogueSaAttack.rect.y = self.rect.y + 20
+            elif self.lastHoriSpeed < 0 and not self.hurt and not self.death and self.saCounter >= 12 and self.saCounter <= 14:
+                self.rogueSaAttack.rect.x = self.rect.x - 85
+                self.rogueSaAttack.rect.y = self.rect.y + 20
+            elif self.saCounter < 12 or self.saCounter > 14:
+                self.rogueSaAttack.rect.x = -1000
+            elif self.hurt or self.death:
+                self.rogueSaAttack.rect.x = -1000
+            #endif
+            if self.saCounter == 17:
+                self.sa = False
+                self.rogueSaAttack.rect.x = -1000
+                self.rect.y = 710
+                self.saCounter = 0
+                self.skill = False
+                self.random = True
+            #endif
+
+        #endif
+
+    #endprocedure
+
+    def Health(self, sprite_list, coin_list):
+
+        if self.reduceHealth == True and not self.freeze:
+
+            self.reduceHealth = False
+            if self.hp > 0:
+                self.hp -= 1
+                self.rogueHealth.Update(self.hp)
+            if self.hp == 0:
+                self.death = True
+                if not self.dropCoin:
+                    self.dropCoin = True
+                    for i in range(8):
+                        coin = ItemClass(1, 20, 20, self.rect.x + 30, self.rect.y + 70, 4)
+                        sprite_list.add(coin)
+                        coin_list.add(coin)
+                    #endfor
+                #endif
+            #endif
+
+        #endif
+
+        if self.hp == 5:
+            self.rogueHealth.rect.x = self.rect.x - 10
+        elif self.hp == 4:
+            self.rogueHealth.rect.x = self.rect.x
+        elif self.hp == 3:
+            self.rogueHealth.rect.x = self.rect.x + 10
+        elif self.hp == 2:
+            self.rogueHealth.rect.x = self.rect.x + 20
+        elif self.hp == 1:
+            self.rogueHealth.rect.x = self.rect.x + 30
+        #endif
+        self.rogueHealth.rect.y = self.rect.y - 30
+
+    #endprocedure
+
+    def EnemyAttackDetection(self,attack_list):
+
+        enemyGetHit_list = pygame.sprite.spritecollide(self, attack_list, False)#If get hit
+        for attack in enemyGetHit_list:
+            if self.hurt == False and not self.death and not self.freeze:
+                self.hurt = True
+                self.reduceHealth = True
+            #endif
+        #endfor
+
+    #endprocedure
+
+    def Hurt(self):
+        
+        if self.hurt == True and not self.freeze:
+
+            self.horiSpeed = 0
+            
+            if self.startHurt == 0:
+                self.startHurt = pygame.time.get_ticks()
+            #endif
+
+            self.endHurt = pygame.time.get_ticks()
+            if self.endHurt - self.startHurt > 390:
+                self.endHurt = 0
+                self.startHurt = 0
+                self.hurt = False
+                self.hurtCounter = 0
+                self.attackCount = 0
+                self.skill = True
+            #endif
+
+        #endif
+
+    #endprocedure
+
+    def MoveVert(self, block_list):
+
+        if self.freeze == False and not self.sa:
+
+            if self.vertSpeed == 0: #Keep testing if player hits something
+                self.vertSpeed = -0.4
+            else: #Gravity
+                self.vertSpeed -= 0.6
+            #endif
+
+            if self.rect.y >= 710 and self.vertSpeed <= 0: #If sinks into the ground
+
+                self.rect.y = 710 #Stands on the ground
+                self.vertSpeed = 0
+                self.jumped = False
+
+            elif self.rect.y <= 0 and self.vertSpeed > 0:
+
+                self.rect.y = 0
+                self.vertSpeed = 0
+
+            #endif
+
+            self.rect.y -= self.vertSpeed #Player move
+                
+            selfVertBlock_list = pygame.sprite.spritecollide(self, block_list, False)#If collide
+            for block in selfVertBlock_list:
+                
+                if self.vertSpeed <= 0: #If player is falling
+
+                    self.rect.bottom = block.rect.top
+                    self.jumped = False
+
+                elif self.vertSpeed >= 0: #If player is jumping
+
+                    self.rect.top = block.rect.bottom
+
+                #endif
+
+                self.vertSpeed = 0 #Stop player
+
+            #endfor
+
+        #endif
+
+    #endprocedure
+
+    def ChangeSpeed(self,num):
+
+        if self.freeze == False and self.attacked == False and not self.death:
+
+            if num == 0:
+
+                self.horiSpeed = -12
+                self.lastHoriSpeed = self.horiSpeed
+
+            elif num == 1:
+
+                self.horiSpeed = 12
+                self.lastHoriSpeed = self.horiSpeed
+
+            elif num == 2:
+
+                self.horiSpeed = 0
+
+            #endif
+
+        #endif
+
+    #endprocedure
+
+    def MoveHori(self, block_list):
+
+        if self.freeze == False:
+            
+            self.rect.x += self.horiSpeed
+                
+            for block in block_list:
+                        
+                if self.rect.colliderect(block.rect): #If player hit block
+                    if self.horiSpeed > 0:
+                        self.rect.right = block.rect.left
+                    else:
+                        self.rect.left = block.rect.right
+                    #endif
+                #endif
+
+            #endfor
 
         #endif
 
@@ -3131,7 +4346,7 @@ class EnemyAnimation(pygame.sprite.Sprite): #Class of player's animation
         #endfor
         self.banditDeath1 = [] #Death 1
         for x in range(1):
-            self.banditDeath1.append(pygame.transform.scale(pygame.image.load("Game_Images/LightBandit/BanditDeath.png"), (130, 130)))
+            self.banditDeath1.append(pygame.transform.scale(pygame.image.load("Game_Images/LightBandit/BanditDeath" + str(1) + ".png"), (130, 130)))
         #endfor
         self.banditRecover1 = [] #Recover 1
         for x in range(8):
@@ -3139,8 +4354,74 @@ class EnemyAnimation(pygame.sprite.Sprite): #Class of player's animation
             self.banditRecover1.append(pygame.transform.scale(pygame.image.load("Game_Images/LightBandit/BanditRecover" + add_str + ".png"), (130, 130)))
         #endfor
 
+        #Warlock
+        self.warlockIdle = [] #Idle 
+        for x in range(12):
+            add_str = str(x+1)
+            self.warlockIdle.append(pygame.transform.scale(pygame.image.load("Game_Images/Warlock/WarlockIdle" + add_str + ".png"), (160, 160)))
+        #endfor
+        self.warlockRun = [] #Run
+        for x in range(8):
+            add_str = str(x+1)
+            self.warlockRun.append(pygame.transform.scale(pygame.image.load("Game_Images/Warlock/WarlockRun" + add_str + ".png"), (160, 160)))
+        #endfor
+        self.warlockDeath = [] #Death
+        for x in range(13):
+            add_str = str(x+1)
+            self.warlockDeath.append(pygame.transform.scale(pygame.image.load("Game_Images/Warlock/WarlockDeath" + add_str + ".png"), (160, 160)))
+        #endfor
+        self.warlockHurt = [] #Hurt
+        for x in range(4):
+            add_str = str(x+1)
+            self.warlockHurt.append(pygame.transform.scale(pygame.image.load("Game_Images/Warlock/WarlockHurt" + add_str + ".png"), (160, 160)))
+        #endfor
+
+        #Rogue
+        self.rogueIdle = [] #Idle 
+        for x in range(11):
+            add_str = str(x+1)
+            self.rogueIdle.append(pygame.transform.scale(pygame.image.load("Game_Images/Rogue/RogueIdle" + add_str + ".png"), (250, 250)))
+        #endfor
+        self.rogueRun = [] #Run
+        for x in range(10):
+            add_str = str(x+1)
+            self.rogueRun.append(pygame.transform.scale(pygame.image.load("Game_Images/Rogue/RogueRun" + add_str + ".png"), (250, 250)))
+        #endfor
+        self.rogueDeath = [] #Death
+        for x in range(14):
+            add_str = str(x+1)
+            self.rogueDeath.append(pygame.transform.scale(pygame.image.load("Game_Images/Rogue/RogueDeath" + add_str + ".png"), (250, 250)))
+        #endfor
+        self.rogueHurt = [] #Hurt
+        for x in range(3):
+            add_str = str(x+1)
+            self.rogueHurt.append(pygame.transform.scale(pygame.image.load("Game_Images/Rogue/RogueHurt" + add_str + ".png"), (250, 250)))
+        #endfor
+        self.rogueDeath = [] #Death
+        for x in range(14):
+            add_str = str(x+1)
+            self.rogueDeath.append(pygame.transform.scale(pygame.image.load("Game_Images/Rogue/RogueDeath" + add_str + ".png"), (250, 250)))
+        #endfor
+        self.rogueAttack = [] #Attack
+        for x in range(10):
+            add_str = str(x+1)
+            self.rogueAttack.append(pygame.transform.scale(pygame.image.load("Game_Images/Rogue/RogueAttack" + add_str + ".png"), (250, 250)))
+        #endfor
+        self.rogueSA = [] #Special Attack
+        for x in range(18):
+            add_str = str(x+1)
+            self.rogueSA.append(pygame.transform.scale(pygame.image.load("Game_Images/Rogue/RogueSA" + add_str + ".png"), (250, 250)))
+        #endfor
+        self.rogueSpell = [] #Spell
+        for x in range(12):
+            add_str = str(x+1)
+            self.rogueSpell.append(pygame.transform.scale(pygame.image.load("Game_Images/Rogue/RogueSpell" + add_str + ".png"), (250, 250)))
+        #endfor
+
         if self.enemy == 1: #Set
             self.image = pygame.transform.flip(self.banditIdle1[0],1,0)
+        elif self.enemy == 2:
+            self.image = pygame.transform.flip(self.warlockIdle[0],1,0)
         #endif
         
     #endprocedure
@@ -3152,6 +4433,18 @@ class EnemyAnimation(pygame.sprite.Sprite): #Class of player's animation
                 self.image = self.banditIdle1[i] #Right
             else:
                 self.image = pygame.transform.flip(self.banditIdle1[i],1,0) #Left
+            #endif
+        elif self.enemy == 2:
+            if speed > 0:
+                self.image = self.warlockIdle[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.warlockIdle[i],1,0) #Left
+            #endif
+        elif self.enemy == 3:
+            if speed > 0:
+                self.image = self.rogueIdle[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.rogueIdle[i],1,0) #Left
             #endif
         #endif
 
@@ -3176,6 +4469,18 @@ class EnemyAnimation(pygame.sprite.Sprite): #Class of player's animation
                 self.image = self.banditRun1[i]
             else:
                 self.image = pygame.transform.flip(self.banditRun1[i],1,0)
+            #endif
+        elif self.enemy == 2:
+            if speed > 0:
+                self.image = self.warlockRun[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.warlockRun[i],1,0) #Left
+            #endif
+        elif self.enemy == 3:
+            if speed > 0:
+                self.image = self.rogueRun[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.rogueRun[i],1,0) #Left
             #endif
         #endif
 
@@ -3213,6 +4518,12 @@ class EnemyAnimation(pygame.sprite.Sprite): #Class of player's animation
             else:
                 self.image = pygame.transform.flip(self.banditAttack1[i],1,0)
             #endif
+        elif self.enemy == 3:
+            if speed > 0:
+                self.image = self.rogueAttack[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.rogueAttack[i],1,0) #Left
+            #endif
         #endif
 
     #endprocedure
@@ -3224,6 +4535,18 @@ class EnemyAnimation(pygame.sprite.Sprite): #Class of player's animation
                 self.image = self.banditHurt1[i]
             else:
                 self.image = pygame.transform.flip(self.banditHurt1[i],1,0)
+            #endif
+        elif self.enemy == 2:
+            if speed > 0:
+                self.image = self.warlockHurt[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.warlockHurt[i],1,0) #Left
+            #endif
+        elif self.enemy == 3:
+            if speed > 0:
+                self.image = self.rogueHurt[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.rogueHurt[i],1,0) #Left
             #endif
         #endif
 
@@ -3249,6 +4572,42 @@ class EnemyAnimation(pygame.sprite.Sprite): #Class of player's animation
             else:
                 self.image = pygame.transform.flip(self.banditDeath1[i],1,0)
             #endif
+        elif self.enemy == 2:
+            if speed > 0:
+                self.image = self.warlockDeath[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.warlockDeath[i],1,0) #Left
+            #endif
+        elif self.enemy == 3:
+            if speed > 0:
+                self.image = self.rogueDeath[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.rogueDeath[i],1,0) #Left
+            #endif
+        #endif
+
+    #endprocedure
+
+    def Spell(self, speed, i):
+
+        if self.enemy == 3:
+            if speed > 0:
+                self.image = self.rogueSpell[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.rogueSpell[i],1,0) #Left
+            #endif
+        #endif
+
+    #endprocedure
+
+    def SA(self, speed, i):
+
+        if self.enemy == 3:
+            if speed > 0:
+                self.image = self.rogueSA[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.rogueSA[i],1,0) #Left
+            #endif
         #endif
 
     #endprocedure
@@ -3262,10 +4621,24 @@ def Game():
     
     clock = pygame.time.Clock()
 
+    #Scripts
+    script1 = []
+    script2 = []
+    script3 = []
+
     #Variables
     currency = [0,0,0,0] #Money
-    live = 0 #Player's live
+    live = [5] #Player's live
+    timeUp = [0]
     gameLevel = 1 #Game Level
+    gamePhase = 1
+    gameChat = 1
+    gameOver = False
+    gamePause = False
+    ReadyToClick = False
+    startReadScript = 0
+    endReadScript = 0
+    timer = TimerClass()
 
     #Setting Variables
     difficulty = 0
@@ -3273,7 +4646,6 @@ def Game():
     #Game Level Variable
     currentSpeed = 0 #Used to determine animation direction
     horiSpeed = 0#Used to determine background move
-    centered = False
     level = -1 #Determines level
     tutorialReset = True
 
@@ -3295,21 +4667,41 @@ def Game():
 
     block1_list = pygame.sprite.Group() #Blocks list 1
 
+    block2_list = pygame.sprite.Group() #Blocks list 2
+
+    block3_list = pygame.sprite.Group() #Blocks list 3
+
+    character1_list = pygame.sprite.Group()
+
+    character2_list = pygame.sprite.Group()
+
+    character3_list = pygame.sprite.Group()
+
+    ground1_list = pygame.sprite.Group()
+
+    ground2_list = pygame.sprite.Group()
+
+    ground3_list = pygame.sprite.Group()
+
     tutorialBlock_list = pygame.sprite.Group() #Block tutorial list
 
     player_list = pygame.sprite.Group() #Player's list
 
-    playerHealth_list = pygame.sprite.Group() #Player health's list
-
     enemy_list = pygame.sprite.Group() #Enemy's list
 
-    dummy_list = pygame.sprite.Group() #Dummy
+    warlock_list = pygame.sprite.Group() #Warlock
+
+    rogue_list = pygame.sprite.Group() #Rogue
+
+    rogueAttack_list = pygame.sprite.Group() #Rogue Attack
 
     tutorialEnemy_list = pygame.sprite.Group() #Enemy's tutorial list
 
-    dummyAttack_list = pygame.sprite.Group() #Dummy's attack
+    banditGroup1_list = pygame.sprite.Group()
 
-    dummyHealth_list = pygame.sprite.Group() #Dummy's health
+    banditGroup2_list = pygame.sprite.Group()
+
+    banditGroup3_list = pygame.sprite.Group()
 
     startEnd_list = pygame.sprite.Group() #The area determines the start and end of a level
 
@@ -3323,13 +4715,19 @@ def Game():
 
     file_list = pygame.sprite.Group() #All visible objects in file
 
-    playerAnimation_list = pygame.sprite.Group() #Player's animation
-
     playerAttack_list = pygame.sprite.Group() #Player's attack
 
-    dummyAnimation_list = pygame.sprite.Group() #Dummy's animation
+    enemyAttack_list = pygame.sprite.Group() #Enemy's attack
 
     button_list = pygame.sprite.Group() #Buttons
+
+    pauseButton_list = pygame.sprite.Group() #Pause Button
+
+    optionBlock_list = pygame.sprite.Group() 
+
+    panelButton_list = pygame.sprite.Group()
+
+    nextButton_list = pygame.sprite.Group() #Next Button
 
     item_list = pygame.sprite.Group() #Group of items
 
@@ -3343,7 +4741,7 @@ def Game():
 
     hard_list = pygame.sprite.Group() #Hard
 
-    background_list = pygame.sprite.Group() #Backgrounds
+    background1_list = pygame.sprite.Group() #Backgrounds
 
     cloud_list = pygame.sprite.Group() #Clouds
 
@@ -3359,6 +4757,10 @@ def Game():
 
     one_list = pygame.sprite.Group()
 
+    wordBox_list = pygame.sprite.Group() #WordBox
+
+    currentLine_list = pygame.sprite.Group() #Current Line
+
     CreateLoad(loading_list)
 
     while not game_over:
@@ -3372,15 +4774,20 @@ def Game():
                 if level == 0 and pos[0] >= 595.5 and pos[1] >= 420 and pos[0] <= 904.5 and pos[1] <= 513: #Select save files
                     level = 3 #Start game
                     tutorialLevel = False
+                    fileLoaded = False
                 elif level == 0 and pos[0] >= 442.5 and pos[1] >= 560 and pos[0] <= 1057.5 and pos[1] <= 653: #Select Settings
                     level = 1 #Settings
                 elif level == 0 and pos[0] >= 430.5 and pos[1] >= 700 and pos[0] <= 1069.5 and pos[1] <= 793: #Select tutorial
                     levelToGo = 2
                     level = -1 #Tutorial
                     tutorialLevel = True
-                    for dummy in dummy_list:
+                    for dummy in tutorialEnemy_list:
                         dummy.AttackStance(1)
+                        dummy.ChangeSpeed(1)
+                        dummy.ChangeSpeed(2)
+                        dummy.rect.x = 295
                     #endfor
+                    fileLoaded = True
                 elif level == 1 and pos[0] >= 529.5 and pos[1] >= 300 and pos[0] <= 970.5 and pos[1] <= 420: #Select Difficulty
                     if difficulty == 0:
                         difficulty = 1
@@ -3413,43 +4820,144 @@ def Game():
                     currentFile = 3
                 elif level == 3 and pos[0] >= 50 and pos[1] >= 820 and pos[0] <= 156 and pos[1] <= 851: #Go back to menu
                     level = 0
+                    fileLoaded = True
                 elif level == 1 and pos[0] >= 50 and pos[1] >= 820 and pos[0] <= 156 and pos[1] <= 851: #Go back to menu
                     level = 0
                 elif level == 2 and pos[0] >= 1430 and pos[1] >= 10 and pos[0] <= 1490 and pos[1] <= 70: #Go back to menu
                     levelToGo = 0
-                    level = -1        
+                    tutorialLevel = True
+                    fileLoaded = False
+                    level = -1
+                    player.Reset()
+                    player.ResetLive([5])
+                    currency[0] = 0
+                    currency[1] = 0
+                    currency[2] = 0
+                    currency[3] = 0
+                elif level == 4 and pos[0] >= 1430 and pos[1] >= 10 and pos[0] <= 1490 and pos[1] <= 70 and not gamePause: #Pause game
+                    gamePause = True
+                    for optionBlock in optionBlock_list:
+                        levelOne_list.add(optionBlock)
+                    #endfor
+                    for button in panelButton_list:
+                        levelOne_list.add(button)
+                    #endfor
+                    for button in pauseButton_list:
+                        levelOne_list.remove(button)
+                    #endfor
+                    if gameLevel == 1:
+                        for character in character1_list:
+                            character.Freeze(1)
+                        #endfor
+                        player.FreezeTrigger(1)
+                    #endif
+                elif level == 4 and pos[0] >= 1068 and pos[1] >= 234 and pos[0] <= 1128 and pos[1] <= 294 and gamePause:
+                    gamePause = False
+                    for optionBlock in optionBlock_list:
+                        levelOne_list.remove(optionBlock)
+                    #endfor
+                    for button in panelButton_list:
+                        levelOne_list.remove(button)
+                    #endfor
+                    for button in pauseButton_list:
+                        levelOne_list.add(button)
+                    #endfor
+                    if gameLevel == 1:
+                        for character in character1_list:
+                            character.Freeze(0)
+                        #endfor
+                        player.FreezeTrigger(0)
+                    #endif
+                elif level == 4 and pos[0] >= 700 and pos[1] >= 530 and pos[0] <= 800 and pos[1] <= 570 and gamePause: #Quit game
+                    levelToGo = 0
+                    level = -1
+                    fileLoaded = False
+                    timeUp[0] = 0
+                    gamePhase = 1
+                    gameChat = 1
+                    gameOver = False
+                    gamePause = False
+                    ReadyToClick = False
+                    startReadScript = 0
+                    endReadScript = 0
+                    if gameLevel == 1:
+                        for block in block1_list:
+                            block.Reset()
+                        #endfpr
+                        for character in character1_list:
+                            character.Reset()
+                        #endfor
+                        for optionBlock in optionBlock_list:
+                            levelOne_list.remove(optionBlock)
+                        #endfor
+                        for button in panelButton_list:
+                            levelOne_list.remove(button)
+                        #endfor
+                        for button in pauseButton_list:
+                            levelOne_list.add(button)
+                        #endfor
+                        for ground in ground1_list:
+                            ground.Update(0)
+                        #endfor
+                        DrawOrRemove(0, levelOne_list, nextButton_list)
+                        DrawOrRemove(0, levelOne_list, currentLine_list)
+                        DrawOrRemove(0, levelOne_list, wordBox_list)
+                    #endif
+                elif level == 4 and pos[0] >= 1195 and pos[1] >= 850 and pos[0] <= 1255 and pos[1] <= 870 and not gamePause:
+                    if ReadyToClick:
+                        gameChat += 1
+                        ReadyToClick = False
+                    #endif
                 #endif
             elif level >= 2 and event.type == pygame.KEYDOWN: #Press Key Down
                 if event.key == pygame.K_SPACE:
-                    player.AttackTrigger()
+                    for player in player_list:
+                        player.AttackTrigger()
+                    #endfor
                 if event.key == pygame.K_w:
-                    player.Jump()
+                    for player in player_list:
+                        player.Jump()
+                    #endfor
                 if event.key == pygame.K_a:
-                    player.ChangeSpeed(0)
-                    player.KeepMove(1)
+                    for player in player_list:
+                        player.ChangeSpeed(0)
+                        player.KeepMove(1)
+                    #endfor
                     currentSpeed = -1
                     horiSpeed = -1
                 if event.key == pygame.K_d:
-                    player.ChangeSpeed(1)
-                    player.KeepMove(1)
+                    for player in player_list:
+                        player.ChangeSpeed(1)
+                        player.KeepMove(1)
+                    #endfor
                     currentSpeed = 1
                     horiSpeed = 1
                 if event.key == pygame.K_s:
-                    player.BlockTrigger(1)
+                    for player in player_list:
+                        player.BlockTrigger(1)
+                    #endfor
                 if event.key == pygame.K_LSHIFT:
-                    player.RollTrigger()
+                    for player in player_list:
+                        player.RollTrigger()
+                    #endfor
                 #endif
             elif level >= 2 and event.type == pygame.KEYUP: #Release Key
                 if event.key == pygame.K_a and currentSpeed < 0:
-                    player.ChangeSpeed(2)
-                    player.KeepMove(0)
+                    for player in player_list:
+                        player.ChangeSpeed(2)
+                        player.KeepMove(0)
+                    #endfor
                     horiSpeed = 0
                 if event.key == pygame.K_d and currentSpeed > 0:
-                    player.ChangeSpeed(2)
-                    player.KeepMove(0)
+                    for player in player_list:
+                        player.ChangeSpeed(2)
+                        player.KeepMove(0)
+                    #endfor
                     horiSpeed = 0
                 if event.key == pygame.K_s:
-                    player.BlockTrigger(0)
+                    for player in player_list:
+                        player.BlockTrigger(0)
+                    #endfor
                 #endif
             #endif
         #endfor
@@ -3508,14 +5016,20 @@ def Game():
                 if levelCreated == False:
 
                     levelCreated = True
-                    
+
                     CreateFile(file_list, button_list, item_list, crown_list)
                     CreateMenu(menu_list, button_list)
                     CreateSettings(setting_list, button_list, easy_list, hard_list)
-                    CreateLevelOnePlatform(block1_list, levelOne_list, startEnd_list, background_list, cloud_list) #Call create block function
-                    CreateTutorialPlatform(tutorialBlock_list, tutorial_list, background_list, cloud_list, button_list)
-                    CreateCharacters1(player_list, playerAnimation_list, playerAttack_list, playerHealth_list, dummyAnimation_list, levelOne_list, tutorial_list, enemy_list, tutorialEnemy_list, dummy_list, dummyAttack_list, dummyHealth_list)
+                    CreateLevelOnePlatform(block1_list, levelOne_list, startEnd_list, background1_list, cloud_list, ground1_list) #Create Level One Platforms
+                    CreatePause(button_list, optionBlock_list, pauseButton_list, panelButton_list, levelOne_list, levelTwo_list, levelThree_list)
+                    CreateTutorialPlatform(tutorialBlock_list, tutorial_list, button_list)
+                    CreateCharacters1(player_list, playerAttack_list, tutorialEnemy_list, tutorial_list, levelOne_list, levelTwo_list, levelThree_list, enemyAttack_list, character1_list)
+                    CreateCharacters2(levelOne_list, enemy_list, warlock_list, wordBox_list, nextButton_list, rogue_list, enemyAttack_list, rogueAttack_list, banditGroup1_list, banditGroup2_list, character1_list)
                     CreateMoney(tutorial_list, levelOne_list, levelTwo_list, levelThree_list, thousand_list, hundred_list, ten_list, one_list)
+                    for player in player_list:
+                        player.DrawOnCanvas(tutorial_list, levelOne_list, levelTwo_list, levelThree_list)
+                    #endfor
+                    ReadScript(script1, script2, script3)
 
                 #endif
 
@@ -3540,7 +5054,6 @@ def Game():
                             level = levelToGo #Go to gameplay
                             fileLoaded = False
                             crownChecked = False
-                            
 
                         #endif
                             
@@ -3557,7 +5070,7 @@ def Game():
 
                 #endif
 
-                if fileLoaded == False:
+                if not fileLoaded and not tutorialLevel:
 
                     fileLoaded = True
                     
@@ -3585,22 +5098,18 @@ def Game():
                     #endif
 
                     #Set currency
-                    if lines[0][0] == "0" and lines[0][1] == "0" and lines[0][2] == "0":
-                        currency = int(lines[0][3])
-                    elif lines[0][0] == "0" and lines[0][1] == "0":
-                        currency = int(lines[0][2] + lines[0][3])
-                    elif lines[0][0] == "0":
-                        currency = int(lines[0][1] + lines[0][2] + lines[0][3])
-                    else:
-                        currency = int(lines[0].rstrip("\n"))
-                    #endif
+                    currency[3] = int(lines[0][3])
+                    currency[2] = int(lines[0][2])
+                    currency[1] = int(lines[0][1])
+                    currency[0] = int(lines[0][0])
 
                     #Set live
-                    if lines[1][0] == "0":
-                        live = int(lines[1][1])
-                    else:
-                        live = int(lines[1].rstrip("\n"))
-                    #endif
+                    live[0] = int(lines[1].rstrip("\n"))
+
+                    for player in player_list:
+                        player.ResetLive(live)
+                        player.FreezeTrigger(1)
+                    #endfor
 
                     #Set Level
                     gameLevel = int(lines[2][0])
@@ -3685,10 +5194,6 @@ def Game():
 
                 cloud.CloudUpdate()
 
-                if cloud.rect.x <= -2560:
-                    cloud.rect.x = 2560
-                #endif
-
             #endfor
 
             for coin in coin_list:
@@ -3704,50 +5209,46 @@ def Game():
                 dummyEndAttack = pygame.time.get_ticks()
                 if dummyEndAttack - dummyStartAttack > 3000:
                     dummyStartAttack = dummyEndAttack
-                    for dummy in dummy_list:
-                        dummy.AttackTrigger()
-                    #endfor
+                    enemy.AttackTrigger()
                 #endif
 
-                enemy.Attack(dummyAttack_list)
-                enemy.MoveHori(block1_list, tutorialBlock_list, level)
+                enemy.Attack()
+                enemy.MoveHori(block1_list, block2_list, block3_list, tutorialBlock_list, level, gameLevel)
                 enemy.AttackChecker()
-                enemy.MoveVert(block1_list, tutorialBlock_list, level)
-                enemy.Revive(dummyHealth_list)
+                enemy.MoveVert(block1_list, block2_list, block3_list, tutorialBlock_list, level, gameLevel)
+                enemy.Revive()
                 enemy.Hurt()
-                enemy.EnemyAttackDetection(playerAttack_list,level)
-                enemy.Health(dummyHealth_list, coin_list, tutorial_list, levelOne_list, level)
-                enemy.Animation(dummyAnimation_list)
+                enemy.EnemyAttackDetection(playerAttack_list)
+                enemy.Health(coin_list, tutorial_list, level, gameLevel)
+                enemy.Animation()
 
             #endfor
 
             #Player Movement
             for player in player_list:
 
-                centered = False
-
                 #Detection
-                player.EnemyAttackDetection(dummyAttack_list,level)
+                player.EnemyAttackDetection(enemyAttack_list)
                 #Blocked
                 player.Blocked()
                 #Hurt
                 player.Hurt()
                 #Attack
-                player.Attack(playerAttack_list)
+                player.Attack()
                 #Roll
                 player.Roll()
                 #Horizontal Movement
-                player.MoveHori(centered, block1_list, tutorialBlock_list, startEnd_list, player_list, level, background_list) #Player move horizontally
+                player.MoveHori(tutorialBlock_list) #Player move horizontally
                 #Attack Checker
                 player.AttackChecker()
                 #Vertical Movement
-                player.MoveVert(block1_list, tutorialBlock_list, level)
+                player.MoveVert(tutorialBlock_list)
                 #Death
-                player.Revive(playerHealth_list)
+                player.Revive(live)
                 #Health
-                player.Health(playerHealth_list)
+                player.Health(live)
                 #Animation
-                player.Animation(playerAnimation_list)
+                player.Animation()
 
             #endfor
 
@@ -3771,59 +5272,563 @@ def Game():
 
             file_list.draw(screen) #Display all visible objects
 
-        elif level == 4: #Level 1
+        elif level == 4: #Gameplay
 
             screen.fill(WHITE)
 
-            #Player Movement
-            for player in player_list:
+            if not gamePause:
 
-                for cloud in cloud_list: #Cloud
+                if gameLevel == 1: #Level 1------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                    
+                    for cloud in cloud_list: #Cloud
 
-                    cloud.CloudUpdate()
-
-                    if cloud.rect.x == -2560:
-                        cloud.rect.x = 2560
-                    #endif
-
-                #endfor
-
-                #Centered
-                for area in startEnd_list:
-                    playerStartEnd_list = pygame.sprite.spritecollide(area, player_list, False)
-                    for player in playerStartEnd_list:
-
-                        centered = False
+                        cloud.CloudUpdate()
 
                     #endfor
+
+                    for button in button_list: #Button Change
+
+                        button.Change(pos, level)
+
+                    #endfor
+
+                    for coin in coin_list:
+
+                        coin.Change()
+                        coin.CoinUpdate(player_list, block1_list, tutorialBlock_list, tutorial_list, levelOne_list, coin_list, currency)
+
+                    #endfor
+
+                    for thousand in thousand_list:
+                        thousand.Update(currency[0])
+                    #endfor
+                    for hundred in hundred_list:
+                        hundred.Update(currency[1])
+                    #endfor
+                    for ten in ten_list:
+                        ten.Update(currency[2])
+                    #endfor
+                    for one in one_list:
+                        one.Update(currency[3])
+                    #endfor
+
+                    #Player Movement
+                    for player in player_list:
+
+                        #Detection
+                        player.EnemyAttackDetection(enemyAttack_list)
+                        if gamePhase == 19:
+                            player.RogueDetection(rogueAttack_list)
+                        #endif
+                        #Blocked
+                        player.Blocked()
+                        #Hurt
+                        player.Hurt()
+                        #Attack
+                        player.Attack()
+                        #Roll
+                        player.Roll()
+                        #Horizontal Movement
+                        if gamePhase != 9 and gamePhase != 10 and gamePhase != 16 and gamePhase != 17 and gamePhase != 20 and gamePhase != 21:
+                            player.MoveHori(block1_list) #Player move horizontally
+                        else:
+                            player.MoveHori2()
+                        #endif
+                        #Attack Checker
+                        player.AttackChecker()
+                        #Vertical Movement
+                        player.MoveVert(block1_list)
+                        #Death
+                        player.Revive(live)
+                        #Health
+                        player.Health(live)
+                        #Animation
+                        player.Animation()
+
+                    #endfor
+
+                    #Warlock
+                    if gamePhase <= 5:
+                        for warlock in warlock_list:
+                            warlock.MoveHori(block1_list)
+                            warlock.MoveVert(block1_list)
+                            warlock.Hurt()
+                            warlock.Health()
+                            warlock.EnemyAttackDetection(rogueAttack_list)
+                            warlock.Animation()
+                        #endfor
+                    #endif
+
+                    #Rogue
+                    if gamePhase <= 5 or gamePhase >= 10:
+                        for rogue in rogue_list:
+                            if gamePhase == 19:
+                                rogue.Control(player.rect.x)
+                            #endif
+                            rogue.MoveHori(block1_list)
+                            rogue.MoveVert(block1_list)
+                            rogue.Hurt()
+                            rogue.EnemyAttackDetection(playerAttack_list)
+                            rogue.Attack()
+                            rogue.Health(levelOne_list, coin_list)
+                            rogue.SA()
+                            rogue.Animation()
+                        #endfor
+                    #endif
+
+                    if gamePhase >= 5 and gamePhase <= 8:
+
+                        #Bandit Movement
+                        for enemy in banditGroup1_list:
+
+                            if gamePhase == 8:
+                                enemy.Control(player_list)
+                            #endif
+                            enemy.Attack()
+                            enemy.MoveHori(block1_list, block2_list, block3_list, tutorialBlock_list, level, gameLevel)
+                            enemy.AttackChecker()
+                            enemy.MoveVert(block1_list, block2_list, block3_list, tutorialBlock_list, level, gameLevel)
+                            enemy.Hurt()
+                            enemy.EnemyAttackDetection(playerAttack_list)
+                            enemy.Health(coin_list, levelOne_list, level, gameLevel)
+                            enemy.Animation()
+
+                        #endfor
+
+                    #endif
+
+                    if gamePhase >= 10 and gamePhase <= 15:
+
+                        #Bandit Movement
+                        for enemy in banditGroup2_list:
+
+                            if gamePhase == 15:
+                                enemy.Control(player_list)
+                            #endif
+                            enemy.Attack()
+                            enemy.MoveHori(block1_list, block2_list, block3_list, tutorialBlock_list, level, gameLevel)
+                            enemy.AttackChecker()
+                            enemy.MoveVert(block1_list, block2_list, block3_list, tutorialBlock_list, level, gameLevel)
+                            enemy.Hurt()
+                            enemy.EnemyAttackDetection(playerAttack_list)
+                            enemy.Health(coin_list, levelOne_list, level, gameLevel)
+                            enemy.Animation()
+
+                        #endfor
+
+                    #endif
+
+                    if gamePhase == 1:
+                        #Warlock
+                        if gameChat == 1:
+                            DrawOrRemove(1, levelOne_list, wordBox_list)
+                            WriteWords(1, script1[0], 0, 815, file_list, levelOne_list, levelTwo_list, levelThree_list, currentLine_list, 4, 1, 0)
+                            gameChat = 2
+                        elif gameChat == 2:
+                            if timeUp[0] == 0 and not ReadyToClick:
+                                timer.Counter(2000, timeUp)
+                            elif timeUp[0] == 1 and not ReadyToClick:
+                                timeUp[0] = 0
+                                ReadyToClick = True
+                                DrawOrRemove(1, levelOne_list, nextButton_list)
+                            #endif
+                            for button in nextButton_list:
+                                button.Change(pos, level)
+                            #endfor
+                        elif gameChat == 3:
+                            DrawOrRemove(0, levelOne_list, nextButton_list)
+                            DrawOrRemove(0, levelOne_list, currentLine_list)
+                            WriteWords(1, script1[1], 0, 815, file_list, levelOne_list, levelTwo_list, levelThree_list, currentLine_list, 4, 1, 0)
+                            gameChat = 4
+                        elif gameChat == 4:
+                            if timeUp[0] == 0 and not ReadyToClick:
+                                timer.Counter(2000, timeUp)
+                            elif timeUp[0] == 1 and not ReadyToClick:
+                                timeUp[0] = 0
+                                ReadyToClick = True
+                                DrawOrRemove(1, levelOne_list, nextButton_list)
+                            #endif
+                            for button in nextButton_list:
+                                button.Change(pos, level)
+                            #endfor
+                        elif gameChat == 5:
+                            DrawOrRemove(0, levelOne_list, nextButton_list)
+                            DrawOrRemove(0, levelOne_list, currentLine_list)
+                            WriteWords(1, script1[2], 0, 815, file_list, levelOne_list, levelTwo_list, levelThree_list, currentLine_list, 4, 1, 0)
+                            gameChat = 6
+                        elif gameChat == 6:
+                            if timeUp[0] == 0 and not ReadyToClick:
+                                timer.Counter(2000, timeUp)
+                            elif timeUp[0] == 1 and not ReadyToClick:
+                                timeUp[0] = 0
+                                ReadyToClick = True
+                                DrawOrRemove(1, levelOne_list, nextButton_list)
+                            #endif
+                            for button in nextButton_list:
+                                button.Change(pos, level)
+                            #endfor
+                        elif gameChat == 7:
+                            DrawOrRemove(0, levelOne_list, nextButton_list)
+                            DrawOrRemove(0, levelOne_list, currentLine_list)
+                            DrawOrRemove(0, levelOne_list, wordBox_list)
+                            gamePhase = 2
+                            gameChat = 1
+                            for warlock in warlock_list:
+                                warlock.ChangeSpeed(1)
+                            #endfor
+                            for rogue in rogue_list:
+                                rogue.ChangeSpeed(0)
+                            #endfor
+                        #endif
+                    elif gamePhase == 2:
+                        if warlock.rect.x >= 675:
+                            warlock.rect.x = 675
+                            for warlock in warlock_list:
+                                warlock.ChangeSpeed(2)
+                            #endfor
+                            for rogue in rogue_list:
+                                rogue.ChangeSpeed(2)
+                                rogue.SATrigger(690)
+                            #endfor
+                            gamePhase = 3
+                        #endif
+                    elif gamePhase == 3:
+                        if timeUp[0] == 0:
+                            timer.Counter(2500, timeUp)
+                        elif timeUp[0] == 1:
+                            timeUp[0] = 0
+                            gamePhase = 4
+                            endTimer = 0
+                            startTimer = 0
+                        #endif
+                    elif gamePhase == 4:
+                        if gameChat == 1:
+                            DrawOrRemove(1, levelOne_list, wordBox_list)
+                            WriteWords(1, script1[3], 0, 815, file_list, levelOne_list, levelTwo_list, levelThree_list, currentLine_list, 4, 1, 0)
+                            gameChat = 2
+                        elif gameChat == 2:
+                            if timeUp[0] == 0 and not ReadyToClick:
+                                timer.Counter(2000, timeUp)
+                            elif timeUp[0] == 1 and not ReadyToClick:
+                                timeUp[0] = 0
+                                ReadyToClick = True
+                                DrawOrRemove(1, levelOne_list, nextButton_list)
+                            #endif
+                            for button in nextButton_list:
+                                button.Change(pos, level)
+                            #endfor
+                        elif gameChat == 3:
+                            DrawOrRemove(0, levelOne_list, nextButton_list)
+                            DrawOrRemove(0, levelOne_list, currentLine_list)
+                            DrawOrRemove(0, levelOne_list, wordBox_list)
+                            gameChat = 0
+                            gamePhase = 5
+                            gameChat = 1
+                        #endif
+                    elif gamePhase == 5:
+                        for bandit in banditGroup1_list:
+                            bandit.ChangeSpeed(0)
+                        #endfor
+                        for rogue in rogue_list:
+                            rogue.ChangeSpeed(1)
+                        #endfor
+                        for rogue in rogue_list:
+                            if rogue.rect.x >= 1700:
+                                timeUp[0] = 0
+                                gamePhase = 6
+                                endTimer = 0
+                                startTimer = 0
+                                for bandit in banditGroup1_list:
+                                    bandit.ChangeSpeed(2)
+                                #endfor
+                                rogue.ChangeSpeed(0)
+                                rogue.ChangeSpeed(2)
+                                rogue.rect.x = 2210
+                                rogue.rect.y = 290
+                                rogue.Animation()
+                            #endif
+                        #endfor
+                    elif gamePhase == 6:
+                        if timeUp[0] == 0:
+                            timer.Counter(600, timeUp)
+                        elif timeUp[0] == 1:
+                            timeUp[0] = 0
+                            gamePhase = 7
+                            endTimer = 0
+                            startTimer = 0
+                            for enemy in banditGroup1_list:
+                                enemy.AttackStance(1)
+                            #endfor
+                        #endif
+                    elif gamePhase == 7:
+                        if timeUp[0] == 0:
+                            timer.Counter(1200, timeUp)
+                        elif timeUp[0] == 1:
+                            timeUp[0] = 0
+                            gamePhase = 8
+                            for player in player_list:
+                                player.FreezeTrigger(0)
+                            #endfor
+                        #endif
+                    elif gamePhase == 8:
+                        if currency[3] == 6 and live[0] > 0:
+                            if timeUp[0] == 0:
+                                for player in player_list:
+                                    player.FreezeTrigger(0)
+                                    player.ChangeSpeed(2)
+                                    player.FreezeTrigger(1)
+                                #endfor
+                                timer.Counter(1200, timeUp)
+                            elif timeUp[0] == 1:
+                                gamePhase = 9
+                                for player in player_list:
+                                    player.FreezeTrigger(0)
+                                    player.ChangeSpeed(1)
+                                    player.FreezeTrigger(1)
+                                #endfor
+                            #endif
+                        #endif
+                        if live[0] == 0:
+                            gameOver = True
+                        #endif
+                    elif gamePhase == 9:
+                        if player.rect.x >= 1550:
+                            player.FreezeTrigger(0)
+                            player.ChangeSpeed(2)
+                            player.FreezeTrigger(1)
+                            player.rect.x = 1550
+                            gamePhase = 10
+                        #endif
+                    elif gamePhase == 10:
+                        if player.rect.x > 50:
+                            player.rect.x -= 10
+                            for block in block1_list:
+                                block.rect.x -= 10
+                            #endfor
+                            for warlock in warlock_list:
+                                warlock.rect.x -= 10
+                                warlock.Animation()
+                            #endfor
+                            for enemy in banditGroup1_list:
+                                enemy.rect.x -= 10
+                                enemy.Animation()
+                            #endfor
+                            for rogue in rogue_list:
+                                rogue.rect.x -= 10
+                                rogue.Animation()
+                            #endfor
+                            for bandit in banditGroup2_list:
+                                bandit.rect.x -= 10
+                            #endfor
+                            for background in background1_list:
+                                background.BackUpdate()
+                            #endfor
+                            for ground in ground1_list:
+                                ground.Update(1)
+                            #endfor
+                        elif player.rect.x == 50:
+                            gamePhase = 11
+                            for ground in ground1_list:
+                                ground.Update(0)
+                            #endfor
+                        #endif
+                    elif gamePhase == 11:
+                        if gameChat == 1:
+                            DrawOrRemove(1, levelOne_list, wordBox_list)
+                            WriteWords(1, script1[4], 0, 815, file_list, levelOne_list, levelTwo_list, levelThree_list, currentLine_list, 4, 1, 0)
+                            gameChat = 2
+                        elif gameChat == 2:
+                            if timeUp[0] == 0 and not ReadyToClick:
+                                timer.Counter(2000, timeUp)
+                            elif timeUp[0] == 1 and not ReadyToClick:
+                                timeUp[0] = 0
+                                ReadyToClick = True
+                                DrawOrRemove(1, levelOne_list, nextButton_list)
+                            #endif
+                            for button in nextButton_list:
+                                button.Change(pos, level)
+                            #endfor
+                        elif gameChat == 3:
+                            DrawOrRemove(0, levelOne_list, nextButton_list)
+                            DrawOrRemove(0, levelOne_list, currentLine_list)
+                            DrawOrRemove(0, levelOne_list, wordBox_list)
+                            gameChat = 0
+                            gamePhase = 12
+                            gameChat = 1
+                        #endif
+                    elif gamePhase == 12:
+                        for rogue in rogue_list:
+                            rogue.SATrigger(1800)
+                        #endfor
+                        gamePhase = 13
+                    elif gamePhase == 13:
+                        if timeUp[0] == 0:
+                            timer.Counter(1400, timeUp)
+                        elif timeUp[0] == 1:
+                            timeUp[0] = 0
+                            gamePhase = 14
+                            for enemy in banditGroup2_list:
+                                enemy.AttackStance(1)
+                            #endfor
+                        #endif
+                    elif gamePhase == 14:
+                        if timeUp[0] == 0:
+                            timer.Counter(600, timeUp)
+                        elif timeUp[0] == 1:
+                            timeUp[0] = 0
+                            gamePhase = 15
+                            for player in player_list:
+                                player.FreezeTrigger(0)
+                            #endfor
+                        #endif
+                    elif gamePhase == 15:
+                        if currency[2] == 1 and currency[3] == 8 and live[0] > 0:
+                            if timeUp[0] == 0:
+                                for player in player_list:
+                                    player.FreezeTrigger(0)
+                                    player.ChangeSpeed(2)
+                                    player.FreezeTrigger(1)
+                                #endfor
+                                timer.Counter(1200, timeUp)
+                            elif timeUp[0] == 1:
+                                gamePhase = 16
+                                for player in player_list:
+                                    player.FreezeTrigger(0)
+                                    player.ChangeSpeed(1)
+                                    player.FreezeTrigger(1)
+                                #endfor
+                            #endif
+                        #endif
+                        if live[0] == 0:
+                            gameOver = True
+                        #endif
+                    elif gamePhase == 16:
+                        if player.rect.x >= 1550:
+                            player.FreezeTrigger(0)
+                            player.ChangeSpeed(2)
+                            player.FreezeTrigger(1)
+                            player.rect.x = 1550
+                            for rogue in rogue_list:
+                                rogue.ChangeSpeed(0)
+                                rogue.ChangeSpeed(2)
+                                rogue.Unrandom()
+                                rogue.rect.x = 2870
+                                rogue.rect.y = 710
+                            #endfor
+                            gamePhase = 17
+                        #endif
+                    elif gamePhase == 17:
+                        if player.rect.x > 50:
+                            player.rect.x -= 10
+                            for block in block1_list:
+                                block.rect.x -= 10
+                            #endfor
+                            for rogue in rogue_list:
+                                rogue.rect.x -= 10
+                                rogue.Animation()
+                            #endfor
+                            for bandit in banditGroup2_list:
+                                bandit.rect.x -= 10
+                                bandit.Animation()
+                            #endfor
+                            for background in background1_list:
+                                background.BackUpdate()
+                            #endfor
+                            for ground in ground1_list:
+                                ground.Update(1)
+                            #endfor
+                        elif player.rect.x == 50:
+                            gamePhase = 18
+                            for ground in ground1_list:
+                                ground.Update(0)
+                            #endfor
+                        #endif
+                    elif gamePhase == 18:
+                        if gameChat == 1:
+                            DrawOrRemove(1, levelOne_list, wordBox_list)
+                            WriteWords(1, script1[5], 0, 815, file_list, levelOne_list, levelTwo_list, levelThree_list, currentLine_list, 4, 1, 0)
+                            gameChat = 2
+                        elif gameChat == 2:
+                            if timeUp[0] == 0 and not ReadyToClick:
+                                timer.Counter(2000, timeUp)
+                            elif timeUp[0] == 1 and not ReadyToClick:
+                                timeUp[0] = 0
+                                ReadyToClick = True
+                                DrawOrRemove(1, levelOne_list, nextButton_list)
+                            #endif
+                            for button in nextButton_list:
+                                button.Change(pos, level)
+                            #endfor
+                        elif gameChat == 3:
+                            DrawOrRemove(0, levelOne_list, nextButton_list)
+                            DrawOrRemove(0, levelOne_list, currentLine_list)
+                            WriteWords(1, script1[6], 0, 815, file_list, levelOne_list, levelTwo_list, levelThree_list, currentLine_list, 4, 1, 0)
+                            gameChat = 4
+                        elif gameChat == 4:
+                            if timeUp[0] == 0 and not ReadyToClick:
+                                timer.Counter(2000, timeUp)
+                            elif timeUp[0] == 1 and not ReadyToClick:
+                                timeUp[0] = 0
+                                ReadyToClick = True
+                                DrawOrRemove(1, levelOne_list, nextButton_list)
+                            #endif
+                            for button in nextButton_list:
+                                button.Change(pos, level)
+                            #endfor
+                        elif gameChat == 5:
+                            DrawOrRemove(0, levelOne_list, nextButton_list)
+                            DrawOrRemove(0, levelOne_list, currentLine_list)
+                            DrawOrRemove(0, levelOne_list, wordBox_list)
+                            gamePhase = 19
+                            gameChat = 1
+                            player.FreezeTrigger(0)
+                        #endif
+                    elif gamePhase == 19:
+                        if currency[2] == 2 and currency[3] == 6 and live[0] > 0:
+                            if timeUp[0] == 0:
+                                for player in player_list:
+                                    player.FreezeTrigger(0)
+                                    player.ChangeSpeed(2)
+                                    player.FreezeTrigger(1)
+                                #endfor
+                                timer.Counter(1200, timeUp)
+                            elif timeUp[0] == 1:
+                                gamePhase = 20
+                                for player in player_list:
+                                    player.FreezeTrigger(0)
+                                    player.ChangeSpeed(1)
+                                    player.FreezeTrigger(1)
+                                #endfor
+                            #endif
+                        #endif
+                        if live[0] <= 0:
+                            gameOver = True
+                        #endif
+                    elif gamePhase == 20:
+                        if player.rect.x >= 1550:
+                            player.FreezeTrigger(0)
+                            player.ChangeSpeed(2)
+                            player.FreezeTrigger(1)
+                            player.rect.x = 1550
+                            gamePhase = 21
+                        #endif
+                    levelOne_list.draw(screen) #Display all visible objects
+
+                #endif
+
+            elif gamePause:
+
+                for button in panelButton_list:
+
+                    button.Change(pos, level)
+
                 #endfor
 
-                #Detection
-                player.EnemyAttackDetection(dummyAttack_list,level)
-                #Blocked
-                player.Blocked()
-                #Hurt
-                player.Hurt()
-                #Attack
-                player.Attack(playerAttack_list)
-                #Roll
-                player.Roll()
-                #Horizontal Movement
-                player.MoveHori(centered, block1_list, tutorialBlock_list, startEnd_list, player_list, level, background_list) #Player move horizontally
-                #Attack Checker
-                player.AttackChecker()
-                #Vertical Movement
-                player.MoveVert(block1_list, tutorialBlock_list, level)
-                #Death
-                player.Death(playerHealth_list)
-                #Health
-                player.Health(playerHealth_list)
-                #Animation
-                player.Animation(playerAnimation_list)
+                if gameLevel == 1:
+                    levelOne_list.draw(screen) #Display all visible objects
+                #endif
 
-            #endfor
-
-            levelOne_list.draw(screen) #Display all visible objects
+            #endif
 
         #endif
 

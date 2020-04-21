@@ -953,3 +953,85 @@ pygame.display.set_caption("2D RPG Game")
 Game()
 
 pygame.quit()
+
+##            else: #If player placed in the center, the blocks move instead of the player
+##
+##                self.rect.x = 717.5
+##
+##                if level == 4:
+##
+##                    for area in startEnd_list:
+##
+##                        area.rect.x -= self.horiSpeed
+##
+##                    #endfor
+##
+##                    for warlock in warlock_list:
+##
+##                        warlock.rect.x -= self.horiSpeed
+##
+##                    #endfor
+##                    
+##                    for block in block1_list:
+##
+##                        block.rect.x -= self.horiSpeed
+##                        
+##                        for back in background_list:
+##
+##                            if self.horiSpeed != 0:
+##
+##                                if self.horiSpeed < 0:
+##                                    move = 5
+##                                else:
+##                                    move = -5
+##                                #endif
+##
+##                                back.BackUpdate(move)
+##
+##                            #endif
+##
+##                        #endfor
+##                        
+##                        playerBlock_list = pygame.sprite.spritecollide(block, player_list, False)
+##                        for player in playerBlock_list:
+##
+##                            for block in block1_list:
+##                                
+##                                block.rect.x += self.horiSpeed
+##                                for back in background_list:
+##
+##                                    if self.horiSpeed != 0:
+##                                        
+##                                        if self.horiSpeed < 0:
+##                                            move = -5
+##                                        else:
+##                                            move = 5
+##                                        #endif
+##
+##                                    #endif
+##
+##                                    back.BackUpdate(move)
+##
+##                                #endfor
+##
+##                                for area in startEnd_list:
+##
+##                                    area.rect.x += self.horiSpeed
+##
+##                                #endfor
+##
+##                                for warlock in warlock_list:
+##
+##                                    warlock.rect.x += self.horiSpeed
+##
+##                                #endfor
+##
+##                            #endfor
+##
+##                        #endfor
+##
+##                    #endfor
+##
+##                #endif
+##
+##            #endif

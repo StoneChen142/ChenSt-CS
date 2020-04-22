@@ -303,10 +303,10 @@ def CreateTutorialPlatform(tutorialBlock_list, tutorial_list, button_list):
     nodesNum = len(nodes) #Number of platforms
     f.close() #Close
 
-    mountain1 = BackgroundClass(1, 0, 3000, 800, 0, 0)
-    mountain2 = BackgroundClass(1, 1, 3000, 800, 0, 0)
-    cloud1 = BackgroundClass(1, 2, 3000, 800, 0, 0)
-    cloud2 = BackgroundClass(1, 3, 3000, 800, 0, 0)
+    mountain1 = BackgroundClass(1, 0, 2560, 800, 0, 0)
+    mountain2 = BackgroundClass(1, 1, 2560, 800, 0, 0)
+    cloud1 = BackgroundClass(1, 2, 2560, 800, 0, 0)
+    cloud2 = BackgroundClass(1, 3, 2560, 800, 0, 0)
 
     tutorial_list.add(cloud2, cloud2, mountain2, mountain1)
 
@@ -390,14 +390,16 @@ def CreateLevelOnePlatform(block1_list, levelOne_list, startEnd_list, background
     nodesNum = len(nodes) #Number of platforms
     f.close() #Close
 
-    back1 = BackgroundClass(1, 0, 3000, 800, 0, 0)
-    back2 = BackgroundClass(1, 1, 3000, 800, 0, 0)
-    back3 = BackgroundClass(1, 2, 3000, 800, 0, 0)
-    back4 = BackgroundClass(1, 3, 3000, 800, 0, 0)
+    back1 = BackgroundClass(1, 0, 2560, 800, 0, 0)
+    back2 = BackgroundClass(1, 1, 2560, 800, 0, 0)
+    back3 = BackgroundClass(1, 2, 2560, 800, 0, 0)
+    back4 = BackgroundClass(1, 3, 2560, 800, 0, 0)
+    back5 = BackgroundClass(1, 2, 2560, 800, 2560, 0)
+    back6 = BackgroundClass(1, 3, 2560, 800, 2560, 0)
 
     background1_list.add(back1,back2)
-    cloud_list.add(back3, back4)
-    levelOne_list.add(back4, back3, back2, back1)
+    cloud_list.add(back3, back4, back5, back6)
+    levelOne_list.add(back4, back6, back3, back5, back2, back1)
 
     #Nodes
     for i in range(nodesNum): 
@@ -1447,7 +1449,7 @@ class BackgroundClass(pygame.sprite.Sprite): #Class of the background
         self.mountains = [] #Mountains
         for x in range(4):
             add_str = str(x+1)
-            self.mountains.append(pygame.transform.scale(loadify("Game_Images/Background/Mountains/Mountain" + add_str + ".png"), (3000, 800)))
+            self.mountains.append(pygame.transform.scale(loadify("Game_Images/Background/Mountains/Mountain" + add_str + ".png"), (2560, 800)))
         #endfor
 
         if self.typeBack == 1:
@@ -1496,8 +1498,8 @@ class BackgroundClass(pygame.sprite.Sprite): #Class of the background
             
         self.rect.x = self.scalex//10
 
-        if self.rect.x <= -1500:
-            self.rect.x = 0
+        if self.rect.x <= -2560:
+            self.rect.x = 2560
         #endif
 
     #endprocedure
@@ -3923,7 +3925,7 @@ class RogueClass(pygame.sprite.Sprite): #Class of the rogue
 
             elif self.sa == True and not self.hurt and not self.attacked:
 
-                if self.endAnimation - self.startAnimation >= 80:
+                if self.endAnimation - self.startAnimation >= 60:
 
                     self.saMove = True
                     self.startAnimation = self.endAnimation #If player is special attacking
@@ -5381,13 +5383,13 @@ def Game():
                         #Bandit Movement
                         for enemy in banditGroup1_list:
 
-                            if gamePhase == 8:
-                                enemy.Control(player_list)
-                            #endif
                             enemy.Attack()
                             enemy.MoveHori(block1_list, block2_list, block3_list, tutorialBlock_list, level, gameLevel)
                             enemy.AttackChecker()
                             enemy.MoveVert(block1_list, block2_list, block3_list, tutorialBlock_list, level, gameLevel)
+                            if gamePhase == 8:
+                                enemy.Control(player_list)
+                            #endif
                             enemy.Hurt()
                             enemy.EnemyAttackDetection(playerAttack_list)
                             enemy.Health(coin_list, levelOne_list, level, gameLevel)
@@ -5402,13 +5404,13 @@ def Game():
                         #Bandit Movement
                         for enemy in banditGroup2_list:
 
-                            if gamePhase == 15:
-                                enemy.Control(player_list)
-                            #endif
                             enemy.Attack()
                             enemy.MoveHori(block1_list, block2_list, block3_list, tutorialBlock_list, level, gameLevel)
                             enemy.AttackChecker()
                             enemy.MoveVert(block1_list, block2_list, block3_list, tutorialBlock_list, level, gameLevel)
+                            if gamePhase == 15:
+                                enemy.Control(player_list)
+                            #endif
                             enemy.Hurt()
                             enemy.EnemyAttackDetection(playerAttack_list)
                             enemy.Health(coin_list, levelOne_list, level, gameLevel)
@@ -5494,7 +5496,7 @@ def Game():
                         #endif
                     elif gamePhase == 3:
                         if timeUp[0] == 0:
-                            timer.Counter(2500, timeUp)
+                            timer.Counter(1900, timeUp)
                         elif timeUp[0] == 1:
                             timeUp[0] = 0
                             gamePhase = 4
@@ -5663,7 +5665,7 @@ def Game():
                         gamePhase = 13
                     elif gamePhase == 13:
                         if timeUp[0] == 0:
-                            timer.Counter(1400, timeUp)
+                            timer.Counter(1000, timeUp)
                         elif timeUp[0] == 1:
                             timeUp[0] = 0
                             gamePhase = 14

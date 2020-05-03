@@ -308,7 +308,7 @@ def CreateTutorialPlatform(tutorialBlock_list, tutorial_list, button_list):
     cloud1 = BackgroundClass(1, 2, 2560, 800, 0, 0)
     cloud2 = BackgroundClass(1, 3, 2560, 800, 0, 0)
 
-    tutorial_list.add(cloud2, cloud2, mountain2, mountain1)
+    tutorial_list.add(cloud2, cloud1, mountain2, mountain1)
 
     #Nodes
     for i in range(nodesNum): 
@@ -1489,18 +1489,20 @@ class BackgroundClass(pygame.sprite.Sprite): #Class of the background
         if self.num == 2:
 
             self.scalex -= 10
+            if self.scalex <= -25600:
+                self.scalex = 25600
+            #endif
 
         elif self.num == 3:
 
             self.scalex -= 5
+            if self.scalex <= -25600:
+                self.scalex = 25600
+            #endif
 
         #endif
             
         self.rect.x = self.scalex//10
-
-        if self.rect.x <= -2560:
-            self.rect.x = 2560
-        #endif
 
     #endprocedure
 
@@ -1658,6 +1660,7 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
     def Reset(self):
 
         self.lastHoriSpeed = 4
+        self.horiSpeed = 0
         self.jumped = False
         self.attacked = False
         self.attackStep = 1
@@ -2674,22 +2677,27 @@ class BanditClass(pygame.sprite.Sprite): #Class of the bandit
 
         if self.num == 1:
             self.banditAnimation = EnemyAnimation(1, 130, 130, self.rect.x, self.rect.y)
+            self.hp = 3
+            self.runningSpeed = 11
+            self.jumpNum = randint(3,5)
+            self.concentrateTime = randint(120,160)
+            self.waitTime = randint(150,200)
+            self.randomTime = randint(800,1000)
+        elif self.num == 0:
+            self.banditAnimation = EnemyAnimation(0, 130, 130, self.rect.x, self.rect.y)
+            self.hp = 5
+            self.runningSpeed = 12
+            self.jumpNum = randint(2,4)
+            self.concentrateTime = randint(50,70)
+            self.waitTime = randint(70,100)
+            self.randomTime = randint(500,700)
         #endif
         self.banditAttack = AttackClass(65, 130, -1000, 0)
         enemyAttack_list.add(self.banditAttack)
-        self.banditHealth = HealthClass(1, 3, 100, 20, self.rect.x - 5, self.rect.y - 25)
-        
+        self.banditHealth = HealthClass(1, self.hp, 100, 20, self.rect.x - 5, self.rect.y - 25)
         sprites_list.add(self.banditAnimation, self.banditHealth)
 
         #Attributes
-        self.hp = 3
-        if self.num == 1:
-            self.runningSpeed = randint(8,10)
-            self.jumpNum = randint(3,5)
-        elif self.num == 2:
-            self.runningSpeed = randint(9,11)
-            self.jumpNum = randint(2,4)
-        #endif
         self.horiSpeed = 0
         self.lastHoriSpeed = -4
         self.vertSpeed = -0.4
@@ -2808,7 +2816,11 @@ class BanditClass(pygame.sprite.Sprite): #Class of the bandit
 
         self.endAnimation = pygame.time.get_ticks() #Get current time for end time
 
-        self.banditAnimation.rect.y = self.rect.y - 30
+        if self.num == 1:
+            self.banditAnimation.rect.y = self.rect.y - 30
+        elif self.num == 0:
+            self.banditAnimation.rect.y = self.rect.y - 24.6
+        #endif
         self.banditAnimation.rect.x = self.rect.x - 40
 
         if self.death == False and not self.freeze:
@@ -2997,7 +3009,7 @@ class BanditClass(pygame.sprite.Sprite): #Class of the bandit
                 #endif
                     
                 self.endRandom2 = pygame.time.get_ticks()
-                if self.endRandom2 - self.startRandom2 > 800:
+                if self.endRandom2 - self.startRandom2 > self.randomTime:
                     self.startRandom2 = 0
                     self.endRandom2 = 0
                     self.random2 = False
@@ -3040,10 +3052,15 @@ class BanditClass(pygame.sprite.Sprite): #Class of the bandit
                 self.hp -= 1
                 self.banditHealth.Update(self.hp)
             if self.hp == 0:
+                if self.num == 1:
+                    coinNum = 2
+                elif self.num == 0:
+                    coinNum = 4
+                #endif
                 self.death = True
                 if not self.dropCoin:
                     self.dropCoin = True
-                    for i in range(2):
+                    for i in range(coinNum):
                         if level == 2:
                             coin = ItemClass(1, 20, 20, self.rect.x + 10, self.rect.y + 70, 2)
                         elif level == 4:
@@ -3057,7 +3074,11 @@ class BanditClass(pygame.sprite.Sprite): #Class of the bandit
 
         #endif
 
-        if self.hp == 3:
+        if self.hp == 5:
+            self.banditHealth.rect.x = self.rect.x - 25
+        elif self.hp == 4:
+            self.banditHealth.rect.x = self.rect.x - 15
+        elif self.hp == 3:
             self.banditHealth.rect.x = self.rect.x - 5
         elif self.hp == 2:
             self.banditHealth.rect.x = self.rect.x + 5
@@ -3121,7 +3142,11 @@ class BanditClass(pygame.sprite.Sprite): #Class of the bandit
                 self.startDeath = 0
                 self.death = False
                 self.deathCounter = 0
-                self.hp = 3
+                if self.num == 1:
+                    self.hp = 3
+                else:
+                    self.hp = 5
+                #endif
                 self.dropCoin = False
                 self.banditHealth.Update(self.hp)
             #endif
@@ -3277,27 +3302,22 @@ class BanditClass(pygame.sprite.Sprite): #Class of the bandit
         if self.attacked == True and self.freeze == False:
 
             self.horiSpeed = 0
-            
-            if self.startAttack == 0:
-                self.startAttack = pygame.time.get_ticks()
-            #endif
 
             if self.attackPhase == 1:
-                self.endAttack = pygame.time.get_ticks()
-                if self.endAttack - self.startAttack > 200:
-                    self.endAttack = 0
-                    self.startAttack = 0
+                if self.attackCounter == 3:
                     self.attackPhase = 2
                 #endif
             elif self.attackPhase == 2:
+                if self.startAttack == 0:
+                    self.startAttack = pygame.time.get_ticks()
+                #endif
                 self.endAttack = pygame.time.get_ticks()
-                if self.endAttack - self.startAttack > 100:
+                if self.endAttack - self.startAttack >= self.concentrateTime:
                     self.endAttack = 0
                     self.startAttack = 0
                     self.attackPhase = 3
                 #endif
             elif self.attackPhase == 3:
-                self.endAttack = pygame.time.get_ticks()
                 if self.lastHoriSpeed > 0 and not self.hurt and not self.death and self.attackCounter < 6:
                     self.banditAttack.rect.x = self.rect.x + 25
                     self.banditAttack.rect.y = self.rect.y - 30
@@ -3309,15 +3329,16 @@ class BanditClass(pygame.sprite.Sprite): #Class of the bandit
                 elif self.hurt:
                     self.banditAttack.rect.x = -1000
                 #endif
-                if self.endAttack - self.startAttack > 200:
-                    self.endAttack = 0
-                    self.startAttack = 0
+                if self.attackCounter == 7:
                     self.attackPhase = 4
                     self.banditAttack.rect.x = -1000
                 #endif
             elif self.attackPhase == 4:
+                if self.startAttack == 0:
+                    self.startAttack = pygame.time.get_ticks()
+                #endif
                 self.endAttack = pygame.time.get_ticks()
-                if self.endAttack - self.startAttack > 150:
+                if self.endAttack - self.startAttack > self.waitTime:
                     self.endAttack = 0
                     self.startAttack = 0
                     self.attacked = False
@@ -3337,12 +3358,12 @@ class BanditClass(pygame.sprite.Sprite): #Class of the bandit
 
             if num == 0:
 
-                self.horiSpeed = -11
+                self.horiSpeed = -self.runningSpeed
                 self.lastHoriSpeed = self.horiSpeed
 
             elif num == 1:
 
-                self.horiSpeed = 11
+                self.horiSpeed = self.runningSpeed
                 self.lastHoriSpeed = self.horiSpeed
 
             elif num == 2:
@@ -3925,7 +3946,7 @@ class RogueClass(pygame.sprite.Sprite): #Class of the rogue
 
             elif self.sa == True and not self.hurt and not self.attacked:
 
-                if self.endAnimation - self.startAnimation >= 60:
+                if self.endAnimation - self.startAnimation >= 70:
 
                     self.saMove = True
                     self.startAnimation = self.endAnimation #If player is special attacking
@@ -4356,6 +4377,47 @@ class EnemyAnimation(pygame.sprite.Sprite): #Class of player's animation
             self.banditRecover1.append(pygame.transform.scale(pygame.image.load("Game_Images/LightBandit/BanditRecover" + add_str + ".png"), (130, 130)))
         #endfor
 
+        #Heavy Bandit
+        self.banditIdle2 = [] #Idle 
+        for x in range(4):
+            add_str = str(x)
+            self.banditIdle2.append(pygame.transform.scale(pygame.image.load("Game_Images/HeavyBandit/Idle/HeavyBandit_Idle_" + add_str + ".png"), (130, 130)))
+        #endfor
+        self.banditAdle2 = [] #Attack Idle 
+        for x in range(4):
+            add_str = str(x)
+            self.banditAdle2.append(pygame.transform.scale(pygame.image.load("Game_Images/HeavyBandit/Adle/HeavyBandit_CombatIdle_" + add_str + ".png"), (130, 130)))
+        #endfor
+        self.banditRun2 = [] #Run
+        for x in range(8):
+            add_str = str(x)
+            self.banditRun2.append(pygame.transform.scale(pygame.image.load("Game_Images/HeavyBandit/Run/HeavyBandit_Run_" + add_str + ".png"), (130, 130)))
+        #endfor
+        self.banditJump2 = [] #Jump
+        for x in range(1):
+            add_str = str(x)
+            self.banditJump2.append(pygame.transform.scale(pygame.image.load("Game_Images/HeavyBandit/Jump/HeavyBandit_Jump_0.png"), (130, 130)))
+        #endfor
+        self.banditAttack2 = [] #Attack 2
+        for x in range(8):
+            add_str = str(x)
+            self.banditAttack2.append(pygame.transform.scale(pygame.image.load("Game_Images/HeavyBandit/Attack/HeavyBandit_Attack_" + add_str + ".png"), (130, 130)))
+        #endfor
+        self.banditHurt2 = [] #Hurt 2
+        for x in range(3):
+            add_str = str(x)
+            self.banditHurt2.append(pygame.transform.scale(pygame.image.load("Game_Images/HeavyBandit/Hurt/HeavyBandit_Hurt_" + add_str + ".png"), (130, 130)))
+        #endfor
+        self.banditDeath2 = [] #Death 2
+        for x in range(1):
+            self.banditDeath2.append(pygame.transform.scale(pygame.image.load("Game_Images/HeavyBandit/Death/HeavyBandit_Death_0.png"), (130, 130)))
+        #endfor
+        self.banditRecover2 = [] #Recover 2
+        for x in range(8):
+            add_str = str(x)
+            self.banditRecover2.append(pygame.transform.scale(pygame.image.load("Game_Images/HeavyBandit/Recover/HeavyBandit_Recover_" + add_str + ".png"), (130, 130)))
+        #endfor
+
         #Warlock
         self.warlockIdle = [] #Idle 
         for x in range(12):
@@ -4424,6 +4486,8 @@ class EnemyAnimation(pygame.sprite.Sprite): #Class of player's animation
             self.image = pygame.transform.flip(self.banditIdle1[0],1,0)
         elif self.enemy == 2:
             self.image = pygame.transform.flip(self.warlockIdle[0],1,0)
+        elif self.enemy == 3:
+            self.image = pygame.transform.flip(self.rogueIdle[0],1,0)
         #endif
         
     #endprocedure
@@ -4448,6 +4512,12 @@ class EnemyAnimation(pygame.sprite.Sprite): #Class of player's animation
             else:
                 self.image = pygame.transform.flip(self.rogueIdle[i],1,0) #Left
             #endif
+        elif self.enemy == 0:
+            if speed > 0:
+                self.image = self.banditIdle2[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.banditIdle2[i],1,0) #Left
+            #endif
         #endif
 
     #endprocedure
@@ -4459,6 +4529,12 @@ class EnemyAnimation(pygame.sprite.Sprite): #Class of player's animation
                 self.image = self.banditAdle1[i] #Right
             else:
                 self.image = pygame.transform.flip(self.banditAdle1[i],1,0) #Left
+            #endif
+        elif self.enemy == 0:
+            if speed > 0:
+                self.image = self.banditAdle2[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.banditAdle2[i],1,0) #Left
             #endif
         #endif
 
@@ -4484,6 +4560,12 @@ class EnemyAnimation(pygame.sprite.Sprite): #Class of player's animation
             else:
                 self.image = pygame.transform.flip(self.rogueRun[i],1,0) #Left
             #endif
+        elif self.enemy == 0:
+            if speed > 0:
+                self.image = self.banditRun2[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.banditRun2[i],1,0) #Left
+            #endif
         #endif
 
     #endprocedure
@@ -4496,17 +4578,11 @@ class EnemyAnimation(pygame.sprite.Sprite): #Class of player's animation
             else:
                 self.image = pygame.transform.flip(self.banditJump1[i],1,0)
             #endif
-        #endif
-
-    #endprocedure
-
-    def Fall(self, speed, i):
-
-        if self.enemy == 1:
+        elif self.enemy == 0:
             if speed > 0:
-                self.image = self.banditJump[i]
+                self.image = self.banditJump2[i] #Right
             else:
-                self.image = pygame.transform.flip(self.banditJump[i],1,0)
+                self.image = pygame.transform.flip(self.banditJump2[i],1,0) #Left
             #endif
         #endif
 
@@ -4525,6 +4601,12 @@ class EnemyAnimation(pygame.sprite.Sprite): #Class of player's animation
                 self.image = self.rogueAttack[i] #Right
             else:
                 self.image = pygame.transform.flip(self.rogueAttack[i],1,0) #Left
+            #endif
+        elif self.enemy == 0:
+            if speed > 0:
+                self.image = self.banditAttack2[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.banditAttack2[i],1,0) #Left
             #endif
         #endif
 
@@ -4550,6 +4632,12 @@ class EnemyAnimation(pygame.sprite.Sprite): #Class of player's animation
             else:
                 self.image = pygame.transform.flip(self.rogueHurt[i],1,0) #Left
             #endif
+        elif self.enemy == 0:
+            if speed > 0:
+                self.image = self.banditHurt2[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.banditHurt2[i],1,0) #Left
+            #endif
         #endif
 
     #endprocedure
@@ -4561,6 +4649,12 @@ class EnemyAnimation(pygame.sprite.Sprite): #Class of player's animation
                 self.image = self.banditRecover1[i]
             else:
                 self.image = pygame.transform.flip(self.banditRecover1[i],1,0)
+            #endif
+        elif self.enemy == 0:
+            if speed > 0:
+                self.image = self.banditRecover2[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.banditRecover2[i],1,0) #Left
             #endif
         #endif
 
@@ -4585,6 +4679,12 @@ class EnemyAnimation(pygame.sprite.Sprite): #Class of player's animation
                 self.image = self.rogueDeath[i] #Right
             else:
                 self.image = pygame.transform.flip(self.rogueDeath[i],1,0) #Left
+            #endif
+        elif self.enemy == 0:
+            if speed > 0:
+                self.image = self.banditDeath2[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.banditDeath2[i],1,0) #Left
             #endif
         #endif
 
@@ -4627,16 +4727,20 @@ def Game():
     script1 = []
     script2 = []
     script3 = []
+    scriptExtra = []
 
     #Variables
     currency = [0,0,0,0] #Money
     live = [5] #Player's live
     timeUp = [0]
+    gameMode = 1
+    gameDifficulty = 1
     gameLevel = 1 #Game Level
     gamePhase = 1
     gameChat = 1
     gameOver = False
     gamePause = False
+    advanceLevel = False
     ReadyToClick = False
     startReadScript = 0
     endReadScript = 0
@@ -4789,6 +4893,8 @@ def Game():
                         dummy.ChangeSpeed(2)
                         dummy.rect.x = 295
                     #endfor
+                    player.Freeze(0)
+                    player.FreezeTrigger(0)
                     fileLoaded = True
                 elif level == 1 and pos[0] >= 529.5 and pos[1] >= 300 and pos[0] <= 970.5 and pos[1] <= 420: #Select Difficulty
                     if difficulty == 0:
@@ -4812,14 +4918,17 @@ def Game():
                     level = -1
                     levelToGo = 4
                     currentFile = 1
+                    player.FreezeTrigger(0)
                 elif level == 3 and pos[0] >= 669.5 and pos[1] >= 680.5 and pos[0] <= 830.5 and pos[1] <= 711.5: #Select file 2
                     level = -1
                     levelToGo = 4
                     currentFile = 2
+                    player.FreezeTrigger(0)
                 elif level == 3 and pos[0] >= 1089.5 and pos[1] >= 680.5 and pos[0] <= 1250.5 and pos[1] <= 711.5: #Select file 3
                     level = -1
                     levelToGo = 4
                     currentFile = 3
+                    player.FreezeTrigger(0)
                 elif level == 3 and pos[0] >= 50 and pos[1] >= 820 and pos[0] <= 156 and pos[1] <= 851: #Go back to menu
                     level = 0
                     fileLoaded = True
@@ -4836,16 +4945,22 @@ def Game():
                     currency[1] = 0
                     currency[2] = 0
                     currency[3] = 0
-                elif level == 4 and pos[0] >= 1430 and pos[1] >= 10 and pos[0] <= 1490 and pos[1] <= 70 and not gamePause: #Pause game
+                elif level == 4 and pos[0] >= 1430 and pos[1] >= 10 and pos[0] <= 1490 and pos[1] <= 70 and not gamePause and not gameOver and not advanceLevel: #Pause game
                     gamePause = True
                     for optionBlock in optionBlock_list:
                         levelOne_list.add(optionBlock)
+                        levelTwo_list.add(optionBlock)
+                        levelThree_list.add(optionBlock)
                     #endfor
                     for button in panelButton_list:
                         levelOne_list.add(button)
+                        levelTwo_list.add(button)
+                        levelThree_list.add(button)
                     #endfor
                     for button in pauseButton_list:
                         levelOne_list.remove(button)
+                        levelTwo_list.remove(button)
+                        levelThree_list.remove(button)
                     #endfor
                     if gameLevel == 1:
                         for character in character1_list:
@@ -4853,16 +4968,22 @@ def Game():
                         #endfor
                         player.FreezeTrigger(1)
                     #endif
-                elif level == 4 and pos[0] >= 1068 and pos[1] >= 234 and pos[0] <= 1128 and pos[1] <= 294 and gamePause:
+                elif level == 4 and pos[0] >= 1068 and pos[1] >= 234 and pos[0] <= 1128 and pos[1] <= 294 and gamePause and not gameOver and not advanceLevel: #Continue
                     gamePause = False
                     for optionBlock in optionBlock_list:
                         levelOne_list.remove(optionBlock)
+                        levelTwo_list.remove(optionBlock)
+                        levelThree_list.remove(optionBlock)
                     #endfor
                     for button in panelButton_list:
                         levelOne_list.remove(button)
+                        levelTwo_list.remove(button)
+                        levelThree_list.remove(button)
                     #endfor
                     for button in pauseButton_list:
                         levelOne_list.add(button)
+                        levelTwo_list.add(button)
+                        levelThree_list.add(button)
                     #endfor
                     if gameLevel == 1:
                         for character in character1_list:
@@ -4870,7 +4991,7 @@ def Game():
                         #endfor
                         player.FreezeTrigger(0)
                     #endif
-                elif level == 4 and pos[0] >= 700 and pos[1] >= 530 and pos[0] <= 800 and pos[1] <= 570 and gamePause: #Quit game
+                elif level == 4 and pos[0] >= 700 and pos[1] >= 530 and pos[0] <= 800 and pos[1] <= 570 and gamePause and not gameOver and not advanceLevel: #Quit game
                     levelToGo = 0
                     level = -1
                     fileLoaded = False
@@ -4882,6 +5003,8 @@ def Game():
                     ReadyToClick = False
                     startReadScript = 0
                     endReadScript = 0
+                    player.Reset()
+                    player.ResetLive([5])
                     if gameLevel == 1:
                         for block in block1_list:
                             block.Reset()
@@ -5138,7 +5261,6 @@ def Game():
                             level = levelToGo #Go to gameplay
                             fileLoaded = False
                             crownChecked = False
-                            
 
                         #endif
                             

@@ -32,7 +32,7 @@ def CreateLoad(loading_list):
 #endprocedure
 
 #Pause Panel Creation
-def CreatePause(button_list, optionBlock_list, pauseButton_list, panelButton_list, levelOne_list, levelTwo_list, levelThree_list):
+def CreatePause(button_list, optionBlock_list, pauseButton_list, panelButton_list, levelOne_list, levelTwo_list, levelThree_list, nextLevelBlock_list):
 
     pauseButton = Button(8, 60, 60, 0, 1430, 10) #Pause
     pauseButton_list.add(pauseButton)
@@ -51,9 +51,17 @@ def CreatePause(button_list, optionBlock_list, pauseButton_list, panelButton_lis
 
     optionBox = BlockClass(6, 800, 475, 350, 212) #Option box
     optionBlock_list.add(optionBox)
+    nextLevelBlock_list.add(optionBox)
 
     quitInstruction = InstructionClass(10, 698, 77, 401, 362) #Instruction
     optionBlock_list.add(quitInstruction)
+
+    savedInstruction = InstructionClass(11, 495, 60, 502.5, 379) #Instruction
+    nextLevelBlock_list.add(savedInstruction)
+
+    nextButton = Button(12, 268, 40, 0, 616, 530)
+    button_list.add(nextButton)
+    nextLevelBlock_list.add(nextButton)
 
 #endprocedure
 
@@ -462,6 +470,87 @@ def CreateLevelOnePlatform(block1_list, levelOne_list, startEnd_list, background
             
 #endprocedure
 
+#LevelOneCreation
+def CreateLevelTwoPlatform(block1_list, levelTwo_list, startEnd_list, background2_list, ground2_list):
+
+    #Files
+    f = open("Game_Files/Level1Platform.txt","r+") #Open platforms file
+    nodes = f.readlines() #All platforms
+    nodesNum = len(nodes) #Number of platforms
+    f.close() #Close
+
+    back1 = BackgroundClass(1, 0, 2560, 800, 0, 0)
+    back2 = BackgroundClass(1, 1, 2560, 800, 0, 0)
+    back3 = BackgroundClass(1, 2, 2560, 800, 0, 0)
+    back4 = BackgroundClass(1, 3, 2560, 800, 0, 0)
+    back5 = BackgroundClass(1, 2, 2560, 800, 2560, 0)
+    back6 = BackgroundClass(1, 3, 2560, 800, 2560, 0)
+
+    background1_list.add(back1,back2)
+    cloud_list.add(back3, back4, back5, back6)
+    levelOne_list.add(back4, back6, back3, back5, back2, back1)
+
+    #Nodes
+    for i in range(nodesNum): 
+        
+        line = nodes[i] #Skip the last line because it is empty
+
+        #Type of Block
+        typeOfBlock = int(line[0])
+        #x position
+        if line[1] == "0" and line[2] == "0": #If first two numbers are 0, than the number is the last two numbers (0030)
+            xpos = int(str(line[3])+str(line[4]))
+        elif line[1] == "0" and line[2] != "0": #If first number is 0, the number is the following three numbers (0300)
+            xpos = int(str(line[2])+str(line[3])+str(line[4]))
+        elif line[4] == str(0) and line[3] == str(0) and line[2] == str(0) and line[1] == str(0) : #If all numbers are 0, the number is (0)
+            xpos = 0
+        else: #If else, the number is just a four digit number (4300)
+            xpos = int(str(line[1])+str(line[2])+str(line[3])+str(line[4]))
+        #endif
+
+        #y position
+        if line[5] == str(0): #If first number is 0, the number is the last two numbers
+            ypos = int(str(line[6])+str(line[7]))
+        else:
+            ypos = int(str(line[5])+str(line[6])+str(line[7]))
+        #endif
+
+        #width
+        if line[8] == str(0): #If first number is 0, the number is the last two numbers
+            width = int(str(line[9])+str(line[10]))
+        else:
+            width = int(str(line[8])+str(line[9])+str(line[10]))
+        #endif
+
+        #hieght
+        if line[11] == str(0): #If first number is 0, the number is the last two numbers
+            height = int(str(line[12])+str(line[13]))
+        else:
+            height = int(str(line[11])+str(line[12])+str(line[13]))
+        #endif
+                
+        if line[0] == str(1): #If it is a normal block, create a normal platform
+
+            block = BlockClass(typeOfBlock, width, height, xpos, ypos) #Creates a block with given width & height
+            block1_list.add(block) #Used for later collision
+            levelOne_list.add(block) #Make it visible
+
+        #endif
+
+    #endfor
+
+    ground = GroundClass(1, 0, 800) #Creates ground
+    ground1_list.add(ground)
+    levelOne_list.add(ground) #Make it visible
+
+    startBlock = BlockClass(0, 10, 800, -10, 0)
+    block1_list.add(block)
+
+    area = BlockClass(0, 1500, 800, 0, 0)
+    startEnd_list.add(area)
+            
+#endprocedure
+
 def ReadScript(script1, script2, script3):
 
     f = open("Game_Files/Level1Script.txt","r+") #Open
@@ -533,6 +622,7 @@ class Button(pygame.sprite.Sprite):
         self.close = [pygame.transform.scale(pygame.image.load('Game_Images/Object/Buttons/Close1.png'), (60, 60)), pygame.transform.scale(pygame.image.load('Game_Images/Object/Buttons/Close2.png'), (60, 60))]
         self.next = [pygame.transform.scale(pygame.image.load('Game_Images/Object/Buttons/Next1.png'), (60, 20)), pygame.transform.scale(pygame.image.load('Game_Images/Object/Buttons/Next2.png'), (60, 20))]
         self.quit = [pygame.transform.scale(pygame.image.load('Game_Images/Object/Buttons/Quit1.png'), (width, height)), pygame.transform.scale(pygame.image.load('Game_Images/Object/Buttons/Quit2.png'), (width, height))]
+        self.nextLevel = [pygame.transform.scale(pygame.image.load('Game_Images/Object/Buttons/NextLevel1.png'), (width, height)), pygame.transform.scale(pygame.image.load('Game_Images/Object/Buttons/NextLevel2.png'), (width, height))]
 
         if self.imageNum == 1:
 
@@ -577,6 +667,10 @@ class Button(pygame.sprite.Sprite):
         elif self.imageNum == 11:
 
             self.image = self.quit[0]
+
+        elif self.imageNum == 12:
+
+            self.image = self.nextLevel[0]
 
         #endif
         
@@ -643,6 +737,10 @@ class Button(pygame.sprite.Sprite):
         elif level == 4 and pos[0] >= 700 and pos[1] >= 530 and pos[0] <= 800 and pos[1] <= 570 and self.imageNum == 11:
 
             self.image = self.quit[1]
+
+        elif level == 4 and pos[0] >= 616 and pos[1] >= 530 and pos[0] <= 884 and pos[1] <= 570 and self.imageNum == 12:
+
+            self.image = self.nextLevel[1]
             
         else:
 
@@ -689,6 +787,10 @@ class Button(pygame.sprite.Sprite):
             elif self.imageNum == 11:
 
                 self.image = self.quit[0]
+
+            elif self.imageNum == 12:
+
+                self.image = self.nextLevel[0]
 
             #endif
 
@@ -1260,6 +1362,7 @@ class InstructionClass(pygame.sprite.Sprite): #Instruction is a sprite, because 
         self.coin = [pygame.transform.scale(pygame.image.load('Game_Images/Text/CoinsInstruction.png'), (487, 27))]
         self.fake = [pygame.transform.scale(pygame.image.load('Game_Images/Text/FakeCoinInstruction.png'), (327, 20))]
         self.quit = [pygame.transform.scale(pygame.image.load('Game_Images/Text/QuitInstruction.png'), (698, 77))]
+        self.saved = [pygame.transform.scale(pygame.image.load('Game_Images/Text/SavedInstruction.png'), (495, 60))]
 
         if typeNum == 1:
 
@@ -1300,6 +1403,10 @@ class InstructionClass(pygame.sprite.Sprite): #Instruction is a sprite, because 
         elif typeNum == 10:
 
             self.image = self.quit[0]
+
+        elif typeNum == 11:
+
+            self.image = self.saved[0]
 
         #endif
 
@@ -4867,6 +4974,8 @@ def Game():
 
     currentLine_list = pygame.sprite.Group() #Current Line
 
+    nextLevelBlock_list = pygame.sprite.Group() #Next level panel
+
     CreateLoad(loading_list)
 
     while not game_over:
@@ -4945,6 +5054,39 @@ def Game():
                     currency[1] = 0
                     currency[2] = 0
                     currency[3] = 0
+                elif level == 4 and pos[0] >= 616 and pos[1] >= 530 and pos[0] <= 884 and pos[1] <= 570 and not gamePause and not gameOver and advanceLevel: #Advance Game Level
+                    advanceLevel = False
+                    for nextBlock in nextLevelBlock_list:
+                        levelOne_list.remove(nextBlock)
+                        levelTwo_list.remove(nextBlock)
+                        levelThree_list.remove(nextBlock)
+                    #endfor
+                    if gameLevel < 3:
+                        gameLevel += 1
+                    #endif
+                    timeUp[0] = 0
+                    gamePhase = 1
+                    gameChat = 1
+                    startReadScript = 0
+                    endReadScript = 0
+                    player.Reset()
+                    if gameLevel == 1:
+                        for block in block1_list:
+                            block.Reset()
+                        #endfpr
+                        for character in character1_list:
+                            character.Reset()
+                        #endfor
+                        for button in pauseButton_list:
+                            levelOne_list.add(button)
+                        #endfor
+                        for ground in ground1_list:
+                            ground.Update(0)
+                        #endfor
+                        DrawOrRemove(0, levelOne_list, nextButton_list)
+                        DrawOrRemove(0, levelOne_list, currentLine_list)
+                        DrawOrRemove(0, levelOne_list, wordBox_list)
+                    #endif
                 elif level == 4 and pos[0] >= 1430 and pos[1] >= 10 and pos[0] <= 1490 and pos[1] <= 70 and not gamePause and not gameOver and not advanceLevel: #Pause game
                     gamePause = True
                     for optionBlock in optionBlock_list:
@@ -5146,7 +5288,7 @@ def Game():
                     CreateMenu(menu_list, button_list)
                     CreateSettings(setting_list, button_list, easy_list, hard_list)
                     CreateLevelOnePlatform(block1_list, levelOne_list, startEnd_list, background1_list, cloud_list, ground1_list) #Create Level One Platforms
-                    CreatePause(button_list, optionBlock_list, pauseButton_list, panelButton_list, levelOne_list, levelTwo_list, levelThree_list)
+                    CreatePause(button_list, optionBlock_list, pauseButton_list, panelButton_list, levelOne_list, levelTwo_list, levelThree_list, nextLevelBlock_list)
                     CreateTutorialPlatform(tutorialBlock_list, tutorial_list, button_list)
                     CreateCharacters1(player_list, playerAttack_list, tutorialEnemy_list, tutorial_list, levelOne_list, levelTwo_list, levelThree_list, enemyAttack_list, character1_list)
                     CreateCharacters2(levelOne_list, enemy_list, warlock_list, wordBox_list, nextButton_list, rogue_list, enemyAttack_list, rogueAttack_list, banditGroup1_list, banditGroup2_list, character1_list)
@@ -5453,7 +5595,7 @@ def Game():
                         #Roll
                         player.Roll()
                         #Horizontal Movement
-                        if gamePhase != 9 and gamePhase != 10 and gamePhase != 16 and gamePhase != 17 and gamePhase != 20 and gamePhase != 21:
+                        if gamePhase != 9 and gamePhase != 10 and gamePhase != 16 and gamePhase != 17 and gamePhase != 20 and gamePhase != 21 and gamePhase != 22:
                             player.MoveHori(block1_list) #Player move horizontally
                         else:
                             player.MoveHori2()
@@ -5929,14 +6071,25 @@ def Game():
                             gameOver = True
                         #endif
                     elif gamePhase == 20:
-                        if player.rect.x >= 1550:
+                        if player.rect.x >= 1600:
                             player.FreezeTrigger(0)
                             player.ChangeSpeed(2)
                             player.FreezeTrigger(1)
-                            player.rect.x = 1550
+                            player.rect.x = 1600
                             gamePhase = 21
+                            DrawOrRemove(0, levelOne_list, pauseButton_list)
+                            DrawOrRemove(0, levelOne_list, wordBox_list)
                         #endif
+                    elif gamePhase == 21:
+                        DrawOrRemove(1, levelOne_list, nextLevelBlock_list)
+                        gamePhase = 22
+                        advanceLevel = True
+                    #endif
                     levelOne_list.draw(screen) #Display all visible objects
+
+                elif gameLevel == 2:
+
+                    print(2)
 
                 #endif
 

@@ -128,10 +128,16 @@ def CreateCharacters1(levelOne_list, enemy_list, warlock_list, wordBox_list, nex
 
 #endprocedure
 
-def CreateCharacters2(levelTwo_list, enemyAttack_list, banditGroup3_list, character2_list, arun_list):
+def CreateCharacters2(levelTwo_list, enemyAttack_list, banditGroup3_list, banditGroup4_list, mushroomGroup1_list, mushroomGroup2_list, mushroomGroup3_list, character2_list, arun_list):
 
-    arun = ArunClass(1400, 690, levelTwo_list, enemyAttack_list)
+    arun = ArunClass(1400, 700, levelTwo_list, enemyAttack_list)
     arun_list.add(arun)
+
+    for i in range(2):
+        mush1 = MushroomClass(randint(1,3), randint(50,1350), -100, levelTwo_list, enemyAttack_list)
+        mushroomGroup1_list.add(mush1)
+        character2_list.add(mush1)
+    #endfor
 
     character2_list.add(arun)
     
@@ -947,12 +953,13 @@ class ItemClass(pygame.sprite.Sprite):
         elif self.item == 4:
 
             self.image = self.javelin[0]
+            self.speed = level
 
         #endif
 
     #endprocedure
 
-    def JavelinUpdate(self, speed):
+    def JavelinUpdate(self, javelin_list, levelTwo_list):
 
         if self.startAnimation == 0: #If start timer has not started yet
             self.startAnimation = pygame.time.get_ticks() #Record current time
@@ -962,11 +969,18 @@ class ItemClass(pygame.sprite.Sprite):
         else:
             self.javelinCounter = 0
         #endif
-        if speed > 0:
+        if self.speed > 0:
             self.image = self.javelin[self.javelinCounter]
         else:
             self.image = pygame.transform.flip(self.javelin[self.javelinCounter],1,0)
         #endif
+        self.rect.x += self.speed
+        if self.rect.x <= -160 or self.rect.x >= 1660:
+            javelin_list.remove(self)
+            levelTwo_list.remove(self)
+        #endif
+
+    #endprocedure
         
 
     def Change(self):
@@ -2178,6 +2192,25 @@ class PlayerClass(pygame.sprite.Sprite): #Class of the player
 
     #endprocedure
 
+    def JavelinAttackDetection(self, javelin_list, levelTwo_list):
+
+        playerGetHit_list = pygame.sprite.spritecollide(self, javelin_list, False)#If get hit
+        for javelin in playerGetHit_list:
+            if self.hurt == False and not self.death and not self.freezeAnimation and not self.roll:
+                self.hurt = True
+                self.reduceHealth = True
+                self.block = False
+                self.playerAttack.rect.x = -1000
+                self.attackStep = 1
+                self.attacked = False
+                self.attackCounter1 = 0
+                self.attackCounter2 = 0
+                self.attackCounter3 = 0
+                javelin_list.remove(javelin)
+                levelTwo_list.remove(javelin)
+            #endif
+        #endfor
+
     def Jump(self):
 
         if not self.freeze and self.blocked == False and self.hurt == False and self.attacked == False and self.roll == False and not self.death:
@@ -3245,7 +3278,7 @@ class BanditClass(pygame.sprite.Sprite): #Class of the bandit
 
     #endprocedure
 
-    def Health(self, coin_list, sprite_list, level, gameLevel):
+    def Health(self, coin_list, sprite_list, level, gameLevel, enemyCount):
 
         if self.reduceHealth == True and not self.freeze:
 
@@ -3260,6 +3293,8 @@ class BanditClass(pygame.sprite.Sprite): #Class of the bandit
                     coinNum = 4
                 #endif
                 self.death = True
+                num = enemyCount[0]
+                enemyCount[0] = num - 1
                 if not self.dropCoin:
                     self.dropCoin = True
                     for i in range(coinNum):
@@ -4367,7 +4402,7 @@ class RogueClass(pygame.sprite.Sprite): #Class of the rogue
 
     #endprocedure
 
-    def Health(self, sprite_list, coin_list):
+    def Health(self, sprite_list, coin_list, enemyCount):
 
         if self.reduceHealth == True and not self.freeze:
 
@@ -4382,6 +4417,8 @@ class RogueClass(pygame.sprite.Sprite): #Class of the rogue
                 #endif
             if self.hp == 0:
                 self.death = True
+                num = enemyCount[0]
+                enemyCount[0] = num - 1
                 if not self.dropCoin:
                     self.dropCoin = True
                     for i in range(8):
@@ -4551,14 +4588,14 @@ class RogueClass(pygame.sprite.Sprite): #Class of the rogue
 
 #endclass
 
-#Arun Swordsmith Class
-class ArunClass(pygame.sprite.Sprite): #Class of the rogue
+#Warlock Class
+class MushroomClass(pygame.sprite.Sprite): #Class of the warlock
  
-    def __init__(self, x, y, levelTwo_list, enemyAttack_list):
+    def __init__(self, mType, x, y, levelTwo_list, enemyAttack_list):
         
         super().__init__()
  
-        self.image = pygame.Surface([50, 110])
+        self.image = pygame.Surface([100, 80])
         self.rect = self.image.get_rect()
 
         self.rect.x = x
@@ -4567,8 +4604,459 @@ class ArunClass(pygame.sprite.Sprite): #Class of the rogue
         self.originalX = x
         self.originalY = y
 
-        self.arunAnimation = EnemyAnimation(4, 320, 250, x-135, y-140)
-        self.arunAttack = AttackClass(200, 130, -1000, 0)
+        if mType == 1:
+            self.mColor = 5
+        elif mType == 2:
+            self.mColor = 6
+        elif mType == 3:
+            self.mColor = 7
+        #endif
+
+        self.mushroomAnimation = EnemyAnimation(self.mColor, 200, 160, self.rect.x, self.rect.y)
+        self.mushroomHealth1 = HealthClass(1, 5, 100, 20, self.rect.x, self.rect.y - 25)
+        self.mushroomHealth2 = HealthClass(1, 5, 100, 20, self.rect.x, self.rect.y - 50)
+        self.mushroomAttack = AttackClass(190, 130, -1000, 0)
+        enemyAttack_list.add(self.mushroomAttack)
+        levelTwo_list.add(self.mushroomAnimation, self.mushroomHealth1, self.mushroomHealth2)
+
+        #Attributes
+        self.hp = 10
+        self.horiSpeed = 0
+        self.lastHoriSpeed = -4
+        self.vertSpeed = -0.4
+        self.attacked = False
+        self.freeze = False
+        self.hurt = False
+        self.death = False
+        self.reduceHealth = False
+
+        #Timers
+        self.endAnimation = 0
+        self.startAnimation = 0
+        self.startAttack = 0
+        self.endAttack = 0
+        self.startDeath = 0
+        self.endDeath = 0
+        self.startHurt = 0
+        self.endHurt = 0
+        self.startWalk = 0
+        self.endWalk = 0
+
+        #Counter
+        self.idleCounter = 0
+        self.runCounter = 0
+        self.attackCounter = 0
+        self.hurtCounter = 0
+        self.deathCounter = 0
+        
+    #endprocedure
+
+    def Reset(self):
+
+        #Attributes
+        self.rect.x = self.originalX
+        self.rect.y = self.originalY
+        self.hp = 1
+        self.horiSpeed = 0
+        self.lastHoriSpeed = -4
+        self.vertSpeed = -0.4
+        self.attacked = False
+        self.freeze = False
+        self.hurt = False
+        self.death = False
+        self.reduceHealth = False
+
+        #Timers
+        self.endAnimation = 0
+        self.startAnimation = 0
+        self.startAttack = 0
+        self.endAttack = 0
+        self.startDeath = 0
+        self.endDeath = 0
+        self.startHurt = 0
+        self.endHurt = 0
+        self.startWalk = 0
+        self.endWalk = 0
+
+        #Counter
+        self.attackCounter = 0
+        self.hurtCounter = 0
+        self.deathCounter = 0
+        
+        self.mushroomHealth1.Update(5)
+        self.mushroomHealth2.Update(5)
+        self.mushroomHealth1.rect.x = self.rect.x
+        self.mushroomHealth2.rect.x = self.rect.x
+        self.Animation()
+
+    #endprocedure
+
+    def Freeze(self, num):
+
+        if num == 1:
+            self.freeze = True
+        else:
+            self.freeze = False
+        #endif
+
+    #endprocedure
+
+    def Animation(self):
+
+        if self.startAnimation == 0: #If start timer has not started yet
+
+            self.startAnimation = pygame.time.get_ticks() #Record current time
+
+        #endif
+
+        self.endAnimation = pygame.time.get_ticks() #Get current time for end time
+
+        self.mushroomAnimation.rect.y = self.rect.y - 75
+        self.mushroomAnimation.rect.x = self.rect.x - 50
+
+        if self.death == False and self.freeze == False:
+        
+            if not self.hurt and self.horiSpeed == 0 and not self.attacked:
+
+                if self.endAnimation - self.startAnimation >= 80: #If next image
+                    
+                    self.startAnimation = self.endAnimation #If player is idle
+                    self.mushroomAnimation.Idle(self.lastHoriSpeed, self.idleCounter)
+
+                    if self.idleCounter != 7: #If reached the end
+                        self.idleCounter += 1
+                    else:
+                        self.idleCounter = 0
+                    #endif
+
+                #endif
+
+            elif not self.hurt and self.horiSpeed != 0 and not self.attacked:
+
+                if self.endAnimation - self.startAnimation >= 110:
+                    
+                    self.startAnimation = self.endAnimation #If player running
+                    self.mushroomAnimation.Run(self.lastHoriSpeed, self.runCounter)
+
+                    if self.runCounter != 7: #If reached the end
+                        self.runCounter += 1
+                    else:
+                        self.runCounter = 0
+                    #endif
+
+                #endif
+            
+            elif self.hurt == True:
+
+                if self.endAnimation - self.startAnimation >= 100:
+
+                    self.startAnimation = self.endAnimation #If player is hurt
+                    self.mushroomAnimation.Hurt(self.lastHoriSpeed, self.hurtCounter)
+
+                    if self.hurtCounter != 2: #If reached the end
+                        self.hurtCounter += 1
+                    #endif
+
+                #endif
+
+            elif self.attacked == True and not self.hurt:
+
+                if self.endAnimation - self.startAnimation >= 80:
+
+                    self.startAnimation = self.endAnimation #If player is hurt
+                    self.mushroomAnimation.Attack(self.lastHoriSpeed, self.attackCounter)
+
+                    if self.attackCounter != 15: #If reached the end
+                        self.attackCounter += 1
+                    #endif
+
+                #endif
+
+            #endif
+
+        elif self.death:
+
+            if self.endAnimation - self.startAnimation >= 60:
+
+                self.startAnimation = self.endAnimation 
+                self.mushroomAnimation.Death(self.lastHoriSpeed, self.deathCounter)
+
+                if self.deathCounter != 10:
+                    self.deathCounter += 1
+                #endif
+
+            #endif
+                    
+        #endif
+
+    #endprocedure
+
+    def Control(self):
+
+        if not self.freeze:
+
+            if self.startWalk == 0: #If start timer has not started yet
+                self.startWalk = pygame.time.get_ticks() #Record current time
+                if self.horiSpeed == 0:
+                    self.ChangeSpeed(randint(0,1))
+                #endif
+            #endif
+            self.endWalk = pygame.time.get_ticks() #Get current time for end time
+            if self.endWalk - self.startWalk >= 7000:
+                rollDice = randint(0,5)
+                if rollDice == 3:
+                    self.ChangeSpeed(2)
+                    self.AttackTrigger()
+                else:
+                    self.ChangeSpeed(randint(0,1))
+                #endif
+                self.startWalk = 0
+                self.endWalk = 0
+            #endif
+
+            if self.rect.x <= 0:
+                self.rect.x = 0
+                self.ChangeSpeed(1)
+            elif self.rect.x >= 1400:
+                self.rect.x = 1400
+                self.ChangeSpeed(0)
+            #endif
+
+        #endif
+
+    #endif
+
+    def Health(self, enemyCount):
+
+        if self.reduceHealth == True and not self.freeze:
+
+            self.reduceHealth = False
+            if self.hp > 0:
+                self.hp -= 1
+                if self.hp >= 5:
+                    hpNum = self.hp - 5
+                    self.mushroomHealth2.Update(hpNum)
+                else:
+                    self.mushroomHealth1.Update(self.hp)
+                #endif
+            if self.hp == 0:
+                self.death = True
+                num = enemyCount[0]
+                enemyCount[0] = num - 1
+            #endif
+
+        #endif
+
+        if self.hp == 10:
+            self.mushroomHealth2.rect.x = self.rect.x
+            self.mushroomHealth1.rect.x = self.rect.x
+        elif self.hp == 9:
+            self.mushroomHealth2.rect.x = self.rect.x + 10
+            self.mushroomHealth1.rect.x = self.rect.x
+        elif self.hp == 8:
+            self.mushroomHealth2.rect.x = self.rect.x + 20
+            self.mushroomHealth1.rect.x = self.rect.x
+        elif self.hp == 7:
+            self.mushroomHealth2.rect.x = self.rect.x + 30
+            self.mushroomHealth1.rect.x = self.rect.x
+        elif self.hp == 6:
+            self.mushroomHealth2.rect.x = self.rect.x + 40
+            self.mushroomHealth1.rect.x = self.rect.x
+        elif self.hp == 5:
+            self.mushroomHealth1.rect.x = self.rect.x
+        elif self.hp == 4:
+            self.mushroomHealth1.rect.x = self.rect.x + 10
+        elif self.hp == 3:
+            self.mushroomHealth1.rect.x = self.rect.x + 20
+        elif self.hp == 2:
+            self.mushroomHealth1.rect.x = self.rect.x + 30
+        elif self.hp == 1:
+            self.mushroomHealth1.rect.x = self.rect.x + 40
+        #endif
+        self.mushroomHealth1.rect.y = self.rect.y - 25
+        self.mushroomHealth2.rect.y = self.rect.y - 50
+
+    #endprocedure
+
+    def AttackTrigger(self):
+
+        self.endAttackRest = pygame.time.get_ticks() #Get current time for end time
+        
+        if not self.freeze and self.attacked == False and self.death == False:
+
+            self.attacked = True
+            self.endAttackRest = 0
+            self.startAttackRest = 0
+            
+        #endif
+
+    #endprocedure
+
+    def Attack(self):
+        
+        if self.attacked == True and self.freeze == False:
+
+            self.horiSpeed = 0
+
+            if not self.hurt and not self.death and self.attackCounter == 8:
+                self.mushroomAttack.rect.x = self.rect.x - 45
+                self.mushroomAttack.rect.y = self.rect.y - 50
+            elif self.attackCounter != 8:
+                self.mushroomAttack.rect.x = -1000
+            elif self.hurt or self.death:
+                self.mushroomAttack.rect.x = -1000
+            #endif
+            if self.attackCounter == 15:
+                self.mushroomAttack.rect.x = -1000
+                self.attacked = False
+                self.attackCounter = 0
+            #endif
+
+        #endif
+
+    #endprocedure
+
+    def EnemyAttackDetection(self,attack_list):
+
+        enemyGetHit_list = pygame.sprite.spritecollide(self, attack_list, False)#If get hit
+        for attack in enemyGetHit_list:
+            if self.hurt == False and not self.death and not self.freeze:
+                self.hurt = True
+                self.reduceHealth = True
+            #endif
+        #endfor
+
+    #endprocedure
+
+    def Hurt(self):
+        
+        if self.hurt == True and not self.freeze:
+
+            self.horiSpeed = 0
+            
+            if self.hurtCounter == 2:
+                self.hurt = False
+                self.hurtCounter = 0
+                self.ChangeSpeed(randint(0,1))
+            #endif
+
+        #endif
+
+    #endprocedure
+
+    def MoveVert(self, block_list):
+
+        if self.freeze == False:
+
+            if self.vertSpeed == 0: #Keep testing if player hits something
+                self.vertSpeed = -0.4
+            else: #Gravity
+                self.vertSpeed -= 0.6
+            #endif
+
+            if self.rect.y >= 720 and self.vertSpeed <= 0: #If sinks into the ground
+
+                self.rect.y = 720 #Stands on the ground
+                self.vertSpeed = 0
+                self.jumped = False
+
+            elif self.rect.y <= 0 and self.vertSpeed > 0:
+
+                self.rect.y = 0
+                self.vertSpeed = 0
+
+            #endif
+
+            self.rect.y -= self.vertSpeed #Player move
+                
+            selfVertBlock_list = pygame.sprite.spritecollide(self, block_list, False)#If collide
+            for block in selfVertBlock_list:
+                
+                if self.vertSpeed <= 0: #If player is falling
+
+                    self.rect.bottom = block.rect.top
+                    self.jumped = False
+
+                elif self.vertSpeed >= 0: #If player is jumping
+
+                    self.rect.top = block.rect.bottom
+
+                #endif
+
+                self.vertSpeed = 0 #Stop player
+
+            #endfor
+
+        #endif
+
+    #endprocedure
+
+    def ChangeSpeed(self,num):
+
+        if self.freeze == False and self.attacked == False and not self.death:
+
+            if num == 0:
+
+                self.horiSpeed = -3
+                self.lastHoriSpeed = self.horiSpeed
+
+            elif num == 1:
+
+                self.horiSpeed = 3
+                self.lastHoriSpeed = self.horiSpeed
+
+            elif num == 2:
+
+                self.horiSpeed = 0
+
+            #endif
+
+        #endif
+
+    #endprocedure
+
+    def MoveHori(self, block_list):
+
+        if self.freeze == False:
+            
+            self.rect.x += self.horiSpeed
+                
+            for block in block_list:
+                        
+                if self.rect.colliderect(block.rect): #If player hit block
+                    if self.horiSpeed > 0:
+                        self.rect.right = block.rect.left
+                    else:
+                        self.rect.left = block.rect.right
+                    #endif
+                #endif
+
+            #endfor
+
+        #endif
+
+    #endprocedure
+
+#endclass
+
+#Arun Swordsmith Class
+class ArunClass(pygame.sprite.Sprite): #Class of the rogue
+ 
+    def __init__(self, x, y, levelTwo_list, enemyAttack_list):
+        
+        super().__init__()
+ 
+        self.image = pygame.Surface([50, 100])
+        self.rect = self.image.get_rect()
+
+        self.rect.x = x
+        self.rect.y = y
+
+        self.originalX = x
+        self.originalY = y
+
+        self.arunAnimation = EnemyAnimation(4, 320, 250, x-135, y-155)
+        self.arunAttack = AttackClass(170, 130, -1000, 0)
         enemyAttack_list.add(self.arunAttack)
         self.arunHealth1 = HealthClass(1, 5, 250, 50, 985, 10)
         self.arunHealth2 = HealthClass(1, 5, 250, 50, 1235, 10)
@@ -4581,6 +5069,7 @@ class ArunClass(pygame.sprite.Sprite): #Class of the rogue
         self.horiSpeed = 0
         self.lastHoriSpeed = -4
         self.vertSpeed = -0.4
+        self.runSpeed = 8
         self.attacked = False
         self.throwed = False
         self.saMove = False
@@ -4598,8 +5087,13 @@ class ArunClass(pygame.sprite.Sprite): #Class of the rogue
         self.randomTime = 700
         self.attackCount = 0
         self.skill = False
+        self.throwTime = 6000
         self.stopSelf = False
         self.dropCoin = False
+        self.rest = False
+        self.javelinThrowed = False
+        self.restTime = 1000
+        self.attackCountNum = 5
 
         #Timers
         self.endAnimation = 0
@@ -4618,6 +5112,10 @@ class ArunClass(pygame.sprite.Sprite): #Class of the rogue
         self.endRandom2 = 0
         self.startAbove = 0
         self.endAbove = 0
+        self.startThrow = 0
+        self.endThrow = 0
+        self.startRest = 0
+        self.endRest = 0
 
         #Counter
         self.idleCounter = 0
@@ -4662,6 +5160,7 @@ class ArunClass(pygame.sprite.Sprite): #Class of the rogue
         #Attributes
         self.hp = 20
         self.horiSpeed = 0
+        self.runSpeed = 8
         self.lastHoriSpeed = -4
         self.vertSpeed = -0.4
         self.attacked = False
@@ -4678,10 +5177,15 @@ class ArunClass(pygame.sprite.Sprite): #Class of the rogue
         self.random2 = False
         self.randomTime = 600
         self.attackCount = 0
+        self.throwTime = 6000
         self.dropCoin = False
         self.stopSelf = False
+        self.rest = False
         self.rect.x = self.originalX
         self.rect.y = self.originalY
+        self.javelinThrowed = False
+        self.restTime = 1000
+        self.attackCountNum = 5
 
         #Timers
         self.endAnimation = 0
@@ -4700,6 +5204,10 @@ class ArunClass(pygame.sprite.Sprite): #Class of the rogue
         self.endRandom2 = 0
         self.startAbove = 0
         self.endAbove = 0
+        self.startThrow = 0
+        self.endThrow = 0
+        self.startRest = 0
+        self.endRest = 0
 
         #Counter
         self.attackCounter = 0
@@ -4736,7 +5244,7 @@ class ArunClass(pygame.sprite.Sprite): #Class of the rogue
         if self.death == False and not self.freeze:
 
             
-            self.arunAnimation.rect.y = self.rect.y - 140
+            self.arunAnimation.rect.y = self.rect.y - 145
             self.arunAnimation.rect.x = self.rect.x - 135
         
             if not self.hurt and self.horiSpeed == 0 and not self.attacked and not self.throwed and not self.jumped:
@@ -4795,15 +5303,15 @@ class ArunClass(pygame.sprite.Sprite): #Class of the rogue
 
                 #endif
 
-            elif self.throwed == True and not self.hurt and not self.attacked:
+            elif self.throwed == True and not self.attacked:
 
-                if self.endAnimation - self.startAnimation >= 32:
+                if self.endAnimation - self.startAnimation >= 40:
 
                     self.startAnimation = self.endAnimation #If player is special attacking
                     self.arunAnimation.Throw(self.lastHoriSpeed, self.throwCounter)
 
-                    if self.saCounter != 9: #If reached the end
-                        self.saCounter += 1
+                    if self.throwCounter != 9: #If reached the end
+                        self.throwCounter += 1
                     #endif
 
                 #endif
@@ -4890,11 +5398,11 @@ class ArunClass(pygame.sprite.Sprite): #Class of the rogue
 
             if self.attackCounter == 5 or self.attackCounter == 6:
                 if self.lastHoriSpeed > 0 and not self.hurt and not self.death:
-                    self.arunAttack.rect.x = self.rect.x - 45
-                    self.arunAttack.rect.y = self.rect.y - 20
+                    self.arunAttack.rect.x = self.rect.x
+                    self.arunAttack.rect.y = self.rect.y - 30
                 elif self.lastHoriSpeed < 0 and not self.hurt and not self.death:
-                    self.arunAttack.rect.x = self.rect.x - 105
-                    self.arunAttack.rect.y = self.rect.y - 20
+                    self.arunAttack.rect.x = self.rect.x - 120
+                    self.arunAttack.rect.y = self.rect.y - 30
                 #endif
             elif self.attackCounter != 5 or self.attackCounter != 6:
                 self.arunAttack.rect.x = -1000
@@ -4906,6 +5414,11 @@ class ArunClass(pygame.sprite.Sprite): #Class of the rogue
                 self.arunAttack.rect.x = -1000
                 self.attacked = False
                 self.attackCounter = 0
+                self.attackCount += 1
+                if self.attackCount == self.attackCountNum:
+                    self.attackCount = 0
+                    self.rest = True
+                #endif
             #endif
 
         #endif
@@ -4916,20 +5429,20 @@ class ArunClass(pygame.sprite.Sprite): #Class of the rogue
 
         if not self.freeze:
 
-            if not self.random and not self.random2 and not self.skill and not self.freeze:
+            if not self.random and not self.random2 and not self.skill and not self.freeze and not self.attacked and not self.rest and not self.throwed:
 
-                if self.rect.y + 10 == y:
+                if self.rect.y == y:
                     self.ChangeSpeed(2)
-                    if self.rect.x - x < 155 and self.rect.x - x > 0:
+                    if self.rect.x - x <= 170 and self.rect.x - x > 0:
                         self.AttackTrigger()
-                    elif x - self.rect.x > 0 and x - self.rect.x <= 155:
+                    elif x - self.rect.x > 0 and x - self.rect.x <= 170:
                         self.AttackTrigger()
-                    elif x <= self.rect.x and abs(x - self.rect.x) >= 155:
+                    elif x <= self.rect.x and abs(x - self.rect.x) >= 170:
                         self.ChangeSpeed(0)
-                    elif x > self.rect.x and abs(x - self.rect.x) >= 155:
+                    elif x > self.rect.x and abs(x - self.rect.x) >= 170:
                         self.ChangeSpeed(1)
                     #endif
-                elif y > self.rect.y + 10:
+                elif y > self.rect.y:
                     self.ChangeSpeed(2)
                     if self.startAbove == 0: #If start timer has not started yet
                         self.startAbove = pygame.time.get_ticks() #Record current time
@@ -4945,7 +5458,7 @@ class ArunClass(pygame.sprite.Sprite): #Class of the rogue
                     elif x > self.rect.x and abs(x - self.rect.x) >= 90:
                         self.ChangeSpeed(1)
                     #endif
-                elif y < self.rect.y + 10:
+                elif y < self.rect.y:
                     self.startAbove = 0
                     self.endAbove = 0
                     self.ChangeSpeed(2)
@@ -4960,12 +5473,16 @@ class ArunClass(pygame.sprite.Sprite): #Class of the rogue
                     #endif
                 #endif
 
-            elif self.skill and not self.random and not self.random2 and not self.freeze:
+                if abs(self.rect.x - x) > 500:
+                    self.endThrow = pygame.time.get_ticks() #Get current time for end time
+                    if self.endThrow - self.startThrow >= self.throwTime:
+                        self.skill = True
+                        self.endThrow = 0
+                        self.startThrow = 0
+                    #endif
+                #endif
 
-                self.ChangeSpeed(2)
-                self.ThrowTrigger(x)
-
-            elif self.random and not self.random2 and not self.skill and not self.freeze:
+            elif self.random and not self.random2 and not self.skill and not self.freeze and not self.rest:
 
                 if self.startRandom == 0: #If start timer has not started yet
 
@@ -4979,10 +5496,11 @@ class ArunClass(pygame.sprite.Sprite): #Class of the rogue
                     self.startRandom = 0
                     self.endRandom = 0
                     self.random = False
-
+                    self.rest = False
+                    self.random2 = False
                 #endif
 
-            elif self.random2 and not self.freeze:
+            elif self.random2 and not self.freeze and not self.rest:
 
                 if self.startRandom2 == 0: #If start timer has not started yet
 
@@ -4996,8 +5514,31 @@ class ArunClass(pygame.sprite.Sprite): #Class of the rogue
                     self.startRandom2 = 0
                     self.endRandom2 = 0
                     self.random2 = False
-
+                    self.rest = False
+                    self.random = False
                 #endif
+
+            elif self.rest and not self.freeze and not self.random and not self.random2:
+
+                if self.startRest == 0: #If start timer has not started yet
+                    self.startRest = pygame.time.get_ticks() #Record current time
+                #endif
+                    
+                self.endRest = pygame.time.get_ticks()
+                if self.endRest - self.startRest >= self.restTime:
+                    self.startRest = 0
+                    self.endRest = 0
+                    self.rest = False
+                    self.random2 = False
+                    self.random = False
+                #endif
+
+            #endif
+
+            if self.skill and not self.freeze and not self.rest:
+
+                self.ChangeSpeed(2)
+                self.ThrowTrigger()
 
             #endif
                 
@@ -5007,9 +5548,9 @@ class ArunClass(pygame.sprite.Sprite): #Class of the rogue
 
             self.rect.x = 0
 
-        elif self.rect.x >= 1420:
+        elif self.rect.x >= 1450:
 
-            self.rect.x = 1420
+            self.rect.x = 1450
 
         #endif
 
@@ -5025,17 +5566,41 @@ class ArunClass(pygame.sprite.Sprite): #Class of the rogue
 
     #endprocedure
 
-    def Throw(self):
+    def Throw(self, javelin_list, levelTwo_list):
 
         if self.throwed == True and self.freeze == False:
 
-            self.horiSpeed = 0
+            if self.throwCounter == 3 and not self.javelinThrowed:
+                self.javelinThrowed = True
+                if self.lastHoriSpeed > 0:
+                    javelin = ItemClass(4, 160, 40, self.rect.x-55, self.rect.y+20, 20)
+                elif self.lastHoriSpeed < 0:
+                    javelin = ItemClass(4, 160, 40, self.rect.x-55, self.rect.y+20, -20)
+                #endif
+                javelin_list.add(javelin)
+                levelTwo_list.add(javelin)
+            #endif
+            if self.throwCounter == 9:
+                self.javelinThrowed = False
+                self.throwCounter = 0
+                self.throwed = False
+                self.skill = False
+                self.random = False
+                self.rest = False
+                self.random2 = False
+                self.startThrow = pygame.time.get_ticks() #Record current time
+                self.attackCount += 1
+                if self.attackCount == self.attackCountNum:
+                    self.attackCount = 0
+                    self.rest = True
+                #endif
+            #endif
 
         #endif
 
     #endprocedure
 
-    def Health(self, sprite_list, coin_list):
+    def Health(self, sprite_list, coin_list, enemyCount):
 
         if self.reduceHealth == True and not self.freeze:
 
@@ -5055,6 +5620,8 @@ class ArunClass(pygame.sprite.Sprite): #Class of the rogue
                     self.arunHealth1.Update(self.hp)
                 #endif
             if self.hp == 0:
+                num = enemyCount[0]
+                enemyCount[0] = num - 1
                 self.death = True
                 if not self.dropCoin:
                     self.dropCoin = True
@@ -5064,6 +5631,12 @@ class ArunClass(pygame.sprite.Sprite): #Class of the rogue
                         coin_list.add(coin)
                     #endfor
                 #endif
+            #endif
+            if self.hp == 10:
+                self.runSpeed = 10
+                self.restTime = 700
+                self.throwTime = 3000
+                self.attackCountNum = 8
             #endif
 
         #endif
@@ -5173,9 +5746,9 @@ class ArunClass(pygame.sprite.Sprite): #Class of the rogue
                 self.vertSpeed -= 0.6
             #endif
 
-            if self.rect.y >= 690 and self.vertSpeed <= 0: #If sinks into the ground
+            if self.rect.y >= 700 and self.vertSpeed <= 0: #If sinks into the ground
 
-                self.rect.y = 690 #Stands on the ground
+                self.rect.y = 700 #Stands on the ground
                 self.vertSpeed = 0
                 self.jumped = False
 
@@ -5216,12 +5789,12 @@ class ArunClass(pygame.sprite.Sprite): #Class of the rogue
 
             if num == 0:
 
-                self.horiSpeed = -11
+                self.horiSpeed = -self.runSpeed
                 self.lastHoriSpeed = self.horiSpeed
 
             elif num == 1:
 
-                self.horiSpeed = 11
+                self.horiSpeed = self.runSpeed
                 self.lastHoriSpeed = self.horiSpeed
 
             elif num == 2:
@@ -5356,6 +5929,106 @@ class EnemyAnimation(pygame.sprite.Sprite): #Class of player's animation
             self.banditRecover2.append(pygame.transform.scale(pygame.image.load("Game_Images/HeavyBandit/Recover/HeavyBandit_Recover_" + add_str + ".png"), (130, 130)))
         #endfor
 
+        #Mushrooms
+        #Red
+        self.mushroomIdle1 = [] #Idle 
+        for x in range(8):
+            add_str = str(x)
+            self.mushroomIdle1.append(pygame.transform.scale(pygame.image.load("Game_Images/Mushroom Red/Idle/MushroomRed_Idle_" + add_str + ".png"), (200, 160)))
+        #endfor
+        self.mushroomAttack1 = [] #Attack
+        for x in range(16):
+            add_str = str(x)
+            if x < 10:
+                add_str = "0"+str(x)
+            #endif
+            self.mushroomAttack1.append(pygame.transform.scale(pygame.image.load("Game_Images/Mushroom Red/Attack/MushroomRed_Attack_" + add_str + ".png"), (200, 160)))
+        #endfor
+        self.mushroomDeath1 = [] #Death
+        for x in range(11):
+            add_str = str(x)
+            if x < 10:
+                add_str = "0"+str(x)
+            #endif
+            self.mushroomDeath1.append(pygame.transform.scale(pygame.image.load("Game_Images/Mushroom Red/Death/MushroomRed_Death_" + add_str + ".png"), (200, 160)))
+        #endfor
+        self.mushroomRun1 = [] #Run
+        for x in range(8):
+            add_str = str(x)
+            self.mushroomRun1.append(pygame.transform.scale(pygame.image.load("Game_Images/Mushroom Red/Walk/MushroomRed_Walk_" + add_str + ".png"), (200, 160)))
+        #endfor
+        self.mushroomHurt1 = [] #Hurt
+        for x in range(3):
+            add_str = str(x)
+            self.mushroomHurt1.append(pygame.transform.scale(pygame.image.load("Game_Images/Mushroom Red/Hurt/MushroomRed_Hurt_" + add_str + ".png"), (200, 160)))
+        #endfor
+            
+        #Orange
+        self.mushroomIdle2 = [] #Idle 
+        for x in range(8):
+            add_str = str(x)
+            self.mushroomIdle2.append(pygame.transform.scale(pygame.image.load("Game_Images/Mushroom Orange/Idle/MushroomOrange_Idle_" + add_str + ".png"), (200, 160)))
+        #endfor
+        self.mushroomAttack2 = [] #Attack
+        for x in range(16):
+            add_str = str(x)
+            if x < 10:
+                add_str = "0"+str(x)
+            #endif
+            self.mushroomAttack2.append(pygame.transform.scale(pygame.image.load("Game_Images/Mushroom Orange/Attack/MushroomOrange_Attack_" + add_str + ".png"), (200, 160)))
+        #endfor
+        self.mushroomDeath2 = [] #Death
+        for x in range(11):
+            add_str = str(x)
+            if x < 10:
+                add_str = "0"+str(x)
+            #endif
+            self.mushroomDeath2.append(pygame.transform.scale(pygame.image.load("Game_Images/Mushroom Orange/Death/MushroomOrange_Death_" + add_str + ".png"), (200, 160)))
+        #endfor
+        self.mushroomRun2 = [] #Run
+        for x in range(8):
+            add_str = str(x)
+            self.mushroomRun2.append(pygame.transform.scale(pygame.image.load("Game_Images/Mushroom Orange/Walk/MushroomOrange_Walk_" + add_str + ".png"), (200, 160)))
+        #endfor
+        self.mushroomHurt2 = [] #Hurt
+        for x in range(3):
+            add_str = str(x)
+            self.mushroomHurt2.append(pygame.transform.scale(pygame.image.load("Game_Images/Mushroom Orange/Hurt/MushroomOrange_Hurt_" + add_str + ".png"), (200, 160)))
+        #endfor
+
+        #Purple
+        self.mushroomIdle3 = [] #Idle 
+        for x in range(8):
+            add_str = str(x)
+            self.mushroomIdle3.append(pygame.transform.scale(pygame.image.load("Game_Images/Mushroom Purple/Idle/MushroomPurple_Idle_" + add_str + ".png"), (200, 160)))
+        #endfor
+        self.mushroomAttack3 = [] #Attack
+        for x in range(16):
+            add_str = str(x)
+            if x < 10:
+                add_str = "0"+str(x)
+            #endif
+            self.mushroomAttack3.append(pygame.transform.scale(pygame.image.load("Game_Images/Mushroom Purple/Attack/MushroomPurple_Attack_" + add_str + ".png"), (200, 160)))
+        #endfor
+        self.mushroomDeath3 = [] #Death
+        for x in range(11):
+            add_str = str(x)
+            if x < 10:
+                add_str = "0"+str(x)
+            #endif
+            self.mushroomDeath3.append(pygame.transform.scale(pygame.image.load("Game_Images/Mushroom Purple/Death/MushroomPurple_Death_" + add_str + ".png"), (200, 160)))
+        #endfor
+        self.mushroomRun3 = [] #Run
+        for x in range(8):
+            add_str = str(x)
+            self.mushroomRun3.append(pygame.transform.scale(pygame.image.load("Game_Images/Mushroom Purple/Walk/MushroomPurple_Walk_" + add_str + ".png"), (200, 160)))
+        #endfor
+        self.mushroomHurt3 = [] #Hurt
+        for x in range(3):
+            add_str = str(x)
+            self.mushroomHurt3.append(pygame.transform.scale(pygame.image.load("Game_Images/Mushroom Purple/Hurt/MushroomPurple_Hurt_" + add_str + ".png"), (200, 160)))
+        #endfor
+
         #Arun Swordsmith
         self.arunIdle = [] #Idle 
         for x in range(10):
@@ -5478,6 +6151,12 @@ class EnemyAnimation(pygame.sprite.Sprite): #Class of player's animation
             self.image = pygame.transform.flip(self.rogueIdle[0],1,0)
         elif self.enemy == 4:
             self.image = pygame.transform.flip(self.arunIdle[0],1,0)
+        elif self.enemy == 5:
+            self.image = pygame.transform.flip(self.mushroomRun1[0],1,0)
+        elif self.enemy == 6:
+            self.image = pygame.transform.flip(self.mushroomRun2[0],1,0)
+        elif self.enemy == 7:
+            self.image = pygame.transform.flip(self.mushroomRun3[0],1,0)
         #endif
         
     #endprocedure
@@ -5513,6 +6192,24 @@ class EnemyAnimation(pygame.sprite.Sprite): #Class of player's animation
                 self.image = self.banditIdle2[i] #Right
             else:
                 self.image = pygame.transform.flip(self.banditIdle2[i],1,0) #Left
+            #endif
+        elif self.enemy == 5:
+            if speed > 0:
+                self.image = self.mushroomIdle1[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.mushroomIdle1[i],1,0) #Left
+            #endif
+        elif self.enemy == 6:
+            if speed > 0:
+                self.image = self.mushroomIdle2[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.mushroomIdle2[i],1,0) #Left
+            #endif
+        elif self.enemy == 7:
+            if speed > 0:
+                self.image = self.mushroomIdle3[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.mushroomIdle3[i],1,0) #Left
             #endif
         #endif
 
@@ -5567,6 +6264,24 @@ class EnemyAnimation(pygame.sprite.Sprite): #Class of player's animation
                 self.image = self.banditRun2[i] #Right
             else:
                 self.image = pygame.transform.flip(self.banditRun2[i],1,0) #Left
+            #endif
+        elif self.enemy == 5:
+            if speed > 0:
+                self.image = self.mushroomRun1[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.mushroomRun1[i],1,0) #Left
+            #endif
+        elif self.enemy == 6:
+            if speed > 0:
+                self.image = self.mushroomRun2[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.mushroomRun2[i],1,0) #Left
+            #endif
+        elif self.enemy == 7:
+            if speed > 0:
+                self.image = self.mushroomRun3[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.mushroomRun3[i],1,0) #Left
             #endif
         #endif
 
@@ -5634,6 +6349,24 @@ class EnemyAnimation(pygame.sprite.Sprite): #Class of player's animation
             else:
                 self.image = pygame.transform.flip(self.banditAttack2[i],1,0) #Left
             #endif
+        elif self.enemy == 5:
+            if speed > 0:
+                self.image = self.mushroomAttack1[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.mushroomAttack1[i],1,0) #Left
+            #endif
+        elif self.enemy == 6:
+            if speed > 0:
+                self.image = self.mushroomAttack2[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.mushroomAttack2[i],1,0) #Left
+            #endif
+        elif self.enemy == 7:
+            if speed > 0:
+                self.image = self.mushroomAttack3[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.mushroomAttack3[i],1,0) #Left
+            #endif
         #endif
 
     #endprocedure
@@ -5669,6 +6402,24 @@ class EnemyAnimation(pygame.sprite.Sprite): #Class of player's animation
                 self.image = self.banditHurt2[i] #Right
             else:
                 self.image = pygame.transform.flip(self.banditHurt2[i],1,0) #Left
+            #endif
+        elif self.enemy == 5:
+            if speed > 0:
+                self.image = self.mushroomHurt1[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.mushroomHurt1[i],1,0) #Left
+            #endif
+        elif self.enemy == 6:
+            if speed > 0:
+                self.image = self.mushroomHurt2[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.mushroomHurt2[i],1,0) #Left
+            #endif
+        elif self.enemy == 7:
+            if speed > 0:
+                self.image = self.mushroomHurt3[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.mushroomHurt3[i],1,0) #Left
             #endif
         #endif
 
@@ -5723,6 +6474,24 @@ class EnemyAnimation(pygame.sprite.Sprite): #Class of player's animation
                 self.image = self.banditDeath2[i] #Right
             else:
                 self.image = pygame.transform.flip(self.banditDeath2[i],1,0) #Left
+            #endif
+        elif self.enemy == 5:
+            if speed > 0:
+                self.image = self.mushroomDeath1[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.mushroomDeath1[i],1,0) #Left
+            #endif
+        elif self.enemy == 6:
+            if speed > 0:
+                self.image = self.mushroomDeath2[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.mushroomDeath2[i],1,0) #Left
+            #endif
+        elif self.enemy == 7:
+            if speed > 0:
+                self.image = self.mushroomDeath3[i] #Right
+            else:
+                self.image = pygame.transform.flip(self.mushroomDeath3[i],1,0) #Left
             #endif
         #endif
 
@@ -5783,6 +6552,7 @@ def Game():
     currency = [0,0,0,0] #Money
     live = [5] #Player's live
     timeUp = [0]
+    enemyCount = [-1]
     gameMode = 1
     gameDifficulty = 1
     gameLevel = 1 #Game Level
@@ -5850,6 +6620,8 @@ def Game():
 
     rogueAttack_list = pygame.sprite.Group() #Rogue Attack
 
+    javelin_list = pygame.sprite.Group() #Javelins
+
     tutorialEnemy_list = pygame.sprite.Group() #Enemy's tutorial list
 
     banditGroup1_list = pygame.sprite.Group()
@@ -5857,6 +6629,14 @@ def Game():
     banditGroup2_list = pygame.sprite.Group()
 
     banditGroup3_list = pygame.sprite.Group()
+
+    banditGroup4_list = pygame.sprite.Group()
+
+    mushroomGroup1_list = pygame.sprite.Group()
+
+    mushroomGroup2_list = pygame.sprite.Group()
+
+    mushroomGroup3_list = pygame.sprite.Group()
 
     startEnd_list = pygame.sprite.Group() #The area determines the start and end of a level
 
@@ -6010,6 +6790,7 @@ def Game():
                     currency[3] = 0
                 elif level == 4 and pos[0] >= 616 and pos[1] >= 500 and pos[0] <= 884 and pos[1] <= 540 and not gamePause and not gameOver and advanceLevel: #Advance Game Level
                     advanceLevel = False
+                    enemyCount = [-1]
                     if gameLevel == 1:
                         DrawOrRemove(0, levelOne_list, nextLevelBlock_list)
                         for block in block1_list:
@@ -6069,6 +6850,7 @@ def Game():
                     level = -1
                 elif level == 4 and pos[0] >= 700 and pos[1] >= 590 and pos[0] <= 800 and pos[1] <= 630 and not gamePause and not gameOver and advanceLevel: #Quit game level during completion
                     advanceLevel = False
+                    enemyCount = [-1]
                     if gameLevel == 1:
                         DrawOrRemove(0, levelOne_list, nextLevelBlock_list)
                         for block in block1_list:
@@ -6169,6 +6951,7 @@ def Game():
                         DrawOrRemove(1, levelTwo_list, pauseButton_list)
                     #endif
                 elif level == 4 and pos[0] >= 700 and pos[1] >= 530 and pos[0] <= 800 and pos[1] <= 570 and gamePause and not gameOver and not advanceLevel: #Quit game
+                    enemyCount = [-1]
                     levelToGo = 0
                     level = -1
                     fileLoaded = False
@@ -6241,6 +7024,7 @@ def Game():
                         DrawOrRemove(0, levelTwo_list, coin_list)
                     #endif
                 elif level == 4 and pos[0] >= 700 and pos[1] >= 590 and pos[0] <= 800 and pos[1] <= 630 and gameOver: #Game Over Quit
+                    enemyCount = [-1]
                     gameOverDisplay = False
                     levelToGo = 0
                     level = -1
@@ -6301,6 +7085,7 @@ def Game():
                         DrawOrRemove(0, coin_list, coin_list)
                     #endif
                 elif level == 4 and pos[0] >= 654.5 and pos[1] >= 500 and pos[0] <= 845.5 and pos[1] <= 540 and gameOver and not gamePause: #Game Over Restart
+                    enemyCount = [-1]
                     gameOverDisplay = False
                     levelToGo = 4
                     level = -1
@@ -6490,7 +7275,7 @@ def Game():
                     CreateTutorialPlatform(tutorialBlock_list, tutorial_list, button_list)
                     CreateCharacters0(player_list, playerAttack_list, tutorialEnemy_list, tutorial_list, levelOne_list, levelTwo_list, levelThree_list, enemyAttack_list, character1_list)
                     CreateCharacters1(levelOne_list, enemy_list, warlock_list, wordBox_list, nextButton_list, rogue_list, enemyAttack_list, rogueAttack_list, banditGroup1_list, banditGroup2_list, character1_list)
-                    CreateCharacters2(levelTwo_list, enemyAttack_list, banditGroup3_list, character2_list, arun_list)
+                    CreateCharacters2(levelTwo_list, enemyAttack_list, banditGroup3_list, banditGroup4_list, mushroomGroup1_list, mushroomGroup2_list, mushroomGroup3_list, character2_list, arun_list)
                     CreateMoney(tutorial_list, levelOne_list, levelTwo_list, levelThree_list, thousand_list, hundred_list, ten_list, one_list)
                     for player in player_list:
                         player.DrawOnCanvas(tutorial_list, levelOne_list, levelTwo_list, levelThree_list)
@@ -6691,7 +7476,7 @@ def Game():
                 enemy.Revive()
                 enemy.Hurt()
                 enemy.EnemyAttackDetection(playerAttack_list)
-                enemy.Health(coin_list, tutorial_list, level, gameLevel)
+                enemy.Health(coin_list, tutorial_list, level, gameLevel, enemyCount)
                 enemy.Animation()
 
             #endfor
@@ -6839,7 +7624,7 @@ def Game():
                             rogue.Hurt()
                             rogue.EnemyAttackDetection(playerAttack_list)
                             rogue.Attack()
-                            rogue.Health(levelOne_list, coin_list)
+                            rogue.Health(levelOne_list, coin_list, enemyCount)
                             rogue.SA()
                             rogue.Animation()
                         #endfor
@@ -6859,7 +7644,7 @@ def Game():
                             #endif
                             enemy.Hurt()
                             enemy.EnemyAttackDetection(playerAttack_list)
-                            enemy.Health(coin_list, levelOne_list, level, gameLevel)
+                            enemy.Health(coin_list, levelOne_list, level, gameLevel, enemyCount)
                             enemy.Animation()
 
                         #endfor
@@ -6880,7 +7665,7 @@ def Game():
                             #endif
                             enemy.Hurt()
                             enemy.EnemyAttackDetection(playerAttack_list)
-                            enemy.Health(coin_list, levelOne_list, level, gameLevel)
+                            enemy.Health(coin_list, levelOne_list, level, gameLevel, enemyCount)
                             enemy.Animation()
 
                         #endfor
@@ -7035,12 +7820,13 @@ def Game():
                         elif timeUp[0] == 1:
                             timeUp[0] = 0
                             gamePhase = 8
+                            enemyCount = [3]
                             for player in player_list:
                                 player.FreezeTrigger(0)
                             #endfor
                         #endif
                     elif gamePhase == 8:
-                        if currency[3] == 6 and live[0] > 0:
+                        if enemyCount == [0] and live[0] > 0:
                             if timeUp[0] == 0:
                                 for player in player_list:
                                     player.FreezeTrigger(0)
@@ -7146,12 +7932,13 @@ def Game():
                         elif timeUp[0] == 1:
                             timeUp[0] = 0
                             gamePhase = 15
+                            enemyCount = [6]
                             for player in player_list:
                                 player.FreezeTrigger(0)
                             #endfor
                         #endif
                     elif gamePhase == 15:
-                        if currency[2] == 1 and currency[3] == 8 and live[0] > 0:
+                        if enemyCount == [0] and live[0] > 0:
                             if timeUp[0] == 0:
                                 for player in player_list:
                                     player.FreezeTrigger(0)
@@ -7250,13 +8037,14 @@ def Game():
                             DrawOrRemove(0, levelOne_list, wordBox_list)
                             gamePhase = 19
                             gameChat = 1
+                            enemyCount = [1]
                             player.FreezeTrigger(0)
                             for rogue in rogue_list:
                                 rogue.HealthDisplay(1, levelOne_list)
                             #endfor
                         #endif
                     elif gamePhase == 19:
-                        if currency[2] == 2 and currency[3] == 6 and live[0] > 0:
+                        if enemyCount == [0] and live[0] > 0:
                             if timeUp[0] == 0:
                                 for player in player_list:
                                     player.FreezeTrigger(0)
@@ -7353,6 +8141,8 @@ def Game():
 
                         #Detection
                         player.EnemyAttackDetection(enemyAttack_list)
+                        #Javelin Detection
+                        player.JavelinAttackDetection(javelin_list, levelTwo_list)
                         #Blocked
                         player.Blocked()
                         #Hurt
@@ -7387,8 +8177,28 @@ def Game():
                         arun.MoveVert(block2_list)
                         arun.Hurt()
                         arun.EnemyAttackDetection(playerAttack_list)
-                        arun.Health(levelTwo_list, coin_list)
+                        arun.Health(levelTwo_list, coin_list, enemyCount)
+                        arun.Throw(javelin_list, levelTwo_list)
                         arun.Animation()
+
+                    #endfor
+
+                    for mushroom in mushroomGroup1_list:
+
+                        mushroom.Control()
+                        mushroom.Attack()
+                        mushroom.MoveHori(block2_list)
+                        mushroom.MoveVert(block2_list)
+                        mushroom.Hurt()
+                        mushroom.EnemyAttackDetection(playerAttack_list)
+                        mushroom.Health(enemyCount)
+                        mushroom.Animation()
+
+                    #endfor
+
+                    for javelin in javelin_list:
+
+                        javelin.JavelinUpdate(javelin_list, levelTwo_list)
 
                     #endfor
                         
@@ -7465,7 +8275,7 @@ def Game():
                             rogue.MoveVert(block1_list)
                             rogue.Hurt()
                             rogue.Attack()
-                            rogue.Health(levelOne_list, coin_list)
+                            rogue.Health(levelOne_list, coin_list, enemyCount)
                             rogue.SA()
                             rogue.Animation()
                         #endfor
@@ -7481,7 +8291,7 @@ def Game():
                             enemy.AttackChecker()
                             enemy.MoveVert(block1_list, block2_list, block3_list, tutorialBlock_list, level, gameLevel)
                             enemy.Hurt()
-                            enemy.Health(coin_list, levelOne_list, level, gameLevel)
+                            enemy.Health(coin_list, levelOne_list, level, gameLevel, enemyCount)
                             enemy.Animation()
 
                         #endfor
@@ -7498,7 +8308,7 @@ def Game():
                             enemy.AttackChecker()
                             enemy.MoveVert(block1_list, block2_list, block3_list, tutorialBlock_list, level, gameLevel)
                             enemy.Hurt()
-                            enemy.Health(coin_list, levelOne_list, level, gameLevel)
+                            enemy.Health(coin_list, levelOne_list, level, gameLevel, enemyCount)
                             enemy.Animation()
 
                         #endfor

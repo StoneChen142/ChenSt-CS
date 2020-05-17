@@ -112,7 +112,7 @@ def CreateCharacters1(levelOne_list, enemy_list, warlock_list, wordBox_list, nex
     character1_list.add(rogue)
 
     for i in range(3):
-        bandit = BanditClass(1, 2140+i*100, 700, levelOne_list, enemyAttack_list)
+        bandit = BanditClass(1, 2020+i*100, 700, levelOne_list, enemyAttack_list)
         banditGroup1_list.add(bandit) #Specify Level
         character1_list.add(bandit)
     #endfor
@@ -134,12 +134,33 @@ def CreateCharacters2(levelTwo_list, enemyAttack_list, banditGroup3_list, bandit
     arun_list.add(arun)
 
     for i in range(2):
-        mush1 = MushroomClass(randint(1,3), randint(50,1350), -100, levelTwo_list, enemyAttack_list)
+        mush1 = MushroomClass(randint(1,3), randint(200,1400), 720, levelTwo_list, enemyAttack_list)
         mushroomGroup1_list.add(mush1)
         character2_list.add(mush1)
     #endfor
 
-    character2_list.add(arun)
+    bandit1 = BanditClass(0, 350, 450, levelTwo_list, enemyAttack_list)
+    bandit2 = BanditClass(0, 1100, 450, levelTwo_list, enemyAttack_list)
+    banditGroup3_list.add(bandit1, bandit2)
+
+    for i in range(3):
+        mush2 = MushroomClass(randint(1,3), randint(1700,2900), 720, levelTwo_list, enemyAttack_list)
+        mushroomGroup2_list.add(mush2)
+        character2_list.add(mush2)
+    #endfor
+
+    bandit3 = BanditClass(0, 1725, 450, levelTwo_list, enemyAttack_list)
+    bandit4 = BanditClass(0, 2600, 450, levelTwo_list, enemyAttack_list)
+    bandit5 = BanditClass(0, 2225, 280, levelTwo_list, enemyAttack_list)
+    banditGroup4_list.add(bandit3, bandit4, bandit5)
+
+    for i in range(2):
+        mush3 = MushroomClass(randint(1,3), 2000, 720, levelTwo_list, enemyAttack_list)
+        mushroomGroup3_list.add(mush3)
+        character2_list.add(mush3)
+    #endfor
+    
+    character2_list.add(arun, bandit1, bandit2, bandit3, bandit4, bandit5)
     
 #endprocedure
 
@@ -1244,6 +1265,7 @@ class WordClass(pygame.sprite.Sprite):
         #endfor
         self.exclamation = [pygame.transform.scale(pygame.image.load("Game_Images/Object/Characters/Exclamation.png"), (width, height))]
         self.comma = [pygame.transform.scale(pygame.image.load("Game_Images/Object/Characters/Comma.png"), (width, height))]
+        self.question = [pygame.transform.scale(pygame.image.load("Game_Images/Object/Characters/Question.png"), (width, height))]
 
         if self.wordType == 0:
             
@@ -1266,6 +1288,10 @@ class WordClass(pygame.sprite.Sprite):
             elif self.num == 33:
 
                 self.image = self.exclamation[0]
+
+            elif self.num == 63:
+
+                self.image = self.question[0]
 
             #endif
 
@@ -1340,6 +1366,11 @@ def WriteWords(typeOfWord, line, x, y, file_list, levelOne_list, levelTwo_list, 
                     width = 4
                     height = 25
                     xIncrement = 6
+                    y = y - 5
+                elif charNum == 63:
+                    width = 14
+                    height = 25
+                    xIncrement = 16
                     y = y - 5
                 #endif
                 word = WordClass(1, charNum, width, height, x, y) #Create word
@@ -2913,7 +2944,7 @@ class BanditClass(pygame.sprite.Sprite): #Class of the bandit
         if self.num == 1:
             self.banditAnimation = EnemyAnimation(1, 130, 130, self.rect.x, self.rect.y)
             self.hp = 3
-            self.runningSpeed = 11
+            self.runningSpeed = 9
             self.jumpNum = randint(3,5)
             self.concentrateTime = randint(120,160)
             self.waitTime = randint(150,200)
@@ -2921,7 +2952,7 @@ class BanditClass(pygame.sprite.Sprite): #Class of the bandit
         elif self.num == 0:
             self.banditAnimation = EnemyAnimation(0, 130, 130, self.rect.x, self.rect.y)
             self.hp = 5
-            self.runningSpeed = 12
+            self.runningSpeed = 10
             self.jumpNum = randint(2,4)
             self.concentrateTime = randint(50,70)
             self.waitTime = randint(70,100)
@@ -3458,27 +3489,50 @@ class BanditClass(pygame.sprite.Sprite): #Class of the bandit
             self.rect.y -= self.vertSpeed #Player move
 
             if level == 4:
-                
-                selfVertBlock_list = pygame.sprite.spritecollide(self, block1_list, False)#If collide
-                for block in selfVertBlock_list:
-                    
-                    if self.vertSpeed <= 0: #If player is falling
 
-                        self.rect.bottom = block.rect.top
-                        self.jumped = False
-                        self.startRandom = 0
-                        self.endRandom = 0
-                        self.random = False
+                if gameLevel == 1:
+                    selfVertBlock_list = pygame.sprite.spritecollide(self, block1_list, False)#If collide
+                    for block in selfVertBlock_list:
+                        
+                        if self.vertSpeed <= 0: #If player is falling
 
-                    elif self.vertSpeed >= 0: #If player is jumping
+                            self.rect.bottom = block.rect.top
+                            self.jumped = False
+                            self.startRandom = 0
+                            self.endRandom = 0
+                            self.random = False
 
-                        self.rect.top = block.rect.bottom
+                        elif self.vertSpeed >= 0: #If player is jumping
 
-                    #endif
+                            self.rect.top = block.rect.bottom
 
-                    self.vertSpeed = 0 #Stop player
+                        #endif
 
-                #endfor
+                        self.vertSpeed = 0 #Stop player
+
+                    #endfor
+                elif gameLevel == 2:
+                    selfVertBlock_list = pygame.sprite.spritecollide(self, block2_list, False)#If collide
+                    for block in selfVertBlock_list:
+                        
+                        if self.vertSpeed <= 0: #If player is falling
+
+                            self.rect.bottom = block.rect.top
+                            self.jumped = False
+                            self.startRandom = 0
+                            self.endRandom = 0
+                            self.random = False
+
+                        elif self.vertSpeed >= 0: #If player is jumping
+
+                            self.rect.top = block.rect.bottom
+
+                        #endif
+
+                        self.vertSpeed = 0 #Stop player
+
+                    #endfor
+                #endif
 
             elif level == 2:
 
@@ -3634,18 +3688,32 @@ class BanditClass(pygame.sprite.Sprite): #Class of the bandit
                 #endfor
                             
             elif level == 4:
-                
-                for block in block1_list:
-                            
-                    if self.rect.colliderect(block.rect): #If player hit block
-                        if self.horiSpeed > 0:
-                            self.rect.right = block.rect.left
-                        else:
-                            self.rect.left = block.rect.right
-                        #endif
-                    #endif
 
-                #endfor
+                if gameLevel == 1:
+                    for block in block1_list:
+                                
+                        if self.rect.colliderect(block.rect): #If player hit block
+                            if self.horiSpeed > 0:
+                                self.rect.right = block.rect.left
+                            else:
+                                self.rect.left = block.rect.right
+                            #endif
+                        #endif
+
+                    #endfor
+                elif gameLevel == 2:
+                    for block in block2_list:
+                                
+                        if self.rect.colliderect(block.rect): #If player hit block
+                            if self.horiSpeed > 0:
+                                self.rect.right = block.rect.left
+                            else:
+                                self.rect.left = block.rect.right
+                            #endif
+                        #endif
+
+                    #endfor
+                #endif
                             
             #endif
 
@@ -4656,7 +4724,7 @@ class MushroomClass(pygame.sprite.Sprite): #Class of the warlock
         #Attributes
         self.rect.x = self.originalX
         self.rect.y = self.originalY
-        self.hp = 1
+        self.hp = 10
         self.horiSpeed = 0
         self.lastHoriSpeed = -4
         self.vertSpeed = -0.4
@@ -4748,7 +4816,7 @@ class MushroomClass(pygame.sprite.Sprite): #Class of the warlock
             
             elif self.hurt == True:
 
-                if self.endAnimation - self.startAnimation >= 100:
+                if self.endAnimation - self.startAnimation >= 110:
 
                     self.startAnimation = self.endAnimation #If player is hurt
                     self.mushroomAnimation.Hurt(self.lastHoriSpeed, self.hurtCounter)
@@ -4802,8 +4870,8 @@ class MushroomClass(pygame.sprite.Sprite): #Class of the warlock
                 #endif
             #endif
             self.endWalk = pygame.time.get_ticks() #Get current time for end time
-            if self.endWalk - self.startWalk >= 7000:
-                rollDice = randint(0,5)
+            if self.endWalk - self.startWalk >= 5000:
+                rollDice = randint(1,3)
                 if rollDice == 3:
                     self.ChangeSpeed(2)
                     self.AttackTrigger()
@@ -4903,7 +4971,7 @@ class MushroomClass(pygame.sprite.Sprite): #Class of the warlock
                 self.mushroomAttack.rect.y = self.rect.y - 50
             elif self.attackCounter != 8:
                 self.mushroomAttack.rect.x = -1000
-            elif self.hurt or self.death:
+            elif self.death:
                 self.mushroomAttack.rect.x = -1000
             #endif
             if self.attackCounter == 15:
@@ -4937,7 +5005,13 @@ class MushroomClass(pygame.sprite.Sprite): #Class of the warlock
             if self.hurtCounter == 2:
                 self.hurt = False
                 self.hurtCounter = 0
-                self.ChangeSpeed(randint(0,1))
+                rollDice = randint(1,3)
+                if rollDice == 3:
+                    self.ChangeSpeed(2)
+                    self.AttackTrigger()
+                else:
+                    self.ChangeSpeed(randint(0,1))
+                #endif
             #endif
 
         #endif
@@ -4997,12 +5071,12 @@ class MushroomClass(pygame.sprite.Sprite): #Class of the warlock
 
             if num == 0:
 
-                self.horiSpeed = -3
+                self.horiSpeed = -2
                 self.lastHoriSpeed = self.horiSpeed
 
             elif num == 1:
 
-                self.horiSpeed = 3
+                self.horiSpeed = 2
                 self.lastHoriSpeed = self.horiSpeed
 
             elif num == 2:
@@ -5292,7 +5366,7 @@ class ArunClass(pygame.sprite.Sprite): #Class of the rogue
 
             elif self.attacked == True and not self.hurt and not self.throwed:
 
-                if self.endAnimation - self.startAnimation >= 42:
+                if self.endAnimation - self.startAnimation >= 55:
 
                     self.startAnimation = self.endAnimation #If player is attacking
                     self.arunAnimation.Attack(self.lastHoriSpeed, self.attackCounter)
@@ -5433,13 +5507,13 @@ class ArunClass(pygame.sprite.Sprite): #Class of the rogue
 
                 if self.rect.y == y:
                     self.ChangeSpeed(2)
-                    if self.rect.x - x <= 170 and self.rect.x - x > 0:
+                    if self.rect.x - x <= 160 and self.rect.x - x > 0 and self.lastHoriSpeed < 0:
                         self.AttackTrigger()
-                    elif x - self.rect.x > 0 and x - self.rect.x <= 170:
+                    elif x - self.rect.x > 0 and x - self.rect.x <= 160 and self.lastHoriSpeed > 0:
                         self.AttackTrigger()
-                    elif x <= self.rect.x and abs(x - self.rect.x) >= 170:
+                    elif x <= self.rect.x and abs(x - self.rect.x) >= 160:
                         self.ChangeSpeed(0)
-                    elif x > self.rect.x and abs(x - self.rect.x) >= 170:
+                    elif x > self.rect.x and abs(x - self.rect.x) >= 160:
                         self.ChangeSpeed(1)
                     #endif
                 elif y > self.rect.y:
@@ -5473,7 +5547,7 @@ class ArunClass(pygame.sprite.Sprite): #Class of the rogue
                     #endif
                 #endif
 
-                if abs(self.rect.x - x) > 500:
+                if abs(self.rect.x - x) > 500 and self.rect.y + 20 >= y and self.rect.y + 20 <= y+100:
                     self.endThrow = pygame.time.get_ticks() #Get current time for end time
                     if self.endThrow - self.startThrow >= self.throwTime:
                         self.skill = True
@@ -5637,6 +5711,9 @@ class ArunClass(pygame.sprite.Sprite): #Class of the rogue
                 self.restTime = 700
                 self.throwTime = 3000
                 self.attackCountNum = 8
+                self.random = False
+                self.rest = False
+                self.random2 = False
             #endif
 
         #endif
@@ -5723,7 +5800,7 @@ class ArunClass(pygame.sprite.Sprite): #Class of the rogue
             if self.jumped == False: #If player has not jumped yet
 
                 self.jumpTime += 1
-                self.vertSpeed = 18
+                self.vertSpeed = 19
                 self.jumped = True
                 self.jumpCounter = 0
                 self.fallCounter = 0
@@ -6831,6 +6908,9 @@ def Game():
                         for background in background_list:
                             background.Reset()
                         #endfor
+                        for arun in rogue_list:
+                            arun.HealthDisplay(0, levelTwo_list)
+                        #endfor
                         DrawOrRemove(0, levelTwo_list, nextButton_list)
                         DrawOrRemove(0, levelTwo_list, currentLine_list)
                         DrawOrRemove(0, levelTwo_list, wordBox_list)
@@ -7022,6 +7102,34 @@ def Game():
                         DrawOrRemove(0, levelTwo_list, currentLine_list)
                         DrawOrRemove(0, levelTwo_list, wordBox_list)
                         DrawOrRemove(0, levelTwo_list, coin_list)
+                        DrawOrRemove(0, levelTwo_list, javelin_list)
+                        DrawOrRemove(0, javelin_list, javelin_list)
+                    elif gameLevel == 3:
+                        for block in block3_list:
+                            block.Reset()
+                        #endfpr
+                        for character in character3_list:
+                            character.Reset()
+                        #endfor
+                        for optionBlock in optionBlock_list:
+                            levelThree_list.remove(optionBlock)
+                        #endfor
+                        for button in panelButton_list:
+                            levelThree_list.remove(button)
+                        #endfor
+                        for button in pauseButton_list:
+                            levelThree_list.add(button)
+                        #endfor
+                        for ground in ground_list:
+                            ground.Update(0)
+                        #endfor
+                        for background in background_list:
+                            background.Reset()
+                        #endfor
+                        DrawOrRemove(0, levelThree_list, nextButton_list)
+                        DrawOrRemove(0, levelThree_list, currentLine_list)
+                        DrawOrRemove(0, levelThree_list, wordBox_list)
+                        DrawOrRemove(0, levelThree_list, coin_list)
                     #endif
                 elif level == 4 and pos[0] >= 700 and pos[1] >= 590 and pos[0] <= 800 and pos[1] <= 630 and gameOver: #Game Over Quit
                     enemyCount = [-1]
@@ -7073,8 +7181,14 @@ def Game():
                         for ground in ground_list:
                             ground.Update(0)
                         #endfor
+                        for coin in coin_list:
+                            levelTwo_list.remove(coin)
+                        #endprocedure
                         for background in background_list:
                             background.Reset()
+                        #endfor
+                        for arun in arun_list:
+                            arun.HealthDisplay(0, levelTwo_list)
                         #endfor
                         DrawOrRemove(0, levelTwo_list, nextButton_list)
                         DrawOrRemove(0, levelTwo_list, currentLine_list)
@@ -7082,6 +7196,31 @@ def Game():
                         DrawOrRemove(0, levelTwo_list, restartLevel_list)
                         DrawOrRemove(1, levelTwo_list, pauseButton_list)
                         DrawOrRemove(0, levelTwo_list, coin_list)
+                        DrawOrRemove(0, coin_list, coin_list)
+                        DrawOrRemove(0, levelTwo_list, javelin_list)
+                        DrawOrRemove(0, javelin_list, javelin_list)
+                    elif gameLevel == 3:
+                        for block in block3_list:
+                            block.Reset()
+                        #endfpr
+                        for character in character3_list:
+                            character.Reset()
+                        #endfor
+                        for ground in ground_list:
+                            ground.Update(0)
+                        #endfor
+                        for coin in coin_list:
+                            levelThree_list.remove(coin)
+                        #endprocedure
+                        for background in background_list:
+                            background.Reset()
+                        #endfor
+                        DrawOrRemove(0, levelThree_list, nextButton_list)
+                        DrawOrRemove(0, levelThree_list, currentLine_list)
+                        DrawOrRemove(0, levelThree_list, wordBox_list)
+                        DrawOrRemove(0, levelThree_list, restartLevel_list)
+                        DrawOrRemove(1, levelThree_list, pauseButton_list)
+                        DrawOrRemove(0, levelThree_list, coin_list)
                         DrawOrRemove(0, coin_list, coin_list)
                     #endif
                 elif level == 4 and pos[0] >= 654.5 and pos[1] >= 500 and pos[0] <= 845.5 and pos[1] <= 540 and gameOver and not gamePause: #Game Over Restart
@@ -7138,10 +7277,13 @@ def Game():
                             ground.Update(0)
                         #endfor
                         for coin in coin_list:
-                            levelOne_list.remove(coin)
+                            levelTwo_list.remove(coin)
                         #endprocedure
                         for background in background_list:
                             background.Reset()
+                        #endfor
+                        for arun in arun_list:
+                            arun.HealthDisplay(0, levelTwo_list)
                         #endfor
                         DrawOrRemove(0, levelTwo_list, nextButton_list)
                         DrawOrRemove(0, levelTwo_list, currentLine_list)
@@ -7149,6 +7291,31 @@ def Game():
                         DrawOrRemove(0, levelTwo_list, restartLevel_list)
                         DrawOrRemove(1, levelTwo_list, pauseButton_list)
                         DrawOrRemove(0, levelTwo_list, coin_list)
+                        DrawOrRemove(0, coin_list, coin_list)
+                        DrawOrRemove(0, levelTwo_list, javelin_list)
+                        DrawOrRemove(0, javelin_list, javelin_list)
+                    elif gameLevel == 3:
+                        for block in block3_list:
+                            block.Reset()
+                        #endfpr
+                        for character in character3_list:
+                            character.Reset()
+                        #endfor
+                        for ground in ground_list:
+                            ground.Update(0)
+                        #endfor
+                        for coin in coin_list:
+                            levelThree_list.remove(coin)
+                        #endprocedure
+                        for background in background_list:
+                            background.Reset()
+                        #endfor
+                        DrawOrRemove(0, levelThree_list, nextButton_list)
+                        DrawOrRemove(0, levelThree_list, currentLine_list)
+                        DrawOrRemove(0, levelThree_list, wordBox_list)
+                        DrawOrRemove(0, levelThree_list, restartLevel_list)
+                        DrawOrRemove(1, levelThree_list, pauseButton_list)
+                        DrawOrRemove(0, levelThree_list, coin_list)
                         DrawOrRemove(0, coin_list, coin_list)
                     #endif
                 elif level == 4 and pos[0] >= 1195 and pos[1] >= 850 and pos[0] <= 1255 and pos[1] <= 870 and not gamePause:
@@ -8107,9 +8274,8 @@ def Game():
                     #endif
                     levelOne_list.draw(screen) #Display all visible objects
 
-                elif gameLevel == 2:
+                elif gameLevel == 2: #Level2 Genocide--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
                     screen.fill(FORESTWHITE)
-                    player.FreezeTrigger(0)
                     for button in button_list: #Button Change
 
                         button.Change(pos, level)
@@ -8119,7 +8285,7 @@ def Game():
                     for coin in coin_list:
 
                         coin.Change()
-                        coin.CoinUpdate(player_list, block2_list, tutorialBlock_list, tutorial_list, levelOne_list, coin_list, currency)
+                        coin.CoinUpdate(player_list, block2_list, tutorialBlock_list, tutorial_list, levelTwo_list, coin_list, currency)
 
                     #endfor
 
@@ -8152,7 +8318,7 @@ def Game():
                         #Roll
                         player.Roll()
                         #Horizontal Movement
-                        if gamePhase != 9 and gamePhase != 10 and gamePhase != 16 and gamePhase != 17 and gamePhase != 20 and gamePhase != 21 and gamePhase != 22:
+                        if gamePhase != 6 and gamePhase != 7 and gamePhase != 13 and gamePhase != 14:
                             player.MoveHori(block2_list) #Player move horizontally
                         else:
                             player.MoveHori2()
@@ -8168,40 +8334,518 @@ def Game():
 
                     #endfor
 
-                    for arun in arun_list:
+                    if gamePhase <= 5 or (gamePhase >= 7 and gamePhase <= 10) or (gamePhase >= 14 and gamePhase <= 17):
+                        for arun in arun_list:
 
-                        arun.Control(player.rect.x, player.rect.y)
-                        arun.Attack()
-                        arun.MoveHori(block2_list)
-                        arun.AttackChecker()
-                        arun.MoveVert(block2_list)
-                        arun.Hurt()
-                        arun.EnemyAttackDetection(playerAttack_list)
-                        arun.Health(levelTwo_list, coin_list, enemyCount)
-                        arun.Throw(javelin_list, levelTwo_list)
-                        arun.Animation()
+                            if gamePhase == 17:
+                                arun.Control(player.rect.x, player.rect.y)
+                            #endif
+                            arun.Attack()
+                            arun.MoveHori(block2_list)
+                            arun.AttackChecker()
+                            arun.MoveVert(block2_list)
+                            arun.Hurt()
+                            arun.EnemyAttackDetection(playerAttack_list)
+                            arun.Health(levelTwo_list, coin_list, enemyCount)
+                            arun.Throw(javelin_list, levelTwo_list)
+                            arun.Animation()
 
-                    #endfor
+                        #endfor
+                    #endif
 
-                    for mushroom in mushroomGroup1_list:
+                    if gamePhase <= 5:
+                        for mushroom in mushroomGroup1_list:
 
-                        mushroom.Control()
-                        mushroom.Attack()
-                        mushroom.MoveHori(block2_list)
-                        mushroom.MoveVert(block2_list)
-                        mushroom.Hurt()
-                        mushroom.EnemyAttackDetection(playerAttack_list)
-                        mushroom.Health(enemyCount)
-                        mushroom.Animation()
+                            if gamePhase == 5:
+                                mushroom.Control()
+                            #endif
+                            mushroom.Attack()
+                            mushroom.MoveHori(block2_list)
+                            mushroom.MoveVert(block2_list)
+                            mushroom.Hurt()
+                            mushroom.EnemyAttackDetection(playerAttack_list)
+                            mushroom.Health(enemyCount)
+                            mushroom.Animation()
 
-                    #endfor
+                        #endfor
+                    #endif
 
-                    for javelin in javelin_list:
+                    if gamePhase >= 7 and gamePhase <= 12:
+                        for mushroom in mushroomGroup2_list:
 
-                        javelin.JavelinUpdate(javelin_list, levelTwo_list)
+                            if gamePhase == 12:
+                                mushroom.Control()
+                            #endif
+                            mushroom.Attack()
+                            mushroom.MoveHori(block2_list)
+                            mushroom.MoveVert(block2_list)
+                            mushroom.Hurt()
+                            mushroom.EnemyAttackDetection(playerAttack_list)
+                            mushroom.Health(enemyCount)
+                            mushroom.Animation()
 
-                    #endfor
-                        
+                        #endfor
+                    #endif
+
+                    if gamePhase >= 14 and gamePhase <= 17:
+                        for mushroom in mushroomGroup3_list:
+
+                            if gamePhase == 17:
+                                mushroom.Control()
+                            #endif
+                            mushroom.Attack()
+                            mushroom.MoveHori(block2_list)
+                            mushroom.MoveVert(block2_list)
+                            mushroom.Hurt()
+                            mushroom.EnemyAttackDetection(playerAttack_list)
+                            mushroom.Health(enemyCount)
+                            mushroom.Animation()
+
+                        #endfor
+                    #endif
+
+                    if gamePhase >= 1 and gamePhase <= 5:
+
+                        #Bandit Movement
+                        for enemy in banditGroup3_list:
+
+                            enemy.Attack()
+                            enemy.MoveHori(block1_list, block2_list, block3_list, tutorialBlock_list, level, gameLevel)
+                            enemy.AttackChecker()
+                            enemy.MoveVert(block1_list, block2_list, block3_list, tutorialBlock_list, level, gameLevel)
+                            if gamePhase == 5 and not gameOver:
+                                enemy.Control(player_list)
+                            #endif
+                            enemy.Hurt()
+                            enemy.EnemyAttackDetection(playerAttack_list)
+                            enemy.Health(coin_list, levelTwo_list, level, gameLevel, enemyCount)
+                            enemy.Animation()
+
+                        #endfor
+
+                    #endif
+
+                    if gamePhase >= 7 and gamePhase <= 12:
+
+                        #Bandit Movement
+                        for enemy in banditGroup4_list:
+
+                            enemy.Attack()
+                            enemy.MoveHori(block1_list, block2_list, block3_list, tutorialBlock_list, level, gameLevel)
+                            enemy.AttackChecker()
+                            enemy.MoveVert(block1_list, block2_list, block3_list, tutorialBlock_list, level, gameLevel)
+                            if gamePhase == 12 and not gameOver:
+                                enemy.Control(player_list)
+                            #endif
+                            enemy.Hurt()
+                            enemy.EnemyAttackDetection(playerAttack_list)
+                            enemy.Health(coin_list, levelTwo_list, level, gameLevel, enemyCount)
+                            enemy.Animation()
+
+                        #endfor
+
+                    #endif
+
+                    if gamePhase == 17:
+                        for javelin in javelin_list:
+
+                            javelin.JavelinUpdate(javelin_list, levelTwo_list)
+
+                        #endfor
+                    #endif
+                            
+                    if gamePhase == 1:
+                        #Warlock
+                        if gameChat == 1:
+                            for player in player_list:
+                                player.FreezeTrigger(0)
+                                player.ChangeSpeed(2)
+                                player.FreezeTrigger(1)
+                            #endfor
+                            DrawOrRemove(1, levelTwo_list, wordBox_list)
+                            WriteWords(1, script2[0], 0, 815, file_list, levelOne_list, levelTwo_list, levelThree_list, currentLine_list, 4, 2, 0)
+                            gameChat = 2
+                        elif gameChat == 2:
+                            if timeUp[0] == 0 and not ReadyToClick:
+                                timer.Counter(2000, timeUp)
+                            elif timeUp[0] == 1 and not ReadyToClick:
+                                timeUp[0] = 0
+                                ReadyToClick = True
+                                DrawOrRemove(1, levelTwo_list, nextButton_list)
+                            #endif
+                            for button in nextButton_list:
+                                button.Change(pos, level)
+                            #endfor
+                        elif gameChat == 3:
+                            DrawOrRemove(0, levelTwo_list, nextButton_list)
+                            DrawOrRemove(0, levelTwo_list, currentLine_list)
+                            WriteWords(1, script2[1], 0, 815, file_list, levelOne_list, levelTwo_list, levelThree_list, currentLine_list, 4, 2, 0)
+                            gameChat = 4
+                        elif gameChat == 4:
+                            if timeUp[0] == 0 and not ReadyToClick:
+                                timer.Counter(2000, timeUp)
+                            elif timeUp[0] == 1 and not ReadyToClick:
+                                timeUp[0] = 0
+                                ReadyToClick = True
+                                DrawOrRemove(1, levelTwo_list, nextButton_list)
+                            #endif
+                            for button in nextButton_list:
+                                button.Change(pos, level)
+                            #endfor
+                        elif gameChat == 5:
+                            DrawOrRemove(0, levelTwo_list, nextButton_list)
+                            DrawOrRemove(0, levelTwo_list, currentLine_list)
+                            DrawOrRemove(0, levelTwo_list, wordBox_list)
+                            gamePhase = 2
+                            gameChat = 1
+                            for arun in arun_list:
+                                arun.ChangeSpeed(1)
+                            #endfor
+                        #endif
+                    elif gamePhase == 2:
+                        for arun in arun_list:
+                            if arun.rect.x >= 1600:
+                                arun.ChangeSpeed(0)
+                                arun.ChangeSpeed(2)
+                                arun.rect.x = 2900
+                                gamePhase = 3
+                            #endif
+                        #endfor
+                    elif gamePhase == 3:
+                        if timeUp[0] == 0:
+                            timer.Counter(900, timeUp)
+                        elif timeUp[0] == 1:
+                            timeUp[0] = 0
+                            gamePhase = 4
+                            endTimer = 0
+                            startTimer = 0
+                            for enemy in banditGroup3_list:
+                                enemy.AttackStance(1)
+                            #endfor
+                        #endif
+                    elif gamePhase == 4:
+                        if timeUp[0] == 0:
+                            timer.Counter(1000, timeUp)
+                        elif timeUp[0] == 1:
+                            timeUp[0] = 0
+                            gamePhase = 5
+                            endTimer = 0
+                            startTimer = 0
+                            enemyCount[0] = 4
+                            for player in player_list:
+                                player.FreezeTrigger(0)
+                            #endfor
+                        #endif
+                    elif gamePhase == 5:
+                        if enemyCount == [0] and live[0] > 0:
+                            if timeUp[0] == 0:
+                                for player in player_list:
+                                    player.FreezeTrigger(0)
+                                    player.ChangeSpeed(2)
+                                    player.FreezeTrigger(1)
+                                #endfor
+                                timer.Counter(1200, timeUp)
+                            elif timeUp[0] == 1:
+                                gamePhase = 6
+                                for player in player_list:
+                                    player.FreezeTrigger(0)
+                                    player.ChangeSpeed(1)
+                                    player.FreezeTrigger(1)
+                                #endfor
+                            #endif
+                        #endif
+                        if live[0] == 0:
+                            gameOver = True
+                        #endif
+                    elif gamePhase == 6:
+                        if player.rect.x >= 1550:
+                            player.FreezeTrigger(0)
+                            player.ChangeSpeed(2)
+                            player.FreezeTrigger(1)
+                            player.rect.x = 1550
+                            gamePhase = 7
+                        #endif
+                    elif gamePhase == 7:
+                        if player.rect.x > 50:
+                            player.rect.x -= 10
+                            for block in block2_list:
+                                block.rect.x -= 10
+                            #endfor
+                            for arun in arun_list:
+                                arun.rect.x -= 10
+                                arun.Animation()
+                            #endfor
+                            for enemy in banditGroup4_list:
+                                enemy.rect.x -= 10
+                                enemy.Animation()
+                            #endfor
+                            for mushroom in mushroomGroup2_list:
+                                mushroom.rect.x -= 10
+                                mushroom.Animation()
+                            #endfor
+                            for mushroom in mushroomGroup1_list:
+                                mushroom.rect.x -= 10
+                                mushroom.Animation()
+                            #endfor
+                            for bandit in banditGroup3_list:
+                                bandit.rect.x -= 10
+                                bandit.Animation()
+                            #endfor
+                            for background in background2_list:
+                                background.BackUpdate()
+                            #endfor
+                            for ground in ground_list:
+                                ground.Update(1)
+                            #endfor
+                        elif player.rect.x == 50:
+                            gamePhase = 8
+                            for ground in ground_list:
+                                ground.Update(0)
+                            #endfor
+                        #endif
+                    elif gamePhase == 8:
+                        if gameChat == 1:
+                            DrawOrRemove(1, levelTwo_list, wordBox_list)
+                            WriteWords(1, script2[2], 0, 815, file_list, levelOne_list, levelTwo_list, levelThree_list, currentLine_list, 4, 2, 0)
+                            gameChat = 2
+                        elif gameChat == 2:
+                            if timeUp[0] == 0 and not ReadyToClick:
+                                timer.Counter(2000, timeUp)
+                            elif timeUp[0] == 1 and not ReadyToClick:
+                                timeUp[0] = 0
+                                ReadyToClick = True
+                                DrawOrRemove(1, levelTwo_list, nextButton_list)
+                            #endif
+                            for button in nextButton_list:
+                                button.Change(pos, level)
+                            #endfor
+                        elif gameChat == 3:
+                            DrawOrRemove(1, levelTwo_list, wordBox_list)
+                            DrawOrRemove(0, levelTwo_list, currentLine_list)
+                            WriteWords(1, script2[3], 0, 815, file_list, levelOne_list, levelTwo_list, levelThree_list, currentLine_list, 4, 2, 0)
+                            gameChat = 4
+                        elif gameChat == 4:
+                            if timeUp[0] == 0 and not ReadyToClick:
+                                timer.Counter(2000, timeUp)
+                            elif timeUp[0] == 1 and not ReadyToClick:
+                                timeUp[0] = 0
+                                ReadyToClick = True
+                                DrawOrRemove(1, levelTwo_list, nextButton_list)
+                            #endif
+                            for button in nextButton_list:
+                                button.Change(pos, level)
+                            #endfor
+                        elif gameChat == 5:
+                            DrawOrRemove(0, levelTwo_list, nextButton_list)
+                            DrawOrRemove(0, levelTwo_list, currentLine_list)
+                            DrawOrRemove(0, levelTwo_list, wordBox_list)
+                            gamePhase = 9
+                            gameChat = 1
+                            for arun in arun_list:
+                                arun.ChangeSpeed(1)
+                            #endfor
+                        #endif
+                    elif gamePhase == 9:
+                        for arun in arun_list:
+                            if arun.rect.x >= 1600:
+                                arun.ChangeSpeed(0)
+                                arun.ChangeSpeed(2)
+                                arun.rect.x = 2900
+                                gamePhase = 10
+                            #endif
+                        #endfor
+                    elif gamePhase == 10:
+                        if timeUp[0] == 0:
+                            timer.Counter(900, timeUp)
+                        elif timeUp[0] == 1:
+                            timeUp[0] = 0
+                            gamePhase = 11
+                            endTimer = 0
+                            startTimer = 0
+                            for enemy in banditGroup4_list:
+                                enemy.AttackStance(1)
+                            #endfor
+                        #endif
+                    elif gamePhase == 11:
+                        if timeUp[0] == 0:
+                            timer.Counter(1000, timeUp)
+                        elif timeUp[0] == 1:
+                            timeUp[0] = 0
+                            gamePhase = 12
+                            endTimer = 0
+                            startTimer = 0
+                            enemyCount[0] = 6
+                            for player in player_list:
+                                player.FreezeTrigger(0)
+                            #endfor
+                        #endif
+                    elif gamePhase == 12:
+                        if enemyCount == [0] and live[0] > 0:
+                            if timeUp[0] == 0:
+                                for player in player_list:
+                                    player.FreezeTrigger(0)
+                                    player.ChangeSpeed(2)
+                                    player.FreezeTrigger(1)
+                                #endfor
+                                timer.Counter(1200, timeUp)
+                            elif timeUp[0] == 1:
+                                gamePhase = 13
+                                for player in player_list:
+                                    player.FreezeTrigger(0)
+                                    player.ChangeSpeed(1)
+                                    player.FreezeTrigger(1)
+                                #endfor
+                            #endif
+                        #endif
+                        if live[0] == 0:
+                            gameOver = True
+                        #endif
+                    elif gamePhase == 13:
+                        if player.rect.x >= 1550:
+                            player.FreezeTrigger(0)
+                            player.ChangeSpeed(2)
+                            player.FreezeTrigger(1)
+                            player.rect.x = 1550
+                            gamePhase = 14
+                            for mushroom in mushroomGroup3_list:
+                                mushroom.rect.x = randint(1700, 2900)
+                            #endfor
+                        #endif
+                    elif gamePhase == 14:
+                        if player.rect.x > 50:
+                            player.rect.x -= 10
+                            for block in block2_list:
+                                block.rect.x -= 10
+                            #endfor
+                            for arun in arun_list:
+                                arun.rect.x -= 10
+                                arun.Animation()
+                            #endfor
+                            for enemy in banditGroup4_list:
+                                enemy.rect.x -= 10
+                                enemy.Animation()
+                            #endfor
+                            for mushroom in mushroomGroup2_list:
+                                mushroom.rect.x -= 10
+                                mushroom.Animation()
+                            #endfor
+                            for mushroom in mushroomGroup3_list:
+                                mushroom.rect.x -= 10
+                                mushroom.Animation()
+                            #endfor
+                            for background in background2_list:
+                                background.BackUpdate()
+                            #endfor
+                            for ground in ground_list:
+                                ground.Update(1)
+                            #endfor
+                        elif player.rect.x == 50:
+                            gamePhase = 15
+                            for ground in ground_list:
+                                ground.Update(0)
+                            #endfor
+                        #endif
+                    elif gamePhase == 15:
+                        if gameChat == 1:
+                            DrawOrRemove(1, levelTwo_list, wordBox_list)
+                            WriteWords(1, script2[4], 0, 815, file_list, levelOne_list, levelTwo_list, levelThree_list, currentLine_list, 4, 2, 0)
+                            gameChat = 2
+                        elif gameChat == 2:
+                            if timeUp[0] == 0 and not ReadyToClick:
+                                timer.Counter(2000, timeUp)
+                            elif timeUp[0] == 1 and not ReadyToClick:
+                                timeUp[0] = 0
+                                ReadyToClick = True
+                                DrawOrRemove(1, levelTwo_list, nextButton_list)
+                            #endif
+                            for button in nextButton_list:
+                                button.Change(pos, level)
+                            #endfor
+                        elif gameChat == 3:
+                            DrawOrRemove(0, levelTwo_list, nextButton_list)
+                            DrawOrRemove(0, levelTwo_list, currentLine_list)
+                            DrawOrRemove(0, levelTwo_list, wordBox_list)
+                            gamePhase = 16
+                            gameChat = 1
+                        #endif
+                    elif gamePhase == 16:
+                        if timeUp[0] == 0:
+                            timer.Counter(1000, timeUp)
+                        elif timeUp[0] == 1:
+                            timeUp[0] = 0
+                            gamePhase = 17
+                            endTimer = 0
+                            startTimer = 0
+                            enemyCount[0] = 5
+                            for arun in arun_list:
+                                arun.HealthDisplay(1, levelTwo_list)
+                            #endfor
+                            for player in player_list:
+                                player.FreezeTrigger(0)
+                            #endfor
+                        #endif
+                    elif gamePhase == 17:
+                        if enemyCount == [0] and live[0] > 0:
+                            if timeUp[0] == 0:
+                                for player in player_list:
+                                    player.FreezeTrigger(0)
+                                    player.ChangeSpeed(2)
+                                    player.FreezeTrigger(1)
+                                #endfor
+                                timer.Counter(1200, timeUp)
+                            elif timeUp[0] == 1:
+                                gamePhase = 18
+                                for player in player_list:
+                                    player.FreezeTrigger(0)
+                                    player.ChangeSpeed(1)
+                                    player.FreezeTrigger(1)
+                                #endfor
+                            #endif
+                        #endif
+                        if live[0] == 0:
+                            gameOver = True
+                        #endif
+                    elif gamePhase == 18:
+                        if player.rect.x >= 1600:
+                            player.FreezeTrigger(0)
+                            player.ChangeSpeed(2)
+                            player.FreezeTrigger(1)
+                            player.rect.x = 1600
+                            for arun in arun_list:
+                                arun.HealthDisplay(0, levelTwo_list)
+                            #endfor
+                            gamePhase = 19
+                            DrawOrRemove(0, levelTwo_list, pauseButton_list)
+                        #endif
+                    elif gamePhase == 19:
+                        if gameChat == 1:
+                            DrawOrRemove(1, levelTwo_list, wordBox_list)
+                            WriteWords(1, script2[5], 0, 815, file_list, levelOne_list, levelTwo_list, levelThree_list, currentLine_list, 4, 2, 0)
+                            gameChat = 2
+                        elif gameChat == 2:
+                            if timeUp[0] == 0 and not ReadyToClick:
+                                timer.Counter(2000, timeUp)
+                            elif timeUp[0] == 1 and not ReadyToClick:
+                                timeUp[0] = 0
+                                ReadyToClick = True
+                                DrawOrRemove(1, levelTwo_list, nextButton_list)
+                            #endif
+                            for button in nextButton_list:
+                                button.Change(pos, level)
+                            #endfor
+                        elif gameChat == 3:
+                            DrawOrRemove(0, levelTwo_list, nextButton_list)
+                            DrawOrRemove(0, levelTwo_list, currentLine_list)
+                            DrawOrRemove(0, levelTwo_list, wordBox_list)
+                            gamePhase = 20
+                            gameChat = 1
+                        #endif
+                    elif gamePhase == 20:
+                        DrawOrRemove(1, levelTwo_list, nextLevelBlock_list)
+                        gamePhase = 21
+                        #SaveProgress(currentFile, currency,live,gameLevel+1)
+                        advanceLevel = True
+                    #endif
                     levelTwo_list.draw(screen) #Display all visible objects
 
                 #endif
@@ -8230,14 +8874,14 @@ def Game():
                         for character in character1_list:
                             character.ChangeSpeed(2)
                         #endfor
+                    elif gameLevel == 2:
+                        DrawOrRemove(1, levelTwo_list, restartLevel_list)
+                        DrawOrRemove(0, levelTwo_list, pauseButton_list)
+                        for character in character2_list:
+                            character.ChangeSpeed(2)
+                        #endfor
                     #endif
                 #endif
-
-                for cloud in cloud_list: #Cloud
-
-                    cloud.CloudUpdate()
-
-                #endfor
 
                 for button in button_list: #Button Change
 
@@ -8253,6 +8897,12 @@ def Game():
                 #endfor
 
                 if gameLevel == 1:
+                    for cloud in cloud_list: #Cloud
+
+                        cloud.CloudUpdate()
+
+                    #endfor
+                        
                     for player in player_list:
 
                         #Hurt
@@ -8315,6 +8965,120 @@ def Game():
 
                     #endif
                     levelOne_list.draw(screen) #Display all visible objects
+                    
+                elif gameLevel == 2:
+                    #Player Movement
+                    for player in player_list:
+
+                        #Hurt
+                        player.Hurt()
+                        #Attack
+                        player.Attack()
+                        #Attack Checker
+                        player.AttackChecker()
+                        #Health
+                        player.Health(live)
+                        #Animation
+                        player.Animation()
+
+                    #endfor
+
+                    if gamePhase <= 5 or (gamePhase >= 7 and gamePhase <= 10) or (gamePhase >= 14 and gamePhase <= 17):
+                        for arun in arun_list:
+
+                            arun.Attack()
+                            arun.MoveHori(block2_list)
+                            arun.AttackChecker()
+                            arun.MoveVert(block2_list)
+                            arun.Hurt()
+                            arun.Health(levelTwo_list, coin_list, enemyCount)
+                            arun.Throw(javelin_list, levelTwo_list)
+                            arun.Animation()
+
+                        #endfor
+                    #endif
+
+                    if gamePhase <= 5:
+                        for mushroom in mushroomGroup1_list:
+
+                            mushroom.Attack()
+                            mushroom.MoveHori(block2_list)
+                            mushroom.MoveVert(block2_list)
+                            mushroom.Hurt()
+                            mushroom.Health(enemyCount)
+                            mushroom.Animation()
+
+                        #endfor
+                    #endif
+
+                    if gamePhase >= 7 and gamePhase <= 12:
+                        for mushroom in mushroomGroup2_list:
+
+                            mushroom.Attack()
+                            mushroom.MoveHori(block2_list)
+                            mushroom.MoveVert(block2_list)
+                            mushroom.Hurt()
+                            mushroom.Health(enemyCount)
+                            mushroom.Animation()
+
+                        #endfor
+                    #endif
+
+                    if gamePhase >= 14 and gamePhase <= 17:
+                        for mushroom in mushroomGroup3_list:
+
+                            mushroom.Attack()
+                            mushroom.MoveHori(block2_list)
+                            mushroom.MoveVert(block2_list)
+                            mushroom.Hurt()
+                            mushroom.Health(enemyCount)
+                            mushroom.Animation()
+
+                        #endfor
+                    #endif
+
+                    if gamePhase >= 1 and gamePhase <= 5:
+
+                        #Bandit Movement
+                        for enemy in banditGroup3_list:
+
+                            enemy.Attack()
+                            enemy.MoveHori(block1_list, block2_list, block3_list, tutorialBlock_list, level, gameLevel)
+                            enemy.AttackChecker()
+                            enemy.MoveVert(block1_list, block2_list, block3_list, tutorialBlock_list, level, gameLevel)
+                            enemy.Hurt()
+                            enemy.Health(coin_list, levelTwo_list, level, gameLevel, enemyCount)
+                            enemy.Animation()
+
+                        #endfor
+
+                    #endif
+
+                    if gamePhase >= 7 and gamePhase <= 12:
+
+                        #Bandit Movement
+                        for enemy in banditGroup4_list:
+
+                            enemy.Attack()
+                            enemy.MoveHori(block1_list, block2_list, block3_list, tutorialBlock_list, level, gameLevel)
+                            enemy.AttackChecker()
+                            enemy.MoveVert(block1_list, block2_list, block3_list, tutorialBlock_list, level, gameLevel)
+                            enemy.Hurt()
+                            enemy.Health(coin_list, levelTwo_list, level, gameLevel, enemyCount)
+                            enemy.Animation()
+
+                        #endfor
+
+                    #endif
+
+                    if gamePhase == 17:
+                        for javelin in javelin_list:
+
+                            javelin.JavelinUpdate(javelin_list, levelTwo_list)
+
+                        #endfor
+                    #endif
+                    levelTwo_list.draw(screen) #Display all visible objects
                 #endif
 
             #endif
